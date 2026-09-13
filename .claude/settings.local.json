@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(export ANDROID_HOME=\"/c/Users/Bour Bon/AppData/Local/Android/Sdk\")",
+      "Bash('/c/Users/Bour Bon/AppData/Local/Android/Sdk/cmdline-tools/*/bin/avdmanager.bat' list avd)",
+      "Bash(nohup '/c/Users/Bour Bon/AppData/Local/Android/Sdk/emulator/emulator.exe' -avd Small_Phone -no-snapshot -no-boot-anim)",
+      "Bash(disown)",
+      "Bash(echo \"launched emulator pid $!\")"
+    ]
+  }
+}

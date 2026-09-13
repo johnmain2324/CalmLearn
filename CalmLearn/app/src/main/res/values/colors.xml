@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand (Design System) -->
+    <color name="warm_ivory">#FAF9F6</color>
+    <color name="white_surface">#FFFFFF</color>
+    <color name="dark_navy">#17252A</color>
+    <color name="deep_teal">#146C6E</color>
+    <color name="teal_surface">#E6F2F2</color>
+    <color name="coral_brand">#F27B64</color>
+    <color name="golden_yellow">#F5C451</color>
+
+    <color name="teal_primary">#146C6E</color>
+    <color name="teal_dark">#0B5147</color>
+    <color name="teal_light">#E6F2F2</color>
+
+    <color name="coral">#F27B64</color>
+    <color name="coral_light">#FCE8E3</color>
+
+    <color name="amber">#F5C451</color>
+    <color name="amber_light">#FDF1DA</color>
+
+    <!-- Semantic (state) -->
+    <color name="success">#2E9E6B</color>
+    <color name="success_light">#E1F5EA</color>
+    <color name="error">#E05A4A</color>
+    <color name="error_light">#FCE6E3</color>
+
+    <!-- Neutrals -->
+    <color name="background">#FAF9F6</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="text_primary">#17252A</color>
+    <color name="text_secondary">#7A8A87</color>
+    <color name="text_hint">#A9B4B2</color>
+    <color name="divider">#ECEAE6</color>
+    <color name="progress_track">#EEECE8</color>
+    <color name="scrim">#8017252A</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+</resources>

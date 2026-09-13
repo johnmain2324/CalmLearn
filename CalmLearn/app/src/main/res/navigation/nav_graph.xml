@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/onboardingFragment">
+
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.example.calmlearn.ui.onboarding.OnboardingFragment"
+        android:label="Onboarding" />
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.calmlearn.ui.home.HomeFragment"
+        android:label="Home" />
+
+    <fragment
+        android:id="@+id/lessonsFragment"
+        android:name="com.example.calmlearn.ui.lessons.LessonsFragment"
+        android:label="Lessons" />
+
+    <fragment
+        android:id="@+id/practiceFragment"
+        android:name="com.example.calmlearn.ui.practice.PracticeFragment"
+        android:label="Practice" />
+
+    <fragment
+        android:id="@+id/progressFragment"
+        android:name="com.example.calmlearn.ui.progress.ProgressFragment"
+        android:label="Progress" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.calmlearn.ui.profile.ProfileFragment"
+        android:label="Profile" />
+
+    <fragment
+        android:id="@+id/topicDetailFragment"
+        android:name="com.example.calmlearn.ui.lessons.topic.TopicDetailFragment"
+        android:label="TopicDetail" />
+
+    <fragment
+        android:id="@+id/wordDetailFragment"
+        android:name="com.example.calmlearn.ui.lessons.word.WordDetailFragment"
+        android:label="WordDetail" />
+
+    <fragment
+        android:id="@+id/flashcardFragment"
+        android:name="com.example.calmlearn.ui.lessons.flashcard.FlashcardFragment"
+        android:label="Flashcard" />
+
+    <fragment
+        android:id="@+id/grammarDetailFragment"
+        android:name="com.example.calmlearn.ui.lessons.grammar.GrammarDetailFragment"
+        android:label="GrammarDetail" />
+
+    <fragment
+        android:id="@+id/speakingFragment"
+        android:name="com.example.calmlearn.ui.speaking.SpeakingFragment"
+        android:label="Speaking" />
+
+    <fragment
+        android:id="@+id/listeningListFragment"
+        android:name="com.example.calmlearn.ui.listening.ListeningListFragment"
+        android:label="ListeningList" />
+
+    <fragment
+        android:id="@+id/listeningFragment"
+        android:name="com.example.calmlearn.ui.listening.ListeningFragment"
+        android:label="Listening" />
+
+    <fragment
+        android:id="@+id/quizFragment"
+        android:name="com.example.calmlearn.ui.quiz.QuizFragment"
+        android:label="Quiz" />
+
+    <!-- Global actions: reachable by id from any destination in this graph -->
+    <action
+        android:id="@+id/action_global_onboarding"
+        app:destination="@id/onboardingFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
+
+    <action
+        android:id="@+id/action_global_home"
+        app:destination="@id/homeFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="false" />
+
+    <action
+        android:id="@+id/action_global_topicDetail"
+        app:destination="@id/topicDetailFragment" />
+
+    <action
+        android:id="@+id/action_global_wordDetail"
+        app:destination="@id/wordDetailFragment" />
+
+    <action
+        android:id="@+id/action_global_flashcard"
+        app:destination="@id/flashcardFragment" />
+
+    <action
+        android:id="@+id/action_global_grammarDetail"
+        app:destination="@id/grammarDetailFragment" />
+
+    <action
+        android:id="@+id/action_global_speaking"
+        app:destination="@id/speakingFragment" />
+
+    <action
+        android:id="@+id/action_global_listeningList"
+        app:destination="@id/listeningListFragment" />
+
+    <action
+        android:id="@+id/action_global_listening"
+        app:destination="@id/listeningFragment" />
+
+    <action
+        android:id="@+id/action_global_quiz"
+        app:destination="@id/quizFragment" />
+
+</navigation>

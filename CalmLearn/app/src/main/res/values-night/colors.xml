@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">#14201D</color>
+    <color name="surface">#1C2925</color>
+    <color name="text_primary">#F1F5F3</color>
+    <color name="text_secondary">#9FB0AC</color>
+    <color name="text_hint">#6E7F7B</color>
+    <color name="divider">#2A3733</color>
+    <color name="progress_track">#2A3733</color>
+</resources>
