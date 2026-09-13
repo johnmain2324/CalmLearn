@@ -4,8 +4,11 @@ import com.example.calmlearn.data.auth.AuthErrorReason
 import com.example.calmlearn.data.auth.AuthRepository
 import com.example.calmlearn.data.auth.AuthResult
 import com.example.calmlearn.data.auth.Gender
+import com.example.calmlearn.data.auth.LoginResult
+import com.example.calmlearn.data.auth.ProfileResult
 import com.example.calmlearn.data.auth.RegisterResult
 import com.example.calmlearn.data.auth.UserProfile
+import com.example.calmlearn.data.auth.VerificationCheckResult
 import kotlinx.coroutines.CompletableDeferred
 
 /**
@@ -24,21 +27,33 @@ class FakeAuthRepository : AuthRepository {
         private set
     var resetCallCount = 0
         private set
+    var resendCallCount = 0
+        private set
+    var refreshCallCount = 0
+        private set
+    var completeProfileCallCount = 0
+        private set
+    var cancelPendingSessionCallCount = 0
+        private set
 
-    var registerResult: RegisterResult = RegisterResult.SignedIn
-    var loginResult: AuthResult = AuthResult.Success
+    var registerResult: RegisterResult = RegisterResult.AccountReady
+    var loginResult: LoginResult = LoginResult.Success
     var resetResult: AuthResult = AuthResult.Success
+    var resendResult: AuthResult = AuthResult.Success
+    var refreshResult: VerificationCheckResult = VerificationCheckResult.VERIFIED
+    var completeProfileResult: AuthResult = AuthResult.Success
     var throwOnNextCall: Throwable? = null
-    var profile: UserProfile? = null
+    var profile: ProfileResult = ProfileResult.NotSignedIn
+    var sessionEmail: String? = null
 
     private var authenticated = false
+
+    private var registerGate: CompletableDeferred<Unit>? = null
+    private var loginGate: CompletableDeferred<Unit>? = null
 
     fun setAuthenticated(value: Boolean) {
         authenticated = value
     }
-
-    private var registerGate: CompletableDeferred<Unit>? = null
-    private var loginGate: CompletableDeferred<Unit>? = null
 
     fun holdRegister() {
         registerGate = CompletableDeferred()
@@ -63,7 +78,7 @@ class FakeAuthRepository : AuthRepository {
         return registerResult
     }
 
-    override suspend fun login(email: String, password: String, rememberMe: Boolean): AuthResult {
+    override suspend fun login(email: String, password: String): LoginResult {
         loginCallCount++
         loginGate?.await()
         throwOnNextCall?.let { pending -> throwOnNextCall = null; throw pending }
@@ -80,10 +95,37 @@ class FakeAuthRepository : AuthRepository {
 
     override fun isAuthenticated(): Boolean = authenticated
 
+    override fun currentSessionEmail(): String? = sessionEmail
+
     override fun logout() {
         authenticated = false
-        profile = null
+        profile = ProfileResult.NotSignedIn
     }
 
-    override suspend fun currentUserProfile(): UserProfile? = profile
+    override fun cancelPendingSession() {
+        cancelPendingSessionCallCount++
+    }
+
+    override suspend fun currentUserProfile(): ProfileResult = profile
+
+    override suspend fun resendVerificationEmail(): AuthResult {
+        resendCallCount++
+        throwOnNextCall?.let { pending -> throwOnNextCall = null; throw pending }
+        return resendResult
+    }
+
+    override suspend fun refreshVerificationStatus(): VerificationCheckResult {
+        refreshCallCount++
+        throwOnNextCall?.let { pending -> throwOnNextCall = null; throw pending }
+        return refreshResult
+    }
+
+    override suspend fun completeProfile(fullName: String, gender: Gender): AuthResult {
+        completeProfileCallCount++
+        throwOnNextCall?.let { pending -> throwOnNextCall = null; throw pending }
+        if (completeProfileResult is AuthResult.Success) {
+            profile = ProfileResult.Loaded(UserProfile(uid = "uid", fullName = fullName, email = sessionEmail.orEmpty(), gender = gender))
+        }
+        return completeProfileResult
+    }
 }

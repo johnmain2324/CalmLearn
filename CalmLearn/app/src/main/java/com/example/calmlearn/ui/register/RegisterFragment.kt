@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
-import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -20,6 +20,7 @@ import com.example.calmlearn.ui.common.applyEditTextPasswordVisibility
 import com.example.calmlearn.ui.common.hideKeyboard
 import com.example.calmlearn.ui.common.toMessageRes
 import com.example.calmlearn.ui.common.toggleEditTextPasswordVisibility
+import com.example.calmlearn.ui.verifyemail.VerifyEmailFragment
 
 /**
  * Man hinh Dang ky. Logic kiem tra du lieu va goi AuthRepository nam trong [RegisterViewModel] de
@@ -194,10 +195,13 @@ class RegisterFragment : Fragment() {
             FormUiState.RequiresNextStep -> {
                 binding.tvError.visibility = View.INVISIBLE
                 viewModel.consumeTerminalState()
-                // Tai khoan da tao nhung chua co phien (vd can xac minh email) - KHONG vao thang
-                // Trang chu, dua nguoi dung ve Dang nhap de tu dang nhap lai khi da san sang.
-                Toast.makeText(requireContext(), R.string.register_requires_next_step, Toast.LENGTH_LONG).show()
-                findNavController().navigate(R.id.action_global_login)
+                // Tai khoan da tao (co the da hoac chua luu xong ho so) nhung CHUA co phien hop le
+                // (con thieu xac minh email) - dua sang man hinh Xac minh email, KHONG vao thang
+                // Trang chu. autoSend=true vi day la lan dau, chua tung gui email xac minh nao.
+                findNavController().navigate(
+                    R.id.action_global_verifyEmail,
+                    bundleOf(VerifyEmailFragment.ARG_AUTO_SEND to true)
+                )
             }
             else -> {
                 binding.tvError.visibility = View.INVISIBLE

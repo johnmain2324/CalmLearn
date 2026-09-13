@@ -89,6 +89,16 @@
         android:name="com.example.calmlearn.ui.forgotpassword.ForgotPasswordFragment"
         android:label="ForgotPassword" />
 
+    <fragment
+        android:id="@+id/verifyEmailFragment"
+        android:name="com.example.calmlearn.ui.verifyemail.VerifyEmailFragment"
+        android:label="VerifyEmail">
+        <argument
+            android:name="autoSend"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </fragment>
+
     <!-- Global actions: reachable by id from any destination in this graph -->
     <action
         android:id="@+id/action_global_onboarding"
@@ -147,5 +157,9 @@
     <action
         android:id="@+id/action_global_register"
         app:destination="@id/registerFragment" />
+
+    <action
+        android:id="@+id/action_global_verifyEmail"
+        app:destination="@id/verifyEmailFragment" />
 
 </navigation>

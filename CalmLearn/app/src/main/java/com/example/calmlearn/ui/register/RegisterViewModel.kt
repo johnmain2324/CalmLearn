@@ -138,8 +138,8 @@ class RegisterViewModel(
                 RegisterResult.Error(AuthErrorReason.UNKNOWN)
             }
             _uiState.value = when (result) {
-                RegisterResult.SignedIn -> FormUiState.Success
-                RegisterResult.RequiresVerification -> FormUiState.RequiresNextStep
+                RegisterResult.AccountReady,
+                RegisterResult.ProfileIncomplete -> FormUiState.RequiresNextStep
                 is RegisterResult.Error -> FormUiState.Error(result.reason)
             }
         }

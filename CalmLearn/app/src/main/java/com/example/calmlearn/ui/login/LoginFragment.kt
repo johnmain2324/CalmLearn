@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -19,6 +20,7 @@ import com.example.calmlearn.ui.common.applyEditTextPasswordVisibility
 import com.example.calmlearn.ui.common.hideKeyboard
 import com.example.calmlearn.ui.common.toMessageRes
 import com.example.calmlearn.ui.common.toggleEditTextPasswordVisibility
+import com.example.calmlearn.ui.verifyemail.VerifyEmailFragment
 
 /**
  * Man hinh Dang nhap. Logic kiem tra du lieu va goi AuthRepository nam trong [LoginViewModel].
@@ -48,7 +50,6 @@ class LoginFragment : Fragment() {
 
         binding.etEmail.setText(viewModel.email)
         binding.etPassword.setText(viewModel.password)
-        binding.cbRememberMe.isChecked = viewModel.rememberMe
         // etPassword dat android:saveEnabled="false" nen phai tu ap lai trang thai an/hien tu ViewModel.
         applyEditTextPasswordVisibility(binding.etPassword, binding.btnTogglePassword, viewModel.isPasswordVisible)
 
@@ -82,8 +83,6 @@ class LoginFragment : Fragment() {
             val newlyVisible = toggleEditTextPasswordVisibility(binding.etPassword, binding.btnTogglePassword, viewModel.isPasswordVisible)
             viewModel.onPasswordVisibilityChanged(newlyVisible)
         }
-
-        binding.cbRememberMe.setOnCheckedChangeListener { _, isChecked -> viewModel.onRememberMeChanged(isChecked) }
 
         binding.tvForgotPassword.setOnClickListener {
             findNavController().navigate(R.id.action_global_forgotPassword)
@@ -154,6 +153,17 @@ class LoginFragment : Fragment() {
                 viewModel.consumeTerminalState()
                 findNavController().navigate(R.id.action_global_home)
             }
+            FormUiState.RequiresNextStep -> {
+                binding.tvError.visibility = View.INVISIBLE
+                viewModel.consumeTerminalState()
+                // Dung mat khau nhung chua du dieu kien vao app (email chua xac minh, hoac ho so
+                // chua luu xong tu lan dang ky truoc do) - dua sang man hinh Xac minh email.
+                // autoSend=false: co the da tung gui xac minh truoc do, khong tu gui them lan nua.
+                findNavController().navigate(
+                    R.id.action_global_verifyEmail,
+                    bundleOf(VerifyEmailFragment.ARG_AUTO_SEND to false)
+                )
+            }
             else -> {
                 binding.tvError.visibility = View.INVISIBLE
             }
@@ -164,7 +174,6 @@ class LoginFragment : Fragment() {
         binding.etEmail.isEnabled = enabled
         binding.etPassword.isEnabled = enabled
         binding.btnTogglePassword.isEnabled = enabled
-        binding.cbRememberMe.isEnabled = enabled
         // Khoa ca lien ket dieu huong trong luc dang gui, tranh nguoi dung roi man hinh giua chung.
         binding.btnBack.isEnabled = enabled
         binding.tvForgotPassword.isEnabled = enabled

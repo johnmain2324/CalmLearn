@@ -13,7 +13,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.calmlearn.R
 import com.example.calmlearn.data.auth.AuthRepositoryProvider
 import com.example.calmlearn.data.auth.Gender
+import com.example.calmlearn.data.auth.ProfileResult
 import com.example.calmlearn.databinding.FragmentProfileBinding
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
@@ -61,20 +63,43 @@ class ProfileFragment : Fragment() {
     }
 
     /**
-     * Hien ten, email, gioi tinh that cua nguoi dang dang nhap (khong con hardcode "Alex Nguyen").
-     * XP/streak dat ve trang thai "chua co thanh tich" vi buoc nay chua trien khai theo doi tien
-     * do that - tranh gan nham so lieu mau cho tai khoan that moi tao.
+     * Hien ten, email, gioi tinh that cua nguoi dang dang nhap (khong con hardcode "Alex Nguyen"/
+     * email mau - XML chi con dung tools:text cho preview). XP/streak dat ve trang thai "chua co
+     * thanh tich" vi buoc nay chua trien khai theo doi tien do that.
      */
     private fun loadCurrentUser() {
+        binding.tvProfileName.text = getString(R.string.profile_name_loading)
+        binding.tvProfileEmail.text = getString(R.string.profile_email_loading)
+        binding.tvProfileGender.text = getString(R.string.profile_gender_unset)
+
         binding.tvStreakValue.text = getString(R.string.home_streak_value_empty)
         binding.tvXpValue.text = getString(R.string.home_xp_value_empty)
 
+        val requestedUid = FirebaseAuth.getInstance().currentUser?.uid
         viewLifecycleOwner.lifecycleScope.launch {
-            val profile = AuthRepositoryProvider.repository.currentUserProfile()
-            if (profile != null) {
-                if (profile.fullName.isNotBlank()) binding.tvProfileName.text = profile.fullName
-                if (profile.email.isNotBlank()) binding.tvProfileEmail.text = profile.email
-                binding.tvProfileGender.text = getString(genderLabelRes(profile.gender))
+            when (val result = AuthRepositoryProvider.repository.currentUserProfile()) {
+                is ProfileResult.Loaded -> {
+                    // Doi chieu UID truoc khi cap nhat UI: neu phien da doi (vd dang xuat/dang
+                    // nhap tai khoan khac ngay trong luc dang cho ket qua) thi bo qua ket qua cu.
+                    if (result.profile.uid != requestedUid) return@launch
+                    val profile = result.profile
+                    binding.tvProfileName.text = profile.fullName.takeIf { it.isNotBlank() }
+                        ?: profile.email.substringBefore('@').takeIf { it.isNotBlank() }
+                        ?: getString(R.string.profile_name_fallback)
+                    binding.tvProfileEmail.text = profile.email.ifBlank { getString(R.string.profile_email_loading) }
+                    // gender == null nghia la CHUA GHI NHAN - khong duoc tu suy dien thanh mot lua
+                    // chon Nam/Nu/Khac cu the nao (xem UserProfile.gender).
+                    binding.tvProfileGender.text = profile.gender?.let { getString(genderLabelRes(it)) }
+                        ?: getString(R.string.profile_gender_unset)
+                }
+                ProfileResult.Missing, ProfileResult.NotSignedIn -> {
+                    binding.tvProfileName.text = getString(R.string.profile_name_fallback)
+                    binding.tvProfileGender.text = getString(R.string.profile_gender_unset)
+                }
+                is ProfileResult.ReadError -> {
+                    binding.tvProfileName.text = getString(R.string.profile_load_error)
+                    binding.tvProfileGender.text = getString(R.string.profile_gender_unset)
+                }
             }
         }
     }

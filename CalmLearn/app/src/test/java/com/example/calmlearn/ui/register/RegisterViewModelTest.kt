@@ -115,21 +115,21 @@ class RegisterViewModelTest {
         advanceUntilIdle()
 
         assertEquals(1, fakeRepository.registerCallCount)
-        assertEquals(FormUiState.Success, viewModel.uiState.value)
+        assertEquals(FormUiState.RequiresNextStep, viewModel.uiState.value)
     }
 
     @Test
-    fun `signed in result navigates via Success state`() = runTest(testDispatcher) {
-        fakeRepository.registerResult = RegisterResult.SignedIn
+    fun `account ready result routes to the verification step, never straight to Success`() = runTest(testDispatcher) {
+        fakeRepository.registerResult = RegisterResult.AccountReady
         fillValidForm()
         viewModel.submit()
         advanceUntilIdle()
-        assertEquals(FormUiState.Success, viewModel.uiState.value)
+        assertEquals(FormUiState.RequiresNextStep, viewModel.uiState.value)
     }
 
     @Test
-    fun `requires verification result does not report Success (must not auto navigate home)`() = runTest(testDispatcher) {
-        fakeRepository.registerResult = RegisterResult.RequiresVerification
+    fun `profile incomplete result also routes to the verification step (never Success)`() = runTest(testDispatcher) {
+        fakeRepository.registerResult = RegisterResult.ProfileIncomplete
         fillValidForm()
         viewModel.submit()
         advanceUntilIdle()
@@ -186,11 +186,11 @@ class RegisterViewModelTest {
     }
 
     @Test
-    fun `consumeTerminalState resets Success to Idle so it is not replayed as a second navigation`() = runTest(testDispatcher) {
+    fun `consumeTerminalState resets RequiresNextStep to Idle so it is not replayed as a second navigation`() = runTest(testDispatcher) {
         fillValidForm()
         viewModel.submit()
         advanceUntilIdle()
-        assertEquals(FormUiState.Success, viewModel.uiState.value)
+        assertEquals(FormUiState.RequiresNextStep, viewModel.uiState.value)
 
         viewModel.consumeTerminalState()
         assertEquals(FormUiState.Idle, viewModel.uiState.value)

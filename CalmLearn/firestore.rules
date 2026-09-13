@@ -1,12 +1,40 @@
 rules_version = '2';
 
 // Dan vao Firebase Console > Firestore Database > Rules, roi bam Publish.
-// Chi chinh chu tai lieu (request.auth.uid == userId) moi duoc doc/ghi ho so cua minh -
-// khong mo quyen doc/ghi toan bo collection "users" cho bat ky ai da dang nhap.
+//
+// Nguyen tac:
+// - Moi tai khoan CHI doc/ghi duoc document ho so cua chinh minh (request.auth.uid == userId) -
+//   khong mo quyen doc/ghi toan bo collection "users" cho bat ky ai da dang nhap.
+// - Ho so duoc phep GHI (create/update) truoc khi email_verified = true (dang ky luu ho so xong
+//   MOI gui email xac minh - xem FirebaseAuthRepository.register()), nen KHONG duoc doi hoi
+//   request.auth.token.email_verified trong rule nay, neu khong se khoa chinh buoc dang ky.
+// - Chi cho phep dung 4 truong co dinh, dung kieu du lieu, va "email" phai trung voi email that
+//   cua tai khoan dang dang nhap (lay tu auth token, khong phai tu client tu khai bao) - ngan
+//   client tu them truong dac quyen (vd "role", "isAdmin") hoac gia mao email nguoi khac.
 service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && isValidProfile(request.resource.data);
+
+      allow update: if request.auth != null
+        && request.auth.uid == userId
+        && isValidProfile(request.resource.data);
+
+      allow delete: if false;
     }
+  }
+
+  function isValidProfile(data) {
+    return data.keys().hasOnly(['fullName', 'email', 'gender', 'createdAt'])
+      && data.fullName is string
+      && data.fullName.size() > 0
+      && data.email is string
+      && data.email == request.auth.token.email
+      && data.gender is string
+      && data.gender in ['MALE', 'FEMALE', 'OTHER'];
   }
 }

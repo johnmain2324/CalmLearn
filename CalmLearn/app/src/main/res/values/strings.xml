@@ -20,6 +20,17 @@
     <!-- Trang thai "chua co thanh tich" cho tai khoan that moi tao (chua trien khai theo doi tien do) -->
     <string name="home_streak_value_empty">0 ngày</string>
     <string name="home_xp_value_empty">0 XP</string>
+    <string name="home_goal_percent_empty">0% hoàn thành</string>
+    <string name="home_goal_minutes_empty">Chưa học phút nào hôm nay</string>
+    <string name="home_goal_remaining_empty">Bắt đầu ngay</string>
+    <string name="home_course_percent_empty">0% hoàn tất</string>
+
+    <!-- Ho so nguoi dung (Trang chu / Ho so) - trang thai trong khi tai / khong co du lieu that -->
+    <string name="profile_name_loading">Đang tải…</string>
+    <string name="profile_name_fallback">Người dùng CalmLearn</string>
+    <string name="profile_email_loading">—</string>
+    <string name="profile_gender_unset">Chưa cập nhật</string>
+    <string name="profile_load_error">Không tải được thông tin hồ sơ. Vui lòng thử lại sau.</string>
     <string name="home_goal_title">Mục tiêu hôm nay</string>
     <string name="home_goal_percent">65% hoàn thành</string>
     <string name="home_goal_minutes">Đã học: 13 / 20 phút</string>
@@ -182,7 +193,6 @@
     <string name="register_error_terms">Bạn cần đồng ý điều khoản để tiếp tục</string>
     <string name="register_have_account">Đã có tài khoản?</string>
     <string name="register_login_now">Đăng nhập</string>
-    <string name="register_requires_next_step">Tài khoản đã được tạo! Chúng tôi đã gửi email xác minh tới hộp thư của bạn — hãy mở email và bấm vào liên kết xác minh, sau đó quay lại đăng nhập.</string>
 
     <!-- Auth chung (Dang nhap / Dang ky / Quen mat khau) -->
     <string name="auth_brand_tagline">Học tiếng Anh mỗi ngày</string>
@@ -193,10 +203,24 @@
     <string name="auth_error_invalid_credentials">Email hoặc mật khẩu không đúng.</string>
     <string name="auth_error_email_in_use">Email này đã được đăng ký. Vui lòng đăng nhập hoặc dùng email khác.</string>
     <string name="auth_error_weak_password">Mật khẩu chưa đáp ứng yêu cầu bảo mật của hệ thống. Vui lòng đặt mật khẩu khác.</string>
-    <string name="auth_error_email_not_verified">Email chưa được xác minh. Vui lòng kiểm tra hộp thư (kể cả mục Spam) và bấm vào liên kết xác minh trước khi đăng nhập.</string>
-    <string name="auth_error_profile_save_failed">Tài khoản đã tạo nhưng lưu hồ sơ (họ tên, giới tính) bị lỗi. Vui lòng thử đăng ký lại.</string>
+    <string name="auth_error_too_many_requests">Bạn vừa thử quá nhiều lần. Vui lòng đợi một lát rồi thử lại.</string>
+    <string name="auth_error_profile_save_failed">Không lưu được hồ sơ (họ tên, giới tính) lúc này. Vui lòng thử lại.</string>
     <string name="auth_error_unknown">Đã có lỗi xảy ra. Vui lòng thử lại sau.</string>
     <string name="auth_google_unavailable">Đăng nhập Google chưa được cấu hình cho ứng dụng này.</string>
+
+    <!-- Xac minh email / hoan tat ho so (man hinh trung gian sau Dang ky, hoac khi Dang nhap phat hien tai khoan chua xac minh / chua co ho so) -->
+    <string name="verify_title">Xác minh email</string>
+    <string name="verify_profile_title">Hoàn tất hồ sơ</string>
+    <string name="verify_subtitle_sent">Chúng tôi đã gửi email xác minh tới %1$s. Vui lòng mở email và bấm vào liên kết xác minh, sau đó quay lại đây và bấm \"Tôi đã xác minh\".</string>
+    <string name="verify_subtitle_failed">Tài khoản %1$s đã được tạo nhưng chúng tôi CHƯA gửi được email xác minh (có thể do mất mạng). Vui lòng bấm gửi lại.</string>
+    <string name="verify_subtitle_pending">Email %1$s của bạn chưa được xác minh. Vui lòng kiểm tra hộp thư hoặc bấm gửi lại email xác minh.</string>
+    <string name="verify_profile_subtitle">Tài khoản %1$s đã được xác thực nhưng hồ sơ (họ tên, giới tính) chưa lưu xong. Vui lòng nhập lại để hoàn tất.</string>
+    <string name="verify_btn_resend">Gửi lại email xác minh</string>
+    <string name="verify_btn_check_again">Tôi đã xác minh — Kiểm tra lại</string>
+    <string name="verify_btn_save_profile">Lưu hồ sơ và gửi email xác minh</string>
+    <string name="verify_resent_success">Đã gửi lại email xác minh.</string>
+    <string name="verify_still_not_verified">Email vẫn chưa được xác minh. Vui lòng kiểm tra lại hộp thư (kể cả mục Spam).</string>
+    <string name="verify_back_to_login">Để sau, quay lại đăng nhập</string>
 
     <!-- Login -->
     <string name="login_title">Chào mừng trở lại!</string>
@@ -204,7 +228,7 @@
     <string name="login_label_email">Email</string>
     <string name="login_label_password">Mật khẩu</string>
     <string name="login_hint_password">Nhập mật khẩu</string>
-    <string name="login_remember_me">Ghi nhớ đăng nhập</string>
+    <string name="login_session_note">Bạn sẽ được giữ đăng nhập cho đến khi bấm Đăng xuất.</string>
     <string name="login_forgot_password">Quên mật khẩu?</string>
     <string name="login_btn_submit">Đăng nhập</string>
     <string name="login_or">Hoặc</string>

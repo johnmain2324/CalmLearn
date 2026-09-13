@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.calmlearn.data.auth.AuthErrorReason
 import com.example.calmlearn.data.auth.AuthRepository
 import com.example.calmlearn.data.auth.AuthRepositoryProvider
-import com.example.calmlearn.data.auth.AuthResult
+import com.example.calmlearn.data.auth.LoginResult
 import com.example.calmlearn.ui.common.FormUiState
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
@@ -19,8 +19,6 @@ class LoginViewModel(
     var email: String = ""
         private set
     var password: String = ""
-        private set
-    var rememberMe: Boolean = false
         private set
     var isPasswordVisible: Boolean = false
         private set
@@ -47,10 +45,6 @@ class LoginViewModel(
     fun onPasswordChanged(value: String) {
         password = value
         onFieldTouched(LoginField.PASSWORD)
-    }
-
-    fun onRememberMeChanged(value: Boolean) {
-        rememberMe = value
     }
 
     fun onPasswordVisibilityChanged(visible: Boolean) {
@@ -94,15 +88,17 @@ class LoginViewModel(
         _uiState.value = FormUiState.Loading
         viewModelScope.launch {
             val result = try {
-                repository.login(input.email, password, rememberMe)
+                repository.login(input.email, password)
             } catch (cancellation: CancellationException) {
                 throw cancellation
             } catch (unexpected: Exception) {
-                AuthResult.Error(AuthErrorReason.UNKNOWN)
+                LoginResult.Error(AuthErrorReason.UNKNOWN)
             }
             _uiState.value = when (result) {
-                is AuthResult.Success -> FormUiState.Success
-                is AuthResult.Error -> FormUiState.Error(result.reason)
+                LoginResult.Success -> FormUiState.Success
+                LoginResult.RequiresVerification,
+                LoginResult.ProfileIncomplete -> FormUiState.RequiresNextStep
+                is LoginResult.Error -> FormUiState.Error(result.reason)
             }
         }
     }
@@ -116,9 +112,9 @@ class LoginViewModel(
         _googleUnavailableEvent.value = null
     }
 
-    /** Xem RegisterViewModel.consumeTerminalState(): tranh Success bi "phat lai" gay dieu huong nhieu lan. */
+    /** Xem RegisterViewModel.consumeTerminalState(): tranh Success/RequiresNextStep bi "phat lai" gay dieu huong nhieu lan. */
     fun consumeTerminalState() {
-        if (_uiState.value == FormUiState.Success) {
+        if (_uiState.value == FormUiState.Success || _uiState.value == FormUiState.RequiresNextStep) {
             _uiState.value = FormUiState.Idle
         }
     }

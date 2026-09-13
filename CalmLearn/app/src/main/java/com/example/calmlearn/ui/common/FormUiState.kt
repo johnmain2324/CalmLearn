@@ -15,9 +15,9 @@ sealed class FormUiState {
     object Success : FormUiState()
 
     /**
-     * Rieng cho Dang ky: tai khoan da duoc tao nhung dich vu CHUA cap phien dang nhap ngay (vd can
-     * xac minh email / dang nhap lai). KHONG duoc tu dong dieu huong vao Trang chu khi gap trang
-     * thai nay.
+     * Dang ky (tai khoan da tao nhung chua xac minh email/chua luu xong ho so) hoac Dang nhap
+     * (phat hien tai khoan chua xac minh/chua co ho so) deu co the roi vao trang thai nay - Fragment
+     * se dieu huong sang man hinh Xac minh email/Hoan tat ho so thay vi vao thang Trang chu.
      */
     object RequiresNextStep : FormUiState()
 }

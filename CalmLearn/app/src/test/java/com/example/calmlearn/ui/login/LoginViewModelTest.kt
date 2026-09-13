@@ -5,7 +5,7 @@ package com.example.calmlearn.ui.login
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.calmlearn.R
 import com.example.calmlearn.data.auth.AuthErrorReason
-import com.example.calmlearn.data.auth.AuthResult
+import com.example.calmlearn.data.auth.LoginResult
 import com.example.calmlearn.testutil.FakeAuthRepository
 import com.example.calmlearn.ui.common.FormUiState
 import kotlinx.coroutines.Dispatchers
@@ -83,7 +83,7 @@ class LoginViewModelTest {
 
     @Test
     fun `valid credentials that the service accepts report Success once`() = runTest(testDispatcher) {
-        fakeRepository.loginResult = AuthResult.Success
+        fakeRepository.loginResult = LoginResult.Success
         viewModel.onEmailChanged("a@example.com")
         viewModel.onPasswordChanged("secret")
         viewModel.submit()
@@ -97,7 +97,7 @@ class LoginViewModelTest {
     @Test
     fun `a correctly formatted request is not automatically treated as authenticated`() = runTest(testDispatcher) {
         // Dinh dang dung khong co nghia da xac thuc thanh cong - dich vu co the tra ve sai thong tin.
-        fakeRepository.loginResult = AuthResult.Error(AuthErrorReason.INVALID_CREDENTIALS)
+        fakeRepository.loginResult = LoginResult.Error(AuthErrorReason.INVALID_CREDENTIALS)
         viewModel.onEmailChanged("a@example.com")
         viewModel.onPasswordChanged("wrong-password")
         viewModel.submit()
@@ -106,13 +106,26 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `signing in with an unverified email is rejected with a dedicated error`() = runTest(testDispatcher) {
-        fakeRepository.loginResult = AuthResult.Error(AuthErrorReason.EMAIL_NOT_VERIFIED)
+    fun `signing in with an unverified email routes to the verification step, not Success`() = runTest(testDispatcher) {
+        fakeRepository.loginResult = LoginResult.RequiresVerification
         viewModel.onEmailChanged("a@example.com")
         viewModel.onPasswordChanged("correct-password")
         viewModel.submit()
         advanceUntilIdle()
-        assertEquals(FormUiState.Error(AuthErrorReason.EMAIL_NOT_VERIFIED), viewModel.uiState.value)
+        assertEquals(FormUiState.RequiresNextStep, viewModel.uiState.value)
+
+        viewModel.consumeTerminalState()
+        assertEquals(FormUiState.Idle, viewModel.uiState.value)
+    }
+
+    @Test
+    fun `signing in with a profile that was never saved routes to the verification step too`() = runTest(testDispatcher) {
+        fakeRepository.loginResult = LoginResult.ProfileIncomplete
+        viewModel.onEmailChanged("a@example.com")
+        viewModel.onPasswordChanged("correct-password")
+        viewModel.submit()
+        advanceUntilIdle()
+        assertEquals(FormUiState.RequiresNextStep, viewModel.uiState.value)
     }
 
     @Test
@@ -127,7 +140,7 @@ class LoginViewModelTest {
 
     @Test
     fun `stale service error clears as soon as the user edits a field again`() = runTest(testDispatcher) {
-        fakeRepository.loginResult = AuthResult.Error(AuthErrorReason.INVALID_CREDENTIALS)
+        fakeRepository.loginResult = LoginResult.Error(AuthErrorReason.INVALID_CREDENTIALS)
         viewModel.onEmailChanged("a@example.com")
         viewModel.onPasswordChanged("wrong")
         viewModel.submit()

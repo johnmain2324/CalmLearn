@@ -152,20 +152,20 @@
             android:textSize="12sp"
             android:visibility="gone" />
 
-        <!-- Ghi nho dang nhap + Quen mat khau -->
+        <!-- Ghi chu ve phien dang nhap (Firebase giu phien den khi Dang xuat - khong con checkbox "Ghi nho dang nhap") -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="@string/login_session_note"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <!-- Quen mat khau -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp">
-
-            <CheckBox
-                android:id="@+id/cbRememberMe"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:text="@string/login_remember_me"
-                android:textColor="@color/text_secondary"
-                android:textSize="13sp" />
+            android:layout_marginTop="8dp">
 
             <TextView
                 android:id="@+id/tvForgotPassword"

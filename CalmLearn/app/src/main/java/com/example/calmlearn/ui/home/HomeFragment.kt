@@ -10,8 +10,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.calmlearn.R
 import com.example.calmlearn.data.auth.AuthRepositoryProvider
+import com.example.calmlearn.data.auth.ProfileResult
 import com.example.calmlearn.databinding.FragmentHomeBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -59,18 +61,41 @@ class HomeFragment : Fragment() {
     }
 
     /**
-     * Hien ten that cua nguoi vua dang nhap (khong con hardcode "Alex Nguyen"). XP/streak dat ve
-     * trang thai "chua co thanh tich" vi buoc nay chua trien khai theo doi tien do that - tranh
-     * gan nham so lieu mau (440 XP, 7 ngay...) cho tai khoan that moi tao.
+     * Hien ten that cua nguoi vua dang nhap (khong con hardcode "Alex Nguyen"/email mau - XML chi
+     * con dung tools:text cho preview, khong con android:text). XP/streak/muc tieu/khoa hoc dat ve
+     * trang thai "chua co du lieu" vi buoc nay chua trien khai theo doi tien do that - tranh gan
+     * nham so lieu mau (440 XP, 65% muc tieu, 70% khoa hoc...) thanh thanh tich that cua nguoi moi.
      */
     private fun loadCurrentUser() {
+        binding.tvUserName.text = getString(R.string.profile_name_loading)
+
         binding.tvStreakValue.text = getString(R.string.home_streak_value_empty)
         binding.tvXpValue.text = getString(R.string.home_xp_value_empty)
+        binding.goalProgress.progress = 0
+        binding.tvGoalPercent.text = getString(R.string.home_goal_percent_empty)
+        binding.tvGoalMinutes.text = getString(R.string.home_goal_minutes_empty)
+        binding.tvGoalRemaining.text = getString(R.string.home_goal_remaining_empty)
+        binding.courseProgress.progress = 0
+        binding.tvCoursePercent.text = getString(R.string.home_course_percent_empty)
 
+        val requestedUid = FirebaseAuth.getInstance().currentUser?.uid
         viewLifecycleOwner.lifecycleScope.launch {
-            val profile = AuthRepositoryProvider.repository.currentUserProfile()
-            if (profile != null && profile.fullName.isNotBlank()) {
-                binding.tvUserName.text = profile.fullName
+            when (val result = AuthRepositoryProvider.repository.currentUserProfile()) {
+                is ProfileResult.Loaded -> {
+                    // Doi chieu UID truoc khi cap nhat UI: neu phien da doi (vd dang xuat/dang
+                    // nhap tai khoan khac ngay trong luc dang cho ket qua) thi bo qua ket qua cu.
+                    if (result.profile.uid != requestedUid) return@launch
+                    binding.tvUserName.text = result.profile.fullName.takeIf { it.isNotBlank() }
+                        ?: result.profile.email.substringBefore('@').takeIf { it.isNotBlank() }
+                        ?: getString(R.string.profile_name_fallback)
+                }
+                ProfileResult.Missing, ProfileResult.NotSignedIn -> {
+                    binding.tvUserName.text = getString(R.string.profile_name_fallback)
+                }
+                is ProfileResult.ReadError -> {
+                    // Loi doc tam thoi - khong fabricate ten, chi hien trang thai trung tinh.
+                    binding.tvUserName.text = getString(R.string.profile_name_fallback)
+                }
             }
         }
     }
