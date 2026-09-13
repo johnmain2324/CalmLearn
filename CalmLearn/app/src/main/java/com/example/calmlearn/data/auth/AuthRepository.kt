@@ -11,8 +11,14 @@ package com.example.calmlearn.data.auth
  */
 interface AuthRepository {
 
-    suspend fun register(fullName: String, email: String, password: String, gender: Gender): AuthResult
+    suspend fun register(fullName: String, email: String, password: String, gender: Gender): RegisterResult
 
+    /**
+     * [rememberMe] chi co y nghia khi duoc trien khai bang co che phien that cua dich vu (vd
+     * Firebase Auth persistence / refresh token that). Khong tu luu mat khau. Voi
+     * [UnavailableAuthRepository] hien tai, tham so nay bi bo qua hoan toan - form van hien
+     * checkbox de nguoi dung lam quen giao dien nhung chua co hieu luc thuc te.
+     */
     suspend fun login(email: String, password: String, rememberMe: Boolean): AuthResult
 
     suspend fun sendPasswordResetEmail(email: String): AuthResult

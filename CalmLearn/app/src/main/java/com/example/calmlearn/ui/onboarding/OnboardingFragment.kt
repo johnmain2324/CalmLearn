@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.calmlearn.R
 import com.example.calmlearn.data.mock.MockData
+import com.example.calmlearn.data.onboarding.OnboardingPrefs
 import com.example.calmlearn.databinding.FragmentOnboardingBinding
 
 class OnboardingFragment : Fragment() {
@@ -95,6 +96,9 @@ class OnboardingFragment : Fragment() {
     private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
     private fun goToLogin() {
+        // Danh dau da xem/bo qua Onboarding truoc: lan mo app sau se vao thang man hinh Dang nhap
+        // (hoac Trang chu neu da co phien) thay vi lai xem Onboarding - xem MainActivity.
+        OnboardingPrefs(requireContext()).setCompleted()
         findNavController().navigate(R.id.action_global_login)
     }
 

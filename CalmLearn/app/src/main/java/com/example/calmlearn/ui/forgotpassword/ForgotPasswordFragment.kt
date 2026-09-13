@@ -6,12 +6,14 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.calmlearn.R
 import com.example.calmlearn.databinding.FragmentForgotPasswordBinding
 import com.example.calmlearn.ui.common.FormUiState
+import com.example.calmlearn.ui.common.hideKeyboard
 import com.example.calmlearn.ui.common.toMessageRes
 
 /**
@@ -48,12 +50,26 @@ class ForgotPasswordFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
             override fun afterTextChanged(s: Editable?) {
-                viewModel.email = s?.toString() ?: ""
-                viewModel.onFieldChanged()
+                viewModel.onEmailChanged(s?.toString() ?: "")
             }
         })
 
-        binding.btnSubmit.setOnClickListener { viewModel.submit() }
+        binding.etEmail.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) viewModel.onEmailBlurred() }
+
+        binding.etEmail.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                binding.etEmail.hideKeyboard()
+                viewModel.submit()
+                true
+            } else {
+                false
+            }
+        }
+
+        binding.btnSubmit.setOnClickListener {
+            binding.root.hideKeyboard()
+            viewModel.submit()
+        }
 
         viewModel.isFormValid.observe(viewLifecycleOwner) { isValid ->
             binding.btnSubmit.isEnabled = isValid && viewModel.uiState.value !is FormUiState.Loading
@@ -61,13 +77,15 @@ class ForgotPasswordFragment : Fragment() {
         }
 
         viewModel.fieldError.observe(viewLifecycleOwner) { errorRes ->
-            binding.tvError.text = errorRes?.let { getString(it) } ?: ""
-            binding.tvError.visibility = if (errorRes != null) View.VISIBLE else View.INVISIBLE
+            if (errorRes == null) {
+                binding.tvEmailError.visibility = View.GONE
+            } else {
+                binding.tvEmailError.text = getString(errorRes)
+                binding.tvEmailError.visibility = View.VISIBLE
+            }
         }
 
         viewModel.uiState.observe(viewLifecycleOwner) { state -> render(state) }
-
-        viewModel.onFieldChanged()
     }
 
     private fun render(state: FormUiState) {
@@ -76,6 +94,9 @@ class ForgotPasswordFragment : Fragment() {
         binding.btnSubmit.text = if (isLoading) "" else getString(R.string.forgot_password_btn_submit)
         binding.btnSubmit.isEnabled = !isLoading && viewModel.isFormValid.value == true
         binding.etEmail.isEnabled = !isLoading
+        // Khoa lien ket dieu huong trong luc dang gui, tranh nguoi dung roi man hinh giua chung.
+        binding.btnBack.isEnabled = !isLoading
+        binding.tvBackToLogin.isEnabled = !isLoading
 
         when (state) {
             is FormUiState.Error -> {
@@ -90,7 +111,10 @@ class ForgotPasswordFragment : Fragment() {
                 binding.btnSubmit.isEnabled = false
                 binding.btnSubmit.alpha = 0.5f
             }
-            else -> Unit
+            else -> {
+                // Idle/Loading: an banner loi dich vu cu (vd nguoi dung vua sua lai email sau loi).
+                binding.tvError.visibility = View.INVISIBLE
+            }
         }
     }
 

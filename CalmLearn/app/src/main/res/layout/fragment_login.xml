@@ -85,6 +85,16 @@
             android:textColorHint="@color/text_hint"
             android:textSize="14sp" />
 
+        <TextView
+            android:id="@+id/tvEmailError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/login_error_email"
+            android:textColor="@color/error"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
         <!-- Password -->
         <TextView
             android:layout_width="match_parent"
@@ -115,6 +125,7 @@
                 android:maxLines="1"
                 android:paddingStart="14dp"
                 android:paddingEnd="4dp"
+                android:saveEnabled="false"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_hint"
                 android:textSize="14sp" />
@@ -130,6 +141,16 @@
                 android:src="@drawable/ic_eye_off"
                 android:tint="@color/text_secondary" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvPasswordError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/login_error_password"
+            android:textColor="@color/error"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
         <!-- Ghi nho dang nhap + Quen mat khau -->
         <RelativeLayout

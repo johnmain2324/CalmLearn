@@ -9,16 +9,16 @@ class ForgotPasswordFormValidatorTest {
 
     @Test
     fun `valid email has no error`() {
-        assertNull(ForgotPasswordFormValidator.firstError("a@example.com"))
+        assertNull(ForgotPasswordFormValidator.emailError("a@example.com"))
     }
 
     @Test
     fun `blank email is rejected`() {
-        assertEquals(R.string.register_error_email, ForgotPasswordFormValidator.firstError(""))
+        assertEquals(R.string.register_error_email, ForgotPasswordFormValidator.emailError(""))
     }
 
     @Test
     fun `malformed email is rejected`() {
-        assertEquals(R.string.register_error_email, ForgotPasswordFormValidator.firstError("not-an-email"))
+        assertEquals(R.string.register_error_email, ForgotPasswordFormValidator.emailError("not-an-email"))
     }
 }

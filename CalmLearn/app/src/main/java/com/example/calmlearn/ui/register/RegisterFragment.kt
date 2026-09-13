@@ -6,6 +6,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -13,16 +16,18 @@ import com.example.calmlearn.R
 import com.example.calmlearn.data.auth.Gender
 import com.example.calmlearn.databinding.FragmentRegisterBinding
 import com.example.calmlearn.ui.common.FormUiState
+import com.example.calmlearn.ui.common.applyEditTextPasswordVisibility
+import com.example.calmlearn.ui.common.hideKeyboard
 import com.example.calmlearn.ui.common.toMessageRes
 import com.example.calmlearn.ui.common.toggleEditTextPasswordVisibility
 
 /**
- * Man hinh Dang ky - vi du minh hoa cho Nhom chu de 2:
- * cac View cua form (EditText, RadioGroup/RadioButton, CheckBox, Button) va cach
- * gan/xu ly cac loai su kien: Click, TextChanged, FocusChange, CheckedChanged.
+ * Man hinh Dang ky. Logic kiem tra du lieu va goi AuthRepository nam trong [RegisterViewModel] de
+ * Fragment chi tap trung hien thi va nhan thao tac nguoi dung.
  *
- * Logic kiem tra du lieu va goi AuthRepository nam trong [RegisterViewModel] de Fragment chi
- * tap trung hien thi va nhan thao tac nguoi dung.
+ * Loi nhap lieu duoc hien RIENG cho tung truong (ngay canh o nhap, chi sau khi nguoi dung da
+ * tuong tac hoac roi khoi o) - khac voi loi DICH VU (banner tvError dung chung, chi xuat hien khi
+ * AuthRepository that tra ve loi).
  */
 class RegisterFragment : Fragment() {
 
@@ -30,9 +35,6 @@ class RegisterFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: RegisterViewModel by viewModels()
-
-    private var isPasswordVisible = false
-    private var isConfirmPasswordVisible = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,6 +48,22 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        restoreFieldsFromViewModel()
+        setupTextWatchers()
+        setupFocusListeners()
+        setupImeActions()
+        setupPasswordToggles()
+        setupGenderAndTerms()
+        setupNavigationLinks()
+
+        binding.btnRegister.setOnClickListener { submit() }
+
+        viewModel.isFormValid.observe(viewLifecycleOwner) { updateSubmitEnabled() }
+        viewModel.fieldErrors.observe(viewLifecycleOwner) { errors -> renderFieldErrors(errors) }
+        viewModel.uiState.observe(viewLifecycleOwner) { state -> render(state) }
+    }
+
+    private fun restoreFieldsFromViewModel() {
         binding.etFullName.setText(viewModel.fullName)
         binding.etEmail.setText(viewModel.email)
         binding.etPassword.setText(viewModel.password)
@@ -53,70 +71,114 @@ class RegisterFragment : Fragment() {
         binding.cbAgree.isChecked = viewModel.agreedToTerms
         setGenderSelection(viewModel.gender)
 
-        binding.btnBack.setOnClickListener { findNavController().navigateUp() }
-        binding.tvGoToLogin.setOnClickListener { findNavController().navigateUp() }
+        // Cac o mat khau dat android:saveEnabled="false" (xem fragment_register.xml) nen phai tu
+        // ap lai trang thai an/hien tu ViewModel, khong the trong cay vao co che tu luu cua EditText.
+        applyEditTextPasswordVisibility(binding.etPassword, binding.btnTogglePassword, viewModel.isPasswordVisible)
+        applyEditTextPasswordVisibility(binding.etConfirmPassword, binding.btnToggleConfirmPassword, viewModel.isConfirmPasswordVisible)
+    }
 
-        binding.etFullName.addTextChangedListener(simpleTextWatcher {
-            viewModel.fullName = it
-            viewModel.onFieldChanged()
-        })
-        binding.etEmail.addTextChangedListener(simpleTextWatcher {
-            viewModel.email = it
-            viewModel.onFieldChanged()
-        })
-        binding.etPassword.addTextChangedListener(simpleTextWatcher {
-            viewModel.password = it
-            viewModel.onFieldChanged()
-        })
-        binding.etConfirmPassword.addTextChangedListener(simpleTextWatcher {
-            viewModel.confirmPassword = it
-            viewModel.onFieldChanged()
-        })
+    private fun setupTextWatchers() {
+        binding.etFullName.addTextChangedListener(simpleTextWatcher { viewModel.onFullNameChanged(it) })
+        binding.etEmail.addTextChangedListener(simpleTextWatcher { viewModel.onEmailChanged(it) })
+        binding.etPassword.addTextChangedListener(simpleTextWatcher { viewModel.onPasswordChanged(it) })
+        binding.etConfirmPassword.addTextChangedListener(simpleTextWatcher { viewModel.onConfirmPasswordChanged(it) })
+    }
 
+    private fun setupFocusListeners() {
+        binding.etFullName.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) viewModel.onFieldBlurred(RegisterField.FULL_NAME) }
+        binding.etEmail.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) viewModel.onFieldBlurred(RegisterField.EMAIL) }
+        binding.etPassword.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) viewModel.onFieldBlurred(RegisterField.PASSWORD) }
+        binding.etConfirmPassword.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) viewModel.onFieldBlurred(RegisterField.CONFIRM_PASSWORD) }
+    }
+
+    /** "Next" chuyen sang o tiep theo, "Done" gui form - ca hai deu goi chung submit() nen khong
+     *  the gui trung voi nut tren man hinh (submit() da tu chan trung o tang ViewModel). */
+    private fun setupImeActions() {
+        binding.etFullName.setOnEditorActionListener { _, actionId, _ -> onNextTo(actionId, binding.etEmail) }
+        binding.etEmail.setOnEditorActionListener { _, actionId, _ -> onNextTo(actionId, binding.etPassword) }
+        binding.etPassword.setOnEditorActionListener { _, actionId, _ -> onNextTo(actionId, binding.etConfirmPassword) }
+        binding.etConfirmPassword.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                binding.etConfirmPassword.hideKeyboard()
+                submit()
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    private fun onNextTo(actionId: Int, next: View): Boolean {
+        if (actionId != EditorInfo.IME_ACTION_NEXT) return false
+        next.requestFocus()
+        return true
+    }
+
+    private fun setupPasswordToggles() {
         binding.btnTogglePassword.setOnClickListener {
-            isPasswordVisible = toggleEditTextPasswordVisibility(binding.etPassword, binding.btnTogglePassword, isPasswordVisible)
+            val newlyVisible = toggleEditTextPasswordVisibility(binding.etPassword, binding.btnTogglePassword, viewModel.isPasswordVisible)
+            viewModel.onPasswordVisibilityChanged(newlyVisible)
         }
         binding.btnToggleConfirmPassword.setOnClickListener {
-            isConfirmPasswordVisible = toggleEditTextPasswordVisibility(binding.etConfirmPassword, binding.btnToggleConfirmPassword, isConfirmPasswordVisible)
+            val newlyVisible = toggleEditTextPasswordVisibility(binding.etConfirmPassword, binding.btnToggleConfirmPassword, viewModel.isConfirmPasswordVisible)
+            viewModel.onConfirmPasswordVisibilityChanged(newlyVisible)
         }
+    }
 
+    private fun setupGenderAndTerms() {
         binding.rgGender.setOnCheckedChangeListener { _, checkedId ->
-            viewModel.gender = when (checkedId) {
-                R.id.rbMale -> Gender.MALE
-                R.id.rbFemale -> Gender.FEMALE
-                R.id.rbOther -> Gender.OTHER
-                else -> null
-            }
-            viewModel.onFieldChanged()
+            viewModel.onGenderChanged(
+                when (checkedId) {
+                    R.id.rbMale -> Gender.MALE
+                    R.id.rbFemale -> Gender.FEMALE
+                    R.id.rbOther -> Gender.OTHER
+                    else -> null
+                }
+            )
         }
+        binding.cbAgree.setOnCheckedChangeListener { _, isChecked -> viewModel.onTermsChanged(isChecked) }
+    }
 
-        binding.cbAgree.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.agreedToTerms = isChecked
-            viewModel.onFieldChanged()
+    private fun setupNavigationLinks() {
+        binding.btnBack.setOnClickListener { findNavController().navigateUp() }
+        binding.tvGoToLogin.setOnClickListener { findNavController().navigateUp() }
+    }
+
+    private fun submit() {
+        binding.root.hideKeyboard()
+        viewModel.submit()
+    }
+
+    private fun renderFieldErrors(errors: RegisterFieldErrors) {
+        bindFieldError(binding.tvFullNameError, errors.fullName)
+        bindFieldError(binding.tvEmailError, errors.email)
+        bindFieldError(binding.tvPasswordError, errors.password)
+        bindFieldError(binding.tvConfirmPasswordError, errors.confirmPassword)
+        bindFieldError(binding.tvGenderError, errors.gender)
+        bindFieldError(binding.tvTermsError, errors.terms)
+    }
+
+    private fun bindFieldError(target: TextView, errorRes: Int?) {
+        if (errorRes == null) {
+            target.visibility = View.GONE
+        } else {
+            target.text = getString(errorRes)
+            target.visibility = View.VISIBLE
         }
+    }
 
-        binding.btnRegister.setOnClickListener { viewModel.submit() }
-
-        viewModel.isFormValid.observe(viewLifecycleOwner) { isValid ->
-            binding.btnRegister.isEnabled = isValid && viewModel.uiState.value !is FormUiState.Loading
-            binding.btnRegister.alpha = if (isValid) 1f else 0.5f
-        }
-
-        viewModel.fieldError.observe(viewLifecycleOwner) { errorRes ->
-            binding.tvError.text = errorRes?.let { getString(it) } ?: ""
-            binding.tvError.visibility = if (errorRes != null) View.VISIBLE else View.INVISIBLE
-        }
-
-        viewModel.uiState.observe(viewLifecycleOwner) { state -> render(state) }
-
-        viewModel.onFieldChanged()
+    private fun updateSubmitEnabled() {
+        val isLoading = viewModel.uiState.value is FormUiState.Loading
+        val isValid = viewModel.isFormValid.value == true
+        binding.btnRegister.isEnabled = isValid && !isLoading
+        binding.btnRegister.alpha = if (isValid) 1f else 0.5f
     }
 
     private fun render(state: FormUiState) {
         val isLoading = state is FormUiState.Loading
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         binding.btnRegister.text = if (isLoading) "" else getString(R.string.register_btn_submit)
-        binding.btnRegister.isEnabled = !isLoading && viewModel.isFormValid.value == true
+        updateSubmitEnabled()
         setFormEnabled(!isLoading)
 
         when (state) {
@@ -125,10 +187,21 @@ class RegisterFragment : Fragment() {
                 binding.tvError.visibility = View.VISIBLE
             }
             FormUiState.Success -> {
-                // Chi xay ra khi AuthRepository that tra ve thanh cong (chua co trong project nay).
+                binding.tvError.visibility = View.INVISIBLE
+                viewModel.consumeTerminalState()
                 findNavController().navigate(R.id.action_global_home)
             }
-            else -> Unit
+            FormUiState.RequiresNextStep -> {
+                binding.tvError.visibility = View.INVISIBLE
+                viewModel.consumeTerminalState()
+                // Tai khoan da tao nhung chua co phien (vd can xac minh email) - KHONG vao thang
+                // Trang chu, dua nguoi dung ve Dang nhap de tu dang nhap lai khi da san sang.
+                Toast.makeText(requireContext(), R.string.register_requires_next_step, Toast.LENGTH_LONG).show()
+                findNavController().navigate(R.id.action_global_login)
+            }
+            else -> {
+                binding.tvError.visibility = View.INVISIBLE
+            }
         }
     }
 
@@ -137,11 +210,16 @@ class RegisterFragment : Fragment() {
         binding.etEmail.isEnabled = enabled
         binding.etPassword.isEnabled = enabled
         binding.etConfirmPassword.isEnabled = enabled
+        binding.btnTogglePassword.isEnabled = enabled
+        binding.btnToggleConfirmPassword.isEnabled = enabled
         binding.rgGender.isEnabled = enabled
         for (i in 0 until binding.rgGender.childCount) {
             binding.rgGender.getChildAt(i).isEnabled = enabled
         }
         binding.cbAgree.isEnabled = enabled
+        // Khoa ca lien ket dieu huong trong luc dang gui, tranh nguoi dung roi man hinh giua chung.
+        binding.btnBack.isEnabled = enabled
+        binding.tvGoToLogin.isEnabled = enabled
     }
 
     private fun setGenderSelection(gender: Gender?) {

@@ -12,9 +12,9 @@ import kotlinx.coroutines.delay
  */
 class UnavailableAuthRepository : AuthRepository {
 
-    override suspend fun register(fullName: String, email: String, password: String, gender: Gender): AuthResult {
+    override suspend fun register(fullName: String, email: String, password: String, gender: Gender): RegisterResult {
         delay(SIMULATED_DELAY_MS)
-        return AuthResult.Error(AuthErrorReason.SERVICE_NOT_CONFIGURED)
+        return RegisterResult.Error(AuthErrorReason.SERVICE_NOT_CONFIGURED)
     }
 
     override suspend fun login(email: String, password: String, rememberMe: Boolean): AuthResult {

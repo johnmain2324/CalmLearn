@@ -54,4 +54,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
 
     testImplementation("junit:junit:4.13.2")
+    // Can thiet de unit test ViewModel dung LiveData + viewModelScope trong JVM thuong (khong Robolectric):
+    // InstantTaskExecutorRule lam LiveData.setValue() chay dong bo, coroutines-test cho phep dieu khien
+    // (tam dung/tiep tuc) coroutine trong viewModelScope de kiem tra trang thai Loading giua chung.
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }

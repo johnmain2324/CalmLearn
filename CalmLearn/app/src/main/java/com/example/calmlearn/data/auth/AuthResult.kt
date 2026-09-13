@@ -13,3 +13,17 @@ sealed class AuthResult {
     object Success : AuthResult()
     data class Error(val reason: AuthErrorReason) : AuthResult()
 }
+
+/**
+ * Ket qua rieng cho dang ky (khac AuthResult vi dang ky co nhieu kha nang hon dang nhap/reset):
+ * dich vu that co the tra ve phien dang nhap ngay, hoac yeu cau buoc tiep theo (vd xac minh email)
+ * truoc khi coi la da dang nhap. UI dua vao day de quyet dinh co vao thang Trang chu hay khong
+ * (xem RegisterViewModel/RegisterFragment).
+ */
+sealed class RegisterResult {
+    /** Tai khoan da duoc tao VA dich vu da cap phien dang nhap hop le ngay. */
+    object SignedIn : RegisterResult()
+    /** Tai khoan da duoc tao nhung CHUA co phien (can xac minh email / dang nhap lai...). */
+    object RequiresVerification : RegisterResult()
+    data class Error(val reason: AuthErrorReason) : RegisterResult()
+}

@@ -140,8 +140,7 @@
 
                 <TableRow
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="14dp">
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -174,6 +173,22 @@
                     android:layout_marginBottom="14dp">
 
                     <TextView
+                        android:id="@+id/tvFullNameError"
+                        android:layout_span="2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/register_error_fullname"
+                        android:textColor="@color/error"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -204,6 +219,22 @@
                     android:layout_marginBottom="14dp">
 
                     <TextView
+                        android:id="@+id/tvEmailError"
+                        android:layout_span="2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/register_error_email"
+                        android:textColor="@color/error"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -232,6 +263,7 @@
                             android:maxLines="1"
                             android:paddingStart="14dp"
                             android:paddingEnd="4dp"
+                            android:saveEnabled="false"
                             android:textColor="@color/text_primary"
                             android:textColorHint="@color/text_hint"
                             android:textSize="14sp" />
@@ -252,7 +284,23 @@
                 <TableRow
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="6dp">
+                    android:layout_marginBottom="14dp">
+
+                    <TextView
+                        android:id="@+id/tvPasswordError"
+                        android:layout_span="2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/register_error_password"
+                        android:textColor="@color/error"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -283,6 +331,7 @@
                             android:maxLines="1"
                             android:paddingStart="14dp"
                             android:paddingEnd="4dp"
+                            android:saveEnabled="false"
                             android:textColor="@color/text_primary"
                             android:textColorHint="@color/text_hint"
                             android:textSize="14sp" />
@@ -299,13 +348,31 @@
                             android:tint="@color/text_secondary" />
                     </LinearLayout>
                 </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp">
+
+                    <TextView
+                        android:id="@+id/tvConfirmPasswordError"
+                        android:layout_span="2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/register_error_confirm_password"
+                        android:textColor="@color/error"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+                </TableRow>
             </TableLayout>
 
+            <!-- Banner loi tu DICH VU (backend) - khac voi loi nhap lieu hien rieng tung truong o tren. -->
             <TextView
                 android:id="@+id/tvError"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:text="@string/register_error_fullname"
                 android:textColor="@color/error"
                 android:textSize="12sp"
@@ -369,6 +436,16 @@
                     android:textSize="13sp" />
             </RadioGroup>
 
+            <TextView
+                android:id="@+id/tvGenderError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/register_error_gender"
+                android:textColor="@color/error"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
             <CheckBox
                 android:id="@+id/cbAgree"
                 android:layout_width="match_parent"
@@ -377,6 +454,16 @@
                 android:text="@string/register_agree_terms"
                 android:textColor="@color/text_secondary"
                 android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tvTermsError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/register_error_terms"
+                android:textColor="@color/error"
+                android:textSize="12sp"
+                android:visibility="gone" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

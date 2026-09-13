@@ -179,6 +179,7 @@
     <string name="register_error_terms">Bạn cần đồng ý điều khoản để tiếp tục</string>
     <string name="register_have_account">Đã có tài khoản?</string>
     <string name="register_login_now">Đăng nhập</string>
+    <string name="register_requires_next_step">Tài khoản đã được tạo. Vui lòng đăng nhập lại (hoặc xác minh email nếu được yêu cầu) để tiếp tục.</string>
 
     <!-- Auth chung (Dang nhap / Dang ky / Quen mat khau) -->
     <string name="auth_brand_tagline">Học tiếng Anh mỗi ngày</string>

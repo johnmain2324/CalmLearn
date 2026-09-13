@@ -6,6 +6,8 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,6 +15,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.calmlearn.R
 import com.example.calmlearn.databinding.FragmentLoginBinding
 import com.example.calmlearn.ui.common.FormUiState
+import com.example.calmlearn.ui.common.applyEditTextPasswordVisibility
+import com.example.calmlearn.ui.common.hideKeyboard
 import com.example.calmlearn.ui.common.toMessageRes
 import com.example.calmlearn.ui.common.toggleEditTextPasswordVisibility
 
@@ -30,8 +34,6 @@ class LoginFragment : Fragment() {
 
     private val viewModel: LoginViewModel by viewModels()
 
-    private var isPasswordVisible = false
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,25 +49,41 @@ class LoginFragment : Fragment() {
         binding.etEmail.setText(viewModel.email)
         binding.etPassword.setText(viewModel.password)
         binding.cbRememberMe.isChecked = viewModel.rememberMe
+        // etPassword dat android:saveEnabled="false" nen phai tu ap lai trang thai an/hien tu ViewModel.
+        applyEditTextPasswordVisibility(binding.etPassword, binding.btnTogglePassword, viewModel.isPasswordVisible)
 
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
 
-        binding.etEmail.addTextChangedListener(simpleTextWatcher {
-            viewModel.email = it
-            viewModel.onFieldChanged()
-        })
-        binding.etPassword.addTextChangedListener(simpleTextWatcher {
-            viewModel.password = it
-            viewModel.onFieldChanged()
-        })
+        binding.etEmail.addTextChangedListener(simpleTextWatcher { viewModel.onEmailChanged(it) })
+        binding.etPassword.addTextChangedListener(simpleTextWatcher { viewModel.onPasswordChanged(it) })
+
+        binding.etEmail.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) viewModel.onFieldBlurred(LoginField.EMAIL) }
+        binding.etPassword.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) viewModel.onFieldBlurred(LoginField.PASSWORD) }
+
+        binding.etEmail.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                binding.etPassword.requestFocus()
+                true
+            } else {
+                false
+            }
+        }
+        binding.etPassword.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                binding.etPassword.hideKeyboard()
+                submit()
+                true
+            } else {
+                false
+            }
+        }
 
         binding.btnTogglePassword.setOnClickListener {
-            isPasswordVisible = toggleEditTextPasswordVisibility(binding.etPassword, binding.btnTogglePassword, isPasswordVisible)
+            val newlyVisible = toggleEditTextPasswordVisibility(binding.etPassword, binding.btnTogglePassword, viewModel.isPasswordVisible)
+            viewModel.onPasswordVisibilityChanged(newlyVisible)
         }
 
-        binding.cbRememberMe.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.rememberMe = isChecked
-        }
+        binding.cbRememberMe.setOnCheckedChangeListener { _, isChecked -> viewModel.onRememberMeChanged(isChecked) }
 
         binding.tvForgotPassword.setOnClickListener {
             findNavController().navigate(R.id.action_global_forgotPassword)
@@ -77,16 +95,13 @@ class LoginFragment : Fragment() {
 
         binding.btnGoogleSignIn.setOnClickListener { viewModel.onGoogleSignInClicked() }
 
-        binding.btnLogin.setOnClickListener { viewModel.submit() }
+        binding.btnLogin.setOnClickListener { submit() }
 
-        viewModel.isFormValid.observe(viewLifecycleOwner) { isValid ->
-            binding.btnLogin.isEnabled = isValid && viewModel.uiState.value !is FormUiState.Loading
-            binding.btnLogin.alpha = if (isValid) 1f else 0.5f
-        }
+        viewModel.isFormValid.observe(viewLifecycleOwner) { updateSubmitEnabled() }
 
-        viewModel.fieldError.observe(viewLifecycleOwner) { errorRes ->
-            binding.tvError.text = errorRes?.let { getString(it) } ?: ""
-            binding.tvError.visibility = if (errorRes != null) View.VISIBLE else View.INVISIBLE
+        viewModel.fieldErrors.observe(viewLifecycleOwner) { errors ->
+            bindFieldError(binding.tvEmailError, errors.email)
+            bindFieldError(binding.tvPasswordError, errors.password)
         }
 
         viewModel.uiState.observe(viewLifecycleOwner) { state -> render(state) }
@@ -97,15 +112,34 @@ class LoginFragment : Fragment() {
                 viewModel.onGoogleUnavailableEventConsumed()
             }
         }
+    }
 
-        viewModel.onFieldChanged()
+    private fun submit() {
+        binding.root.hideKeyboard()
+        viewModel.submit()
+    }
+
+    private fun bindFieldError(target: TextView, errorRes: Int?) {
+        if (errorRes == null) {
+            target.visibility = View.GONE
+        } else {
+            target.text = getString(errorRes)
+            target.visibility = View.VISIBLE
+        }
+    }
+
+    private fun updateSubmitEnabled() {
+        val isLoading = viewModel.uiState.value is FormUiState.Loading
+        val isValid = viewModel.isFormValid.value == true
+        binding.btnLogin.isEnabled = isValid && !isLoading
+        binding.btnLogin.alpha = if (isValid) 1f else 0.5f
     }
 
     private fun render(state: FormUiState) {
         val isLoading = state is FormUiState.Loading
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         binding.btnLogin.text = if (isLoading) "" else getString(R.string.login_btn_submit)
-        binding.btnLogin.isEnabled = !isLoading && viewModel.isFormValid.value == true
+        updateSubmitEnabled()
         setFormEnabled(!isLoading)
 
         when (state) {
@@ -114,18 +148,27 @@ class LoginFragment : Fragment() {
                 binding.tvError.visibility = View.VISIBLE
             }
             FormUiState.Success -> {
-                // Chi xay ra khi AuthRepository that tra ve thanh cong (chua co trong project nay).
+                binding.tvError.visibility = View.INVISIBLE
+                // Thuc su xay ra chi khi AuthRepository that tra ve thanh cong; gan lai Idle ngay
+                // de trang thai nay khong "phat lai" gay dieu huong them lan nua.
+                viewModel.consumeTerminalState()
                 findNavController().navigate(R.id.action_global_home)
             }
-            else -> Unit
+            else -> {
+                binding.tvError.visibility = View.INVISIBLE
+            }
         }
     }
 
     private fun setFormEnabled(enabled: Boolean) {
         binding.etEmail.isEnabled = enabled
         binding.etPassword.isEnabled = enabled
+        binding.btnTogglePassword.isEnabled = enabled
         binding.cbRememberMe.isEnabled = enabled
+        // Khoa ca lien ket dieu huong trong luc dang gui, tranh nguoi dung roi man hinh giua chung.
+        binding.btnBack.isEnabled = enabled
         binding.tvForgotPassword.isEnabled = enabled
+        binding.tvGoToRegister.isEnabled = enabled
         binding.btnGoogleSignIn.isEnabled = enabled
     }
 
