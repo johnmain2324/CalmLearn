@@ -48,12 +48,14 @@ class OnboardingFragment : Fragment() {
             }
         })
 
-        binding.btnSkip.setOnClickListener { goToHome() }
+        // Bo qua onboarding khong duoc phep bo qua buoc xac thuc: ca "Bo qua" lan nut cuoi
+        // cung deu dua nguoi dung ve man hinh Dang nhap (project chua co che do khach rieng).
+        binding.btnSkip.setOnClickListener { goToLogin() }
 
         binding.btnPrimary.setOnClickListener {
             val current = binding.onboardingPager.currentItem
             if (current == pages.lastIndex) {
-                goToHome()
+                goToLogin()
             } else {
                 binding.onboardingPager.currentItem = current + 1
             }
@@ -92,8 +94,8 @@ class OnboardingFragment : Fragment() {
 
     private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
-    private fun goToHome() {
-        findNavController().navigate(R.id.action_global_home)
+    private fun goToLogin() {
+        findNavController().navigate(R.id.action_global_login)
     }
 
     override fun onDestroyView() {

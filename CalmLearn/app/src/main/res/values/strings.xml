@@ -153,6 +153,68 @@
     <string name="onboarding_next">Tiếp tục</string>
     <string name="onboarding_start">Bắt đầu học</string>
 
+    <!-- Register -->
+    <string name="register_title">Tạo tài khoản</string>
+    <string name="register_subtitle">Đăng ký để lưu lại tiến độ học tập của bạn</string>
+    <string name="register_label_fullname">Họ và tên</string>
+    <string name="register_hint_fullname">Nhập họ tên của bạn</string>
+    <string name="register_label_email">Email</string>
+    <string name="register_hint_email">vidu@email.com</string>
+    <string name="register_label_password">Mật khẩu</string>
+    <string name="register_hint_password">Tối thiểu 6 ký tự</string>
+    <string name="register_label_confirm_password">Xác nhận mật khẩu</string>
+    <string name="register_hint_confirm_password">Nhập lại mật khẩu</string>
+    <string name="register_label_gender">Giới tính</string>
+    <string name="register_gender_male">Nam</string>
+    <string name="register_gender_female">Nữ</string>
+    <string name="register_agree_terms">Tôi đồng ý với Điều khoản sử dụng</string>
+    <string name="register_btn_submit">Đăng ký</string>
+    <string name="register_success">Đăng ký thành công! Chào mừng %1$s đến với CalmLearn.</string>
+    <string name="register_error_fullname">Vui lòng nhập họ tên</string>
+    <string name="register_error_email">Email không hợp lệ</string>
+    <string name="register_error_password">Mật khẩu phải có ít nhất 6 ký tự</string>
+    <string name="register_error_confirm_password">Mật khẩu xác nhận không khớp</string>
+    <string name="register_gender_other">Khác</string>
+    <string name="register_error_gender">Vui lòng chọn giới tính</string>
+    <string name="register_error_terms">Bạn cần đồng ý điều khoản để tiếp tục</string>
+    <string name="register_have_account">Đã có tài khoản?</string>
+    <string name="register_login_now">Đăng nhập</string>
+
+    <!-- Auth chung (Dang nhap / Dang ky / Quen mat khau) -->
+    <string name="auth_brand_tagline">Học tiếng Anh mỗi ngày</string>
+    <string name="cd_toggle_password">Hiện/ẩn mật khẩu</string>
+    <!-- Hien khi AuthRepository chua duoc noi voi dich vu xac thuc that (xem UnavailableAuthRepository) -->
+    <string name="auth_error_service_not_configured">Chức năng chưa khả dụng: dịch vụ xác thực chưa được cấu hình. Vui lòng liên hệ nhóm phát triển.</string>
+    <string name="auth_error_network">Không thể kết nối đến máy chủ. Vui lòng kiểm tra mạng và thử lại.</string>
+    <string name="auth_error_invalid_credentials">Email hoặc mật khẩu không đúng.</string>
+    <string name="auth_error_unknown">Đã có lỗi xảy ra. Vui lòng thử lại sau.</string>
+    <string name="auth_google_unavailable">Đăng nhập Google chưa được cấu hình cho ứng dụng này.</string>
+
+    <!-- Login -->
+    <string name="login_title">Chào mừng trở lại!</string>
+    <string name="login_subtitle">Đăng nhập để tiếp tục hành trình học tiếng Anh của bạn.</string>
+    <string name="login_label_email">Email</string>
+    <string name="login_label_password">Mật khẩu</string>
+    <string name="login_hint_password">Nhập mật khẩu</string>
+    <string name="login_remember_me">Ghi nhớ đăng nhập</string>
+    <string name="login_forgot_password">Quên mật khẩu?</string>
+    <string name="login_btn_submit">Đăng nhập</string>
+    <string name="login_or">Hoặc</string>
+    <string name="login_google">Tiếp tục với Google</string>
+    <string name="login_no_account">Chưa có tài khoản?</string>
+    <string name="login_register_now">Đăng ký ngay</string>
+    <string name="login_error_email">Email không hợp lệ</string>
+    <string name="login_error_password">Vui lòng nhập mật khẩu</string>
+
+    <!-- Forgot password -->
+    <string name="forgot_password_title">Quên mật khẩu?</string>
+    <string name="forgot_password_subtitle">Đừng lo lắng! Hãy nhập email đã đăng ký, chúng tôi sẽ gửi hướng dẫn đặt lại mật khẩu cho bạn.</string>
+    <string name="forgot_password_btn_submit">Gửi hướng dẫn</string>
+    <string name="forgot_password_remembered">Nhớ lại mật khẩu?</string>
+    <string name="forgot_password_back_to_login">Quay lại đăng nhập</string>
+    <string name="forgot_password_security_note">Vì sự an toàn của bạn, liên kết đặt lại mật khẩu sẽ hết hạn sau một khoảng thời gian.</string>
+    <string name="forgot_password_success">Nếu email này tồn tại trong hệ thống, hướng dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra hộp thư của bạn.</string>
+
     <!-- Topic detail -->
     <string name="topic_words_learned_format">%1$d/%2$d từ đã học</string>
     <string name="topic_search_hint">Tìm từ trong chủ đề này…</string>

@@ -48,4 +48,10 @@ dependencies {
     // Navigation component
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+
+    // ViewModel + coroutines for the account flow (login/register/forgot password)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+
+    testImplementation("junit:junit:4.13.2")
 }

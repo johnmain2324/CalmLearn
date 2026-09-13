@@ -74,6 +74,21 @@
         android:name="com.example.calmlearn.ui.quiz.QuizFragment"
         android:label="Quiz" />
 
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.calmlearn.ui.register.RegisterFragment"
+        android:label="Register" />
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.calmlearn.ui.login.LoginFragment"
+        android:label="Login" />
+
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.example.calmlearn.ui.forgotpassword.ForgotPasswordFragment"
+        android:label="ForgotPassword" />
+
     <!-- Global actions: reachable by id from any destination in this graph -->
     <action
         android:id="@+id/action_global_onboarding"
@@ -82,10 +97,20 @@
         app:popUpToInclusive="true" />
 
     <action
+        android:id="@+id/action_global_login"
+        app:destination="@id/loginFragment"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
+
+    <action
+        android:id="@+id/action_global_forgotPassword"
+        app:destination="@id/forgotPasswordFragment" />
+
+    <action
         android:id="@+id/action_global_home"
         app:destination="@id/homeFragment"
         app:popUpTo="@id/nav_graph"
-        app:popUpToInclusive="false" />
+        app:popUpToInclusive="true" />
 
     <action
         android:id="@+id/action_global_topicDetail"
@@ -118,5 +143,9 @@
     <action
         android:id="@+id/action_global_quiz"
         app:destination="@id/quizFragment" />
+
+    <action
+        android:id="@+id/action_global_register"
+        app:destination="@id/registerFragment" />
 
 </navigation>

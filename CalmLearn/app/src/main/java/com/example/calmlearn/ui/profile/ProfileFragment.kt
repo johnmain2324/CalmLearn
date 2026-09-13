@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.calmlearn.R
+import com.example.calmlearn.data.auth.AuthRepositoryProvider
 import com.example.calmlearn.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment() {
@@ -71,7 +72,11 @@ class ProfileFragment : Fragment() {
             .setTitle(R.string.profile_logout)
             .setMessage(R.string.profile_logout_confirm)
             .setPositiveButton(R.string.profile_logout) { _, _ ->
-                findNavController().navigate(R.id.action_global_onboarding)
+                // Dua qua AuthRepository (khong dung co isLoggedIn cuc bo) roi ve man hinh
+                // Dang nhap; action_global_login xoa toan bo back stack nen Back se khong quay
+                // lai duoc cac man hinh can tai khoan.
+                AuthRepositoryProvider.repository.logout()
+                findNavController().navigate(R.id.action_global_login)
             }
             .setNegativeButton(R.string.action_back, null)
             .show()
