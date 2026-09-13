@@ -75,6 +75,7 @@
             </FrameLayout>
 
             <TextView
+                android:id="@+id/tvProfileName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -84,9 +85,19 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvProfileEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/profile_email"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvProfileGender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/register_gender_other"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
 
@@ -127,6 +138,7 @@
                         android:contentDescription="@null" />
 
                     <TextView
+                        android:id="@+id/tvStreakValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"
@@ -154,6 +166,7 @@
                         android:contentDescription="@null" />
 
                     <TextView
+                        android:id="@+id/tvXpValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="6dp"

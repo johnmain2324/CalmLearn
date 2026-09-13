@@ -146,6 +146,24 @@ class RegisterViewModelTest {
     }
 
     @Test
+    fun `registering with an email already in use surfaces a dedicated error`() = runTest(testDispatcher) {
+        fakeRepository.registerResult = RegisterResult.Error(AuthErrorReason.EMAIL_ALREADY_IN_USE)
+        fillValidForm()
+        viewModel.submit()
+        advanceUntilIdle()
+        assertEquals(FormUiState.Error(AuthErrorReason.EMAIL_ALREADY_IN_USE), viewModel.uiState.value)
+    }
+
+    @Test
+    fun `password rejected by the service policy surfaces a dedicated error`() = runTest(testDispatcher) {
+        fakeRepository.registerResult = RegisterResult.Error(AuthErrorReason.WEAK_PASSWORD)
+        fillValidForm()
+        viewModel.submit()
+        advanceUntilIdle()
+        assertEquals(FormUiState.Error(AuthErrorReason.WEAK_PASSWORD), viewModel.uiState.value)
+    }
+
+    @Test
     fun `unexpected exception from the repository maps to an error instead of staying stuck loading`() = runTest(testDispatcher) {
         fakeRepository.throwOnNextCall = RuntimeException("boom")
         fillValidForm()

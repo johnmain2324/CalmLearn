@@ -17,6 +17,9 @@
     <string name="home_streak_label">Chuỗi học liên tục</string>
     <string name="home_xp_value">440 XP</string>
     <string name="home_xp_label">Hạng Sơ cấp A2</string>
+    <!-- Trang thai "chua co thanh tich" cho tai khoan that moi tao (chua trien khai theo doi tien do) -->
+    <string name="home_streak_value_empty">0 ngày</string>
+    <string name="home_xp_value_empty">0 XP</string>
     <string name="home_goal_title">Mục tiêu hôm nay</string>
     <string name="home_goal_percent">65% hoàn thành</string>
     <string name="home_goal_minutes">Đã học: 13 / 20 phút</string>
@@ -179,7 +182,7 @@
     <string name="register_error_terms">Bạn cần đồng ý điều khoản để tiếp tục</string>
     <string name="register_have_account">Đã có tài khoản?</string>
     <string name="register_login_now">Đăng nhập</string>
-    <string name="register_requires_next_step">Tài khoản đã được tạo. Vui lòng đăng nhập lại (hoặc xác minh email nếu được yêu cầu) để tiếp tục.</string>
+    <string name="register_requires_next_step">Tài khoản đã được tạo! Chúng tôi đã gửi email xác minh tới hộp thư của bạn — hãy mở email và bấm vào liên kết xác minh, sau đó quay lại đăng nhập.</string>
 
     <!-- Auth chung (Dang nhap / Dang ky / Quen mat khau) -->
     <string name="auth_brand_tagline">Học tiếng Anh mỗi ngày</string>
@@ -188,6 +191,10 @@
     <string name="auth_error_service_not_configured">Chức năng chưa khả dụng: dịch vụ xác thực chưa được cấu hình. Vui lòng liên hệ nhóm phát triển.</string>
     <string name="auth_error_network">Không thể kết nối đến máy chủ. Vui lòng kiểm tra mạng và thử lại.</string>
     <string name="auth_error_invalid_credentials">Email hoặc mật khẩu không đúng.</string>
+    <string name="auth_error_email_in_use">Email này đã được đăng ký. Vui lòng đăng nhập hoặc dùng email khác.</string>
+    <string name="auth_error_weak_password">Mật khẩu chưa đáp ứng yêu cầu bảo mật của hệ thống. Vui lòng đặt mật khẩu khác.</string>
+    <string name="auth_error_email_not_verified">Email chưa được xác minh. Vui lòng kiểm tra hộp thư (kể cả mục Spam) và bấm vào liên kết xác minh trước khi đăng nhập.</string>
+    <string name="auth_error_profile_save_failed">Tài khoản đã tạo nhưng lưu hồ sơ (họ tên, giới tính) bị lỗi. Vui lòng thử đăng ký lại.</string>
     <string name="auth_error_unknown">Đã có lỗi xảy ra. Vui lòng thử lại sau.</string>
     <string name="auth_google_unavailable">Đăng nhập Google chưa được cấu hình cho ứng dụng này.</string>
 

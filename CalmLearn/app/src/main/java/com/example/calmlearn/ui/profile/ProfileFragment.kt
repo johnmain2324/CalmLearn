@@ -8,10 +8,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.calmlearn.R
 import com.example.calmlearn.data.auth.AuthRepositoryProvider
+import com.example.calmlearn.data.auth.Gender
 import com.example.calmlearn.databinding.FragmentProfileBinding
+import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
@@ -31,6 +34,8 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loadCurrentUser()
 
         binding.rowAccount.root.setOnClickListener {
             Toast.makeText(requireContext(), R.string.profile_account, Toast.LENGTH_SHORT).show()
@@ -53,6 +58,31 @@ class ProfileFragment : Fragment() {
         }
 
         binding.rowLogout.setOnClickListener { confirmLogout() }
+    }
+
+    /**
+     * Hien ten, email, gioi tinh that cua nguoi dang dang nhap (khong con hardcode "Alex Nguyen").
+     * XP/streak dat ve trang thai "chua co thanh tich" vi buoc nay chua trien khai theo doi tien
+     * do that - tranh gan nham so lieu mau cho tai khoan that moi tao.
+     */
+    private fun loadCurrentUser() {
+        binding.tvStreakValue.text = getString(R.string.home_streak_value_empty)
+        binding.tvXpValue.text = getString(R.string.home_xp_value_empty)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val profile = AuthRepositoryProvider.repository.currentUserProfile()
+            if (profile != null) {
+                if (profile.fullName.isNotBlank()) binding.tvProfileName.text = profile.fullName
+                if (profile.email.isNotBlank()) binding.tvProfileEmail.text = profile.email
+                binding.tvProfileGender.text = getString(genderLabelRes(profile.gender))
+            }
+        }
+    }
+
+    private fun genderLabelRes(gender: Gender): Int = when (gender) {
+        Gender.MALE -> R.string.register_gender_male
+        Gender.FEMALE -> R.string.register_gender_female
+        Gender.OTHER -> R.string.register_gender_other
     }
 
     private fun showLanguagePicker() {

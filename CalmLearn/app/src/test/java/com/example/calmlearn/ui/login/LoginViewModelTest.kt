@@ -106,6 +106,16 @@ class LoginViewModelTest {
     }
 
     @Test
+    fun `signing in with an unverified email is rejected with a dedicated error`() = runTest(testDispatcher) {
+        fakeRepository.loginResult = AuthResult.Error(AuthErrorReason.EMAIL_NOT_VERIFIED)
+        viewModel.onEmailChanged("a@example.com")
+        viewModel.onPasswordChanged("correct-password")
+        viewModel.submit()
+        advanceUntilIdle()
+        assertEquals(FormUiState.Error(AuthErrorReason.EMAIL_NOT_VERIFIED), viewModel.uiState.value)
+    }
+
+    @Test
     fun `unexpected exception maps to an error instead of staying stuck loading`() = runTest(testDispatcher) {
         fakeRepository.throwOnNextCall = RuntimeException("boom")
         viewModel.onEmailChanged("a@example.com")

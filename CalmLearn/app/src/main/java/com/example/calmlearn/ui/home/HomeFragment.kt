@@ -6,10 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.calmlearn.R
+import com.example.calmlearn.data.auth.AuthRepositoryProvider
 import com.example.calmlearn.databinding.FragmentHomeBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
@@ -27,6 +30,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loadCurrentUser()
 
         binding.btnContinueCourse.setOnClickListener { openTopic("travel") }
         binding.itemTopicTravel.root.setOnClickListener { openTopic("travel") }
@@ -51,6 +56,23 @@ class HomeFragment : Fragment() {
         binding.btnQuickPracticeSeeAll.setOnClickListener { switchTab(R.id.practiceFragment) }
         binding.btnWeekDetail.setOnClickListener { switchTab(R.id.progressFragment) }
         binding.btnBadgesViewAll.setOnClickListener { switchTab(R.id.progressFragment) }
+    }
+
+    /**
+     * Hien ten that cua nguoi vua dang nhap (khong con hardcode "Alex Nguyen"). XP/streak dat ve
+     * trang thai "chua co thanh tich" vi buoc nay chua trien khai theo doi tien do that - tranh
+     * gan nham so lieu mau (440 XP, 7 ngay...) cho tai khoan that moi tao.
+     */
+    private fun loadCurrentUser() {
+        binding.tvStreakValue.text = getString(R.string.home_streak_value_empty)
+        binding.tvXpValue.text = getString(R.string.home_xp_value_empty)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val profile = AuthRepositoryProvider.repository.currentUserProfile()
+            if (profile != null && profile.fullName.isNotBlank()) {
+                binding.tvUserName.text = profile.fullName
+            }
+        }
     }
 
     private fun openTopic(topicId: String) {

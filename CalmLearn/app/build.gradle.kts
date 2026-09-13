@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -52,6 +53,14 @@ dependencies {
     // ViewModel + coroutines for the account flow (login/register/forgot password)
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+
+    // Firebase Authentication (dang ky/dang nhap/quen mat khau that) + Firestore (luu ho so:
+    // ten, gioi tinh gan voi uid). BoM khoa phien ban tuong thich giua cac thu vien Firebase.
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+    // Chuyen Task<T> cua Firebase (Play Services) sang suspend fun (.await()) de dung trong ViewModel.
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     testImplementation("junit:junit:4.13.2")
     // Can thiet de unit test ViewModel dung LiveData + viewModelScope trong JVM thuong (khong Robolectric):

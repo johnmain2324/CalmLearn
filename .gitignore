@@ -26,6 +26,10 @@ local.properties
 *.jks
 *.keystore
 
+# Cau hinh Firebase thuc cua tung may/nhom - moi nguoi tu tai tu Firebase Console ve, khong commit
+# (file mau google-services.example.json duoc giu lai de tham khao cau truc).
+/CalmLearn/app/google-services.json
+
 # VS Code
 .vscode/*
 !.vscode/settings.json

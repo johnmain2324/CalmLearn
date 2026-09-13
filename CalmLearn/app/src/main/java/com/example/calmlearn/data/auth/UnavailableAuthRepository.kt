@@ -3,12 +3,11 @@ package com.example.calmlearn.data.auth
 import kotlinx.coroutines.delay
 
 /**
- * Implementation "tam" duy nhat cua [AuthRepository] khi project chua co backend/dich vu xac
- * thuc that. Khong tao tai khoan gia, khong bao gio tra ve Success - chi mo phong do tre mang
- * (de UI co the demo trang thai Loading) roi bao loi ro rang la dich vu chua duoc cau hinh.
- *
- * TODO(nhom): thay the bang implementation that (Firebase Auth / REST API backend) sau khi
- * nhom chot phuong an xac thuc.
+ * Implementation "cho" cua [AuthRepository]: khong tao tai khoan gia, khong bao gio tra ve
+ * Success - chi mo phong do tre mang (de UI co the demo trang thai Loading) roi bao loi ro rang la
+ * dich vu chua duoc cau hinh. Khong con duoc [AuthRepositoryProvider] su dung (da chuyen sang
+ * [FirebaseAuthRepository]) - giu lai lam stub tham khao / de dung khi can chay UI ma khong co
+ * `google-services.json` that (vd demo giao dien don thuan).
  */
 class UnavailableAuthRepository : AuthRepository {
 
@@ -34,6 +33,8 @@ class UnavailableAuthRepository : AuthRepository {
     override fun isAuthenticated(): Boolean = false
 
     override fun logout() = Unit
+
+    override suspend fun currentUserProfile(): UserProfile? = null
 
     private companion object {
         const val SIMULATED_DELAY_MS = 600L

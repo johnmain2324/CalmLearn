@@ -6,6 +6,14 @@ enum class AuthErrorReason {
     SERVICE_NOT_CONFIGURED,
     NETWORK_ERROR,
     INVALID_CREDENTIALS,
+    /** Dang ky voi email da co tai khoan (FirebaseAuthUserCollisionException). */
+    EMAIL_ALREADY_IN_USE,
+    /** Mat khau khong dap ung chinh sach cua dich vu (FirebaseAuthWeakPasswordException). */
+    WEAK_PASSWORD,
+    /** Dang nhap dung nhung email chua duoc xac minh - da tu dong dang xuat, chua coi la co phien. */
+    EMAIL_NOT_VERIFIED,
+    /** Tai khoan xac thuc da tao thanh cong nhung buoc luu ho so (ten/gioi tinh) bi loi. */
+    PROFILE_SAVE_FAILED,
     UNKNOWN
 }
 

@@ -5,11 +5,12 @@ import com.example.calmlearn.data.auth.AuthRepository
 import com.example.calmlearn.data.auth.AuthResult
 import com.example.calmlearn.data.auth.Gender
 import com.example.calmlearn.data.auth.RegisterResult
+import com.example.calmlearn.data.auth.UserProfile
 import kotlinx.coroutines.CompletableDeferred
 
 /**
  * AuthRepository gia lap CHI dung trong unit test (khong duoc dua vao luong ung dung chinh -
- * AuthRepositoryProvider van tro ve UnavailableAuthRepository). Cho phep:
+ * AuthRepositoryProvider dung FirebaseAuthRepository that). Cho phep:
  * - Dat san ket qua tra ve (Success/Error/Verification...) cho tung phuong thuc.
  * - "Giu" (hold) mot loi goi de kiem tra trang thai Loading giua chung, roi "tha" (release) khi test san sang.
  * - Gia lap ngoai le bat ngo tu dich vu (throwOnNextCall) de kiem tra ViewModel khong bi ket Loading.
@@ -28,8 +29,13 @@ class FakeAuthRepository : AuthRepository {
     var loginResult: AuthResult = AuthResult.Success
     var resetResult: AuthResult = AuthResult.Success
     var throwOnNextCall: Throwable? = null
+    var profile: UserProfile? = null
 
     private var authenticated = false
+
+    fun setAuthenticated(value: Boolean) {
+        authenticated = value
+    }
 
     private var registerGate: CompletableDeferred<Unit>? = null
     private var loginGate: CompletableDeferred<Unit>? = null
@@ -76,5 +82,8 @@ class FakeAuthRepository : AuthRepository {
 
     override fun logout() {
         authenticated = false
+        profile = null
     }
+
+    override suspend fun currentUserProfile(): UserProfile? = profile
 }
