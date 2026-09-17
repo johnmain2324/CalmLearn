@@ -206,6 +206,17 @@
             <include android:id="@+id/rowAbout" layout="@layout/item_settings_row_about" />
         </LinearLayout>
 
+        <!-- Huy hieu: mo luong Activity + Intent doc lap (AchievementListActivity) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_card_stroke"
+            android:orientation="vertical">
+
+            <include android:id="@+id/rowAchievements" layout="@layout/item_settings_row_achievements" />
+        </LinearLayout>
+
         <!-- Logout -->
         <LinearLayout
             android:id="@+id/rowLogout"

@@ -23,7 +23,7 @@ khong thay file nay o dau ca** cho den khi tu tao theo cac buoc sau:
 
 1. Vao https://console.firebase.google.com → **Add project** → dat ten tuy y (vd `calmlearn-dev`).
 2. Trong project vua tao → bam icon Android → **Add app**:
-   - Android package name: `com.example.calmlearn` (phai go dung, khong duoc sai 1 ky tu - kiem tra
+   - Android package name: `com.education.calmlearn` (phai go dung, khong duoc sai 1 ky tu - kiem tra
      lai trong `CalmLearn/app/build.gradle.kts`, muc `applicationId`, neu khong chac).
    - Cac buoc con lai (nickname, SHA-1) co the bo qua vi chua dung Google Sign-In.
    - Tai file **`google-services.json`** ve may, roi **dat file nay vao dung thu muc**
@@ -44,7 +44,7 @@ khong thay file nay o dau ca** cho den khi tu tao theo cac buoc sau:
 
 Sau khi hoan tat, tu kiem tra: mo file `CalmLearn/app/google-services.json` vua tai, tim
 `"package_name"` trong muc `android_client_info` - gia tri nay PHAI khop chinh xac voi
-`applicationId` trong `build.gradle.kts` (`com.example.calmlearn`); neu Firebase tu dong dien sai
+`applicationId` trong `build.gradle.kts` (`com.education.calmlearn`); neu Firebase tu dong dien sai
 package luc tao app tren Console thi Google Services plugin se bao loi khi build.
 
 **Emulator vs dien thoai that:** khong can cau hinh gi khac nhau - Firebase la dich vu tren mang
@@ -60,7 +60,7 @@ Templates** trong Firebase Console.
 ## Cau truc project
 
 ```
-app/src/main/java/com/example/calmlearn/
+app/src/main/java/com/education/calmlearn/
     MainActivity.kt              # Host chua BottomNavigationView + Navigation graph
     ui/home/HomeFragment.kt      # Man hinh Trang chu
     ui/lessons/LessonsFragment.kt# Man hinh Bai hoc (co toggle Tu vung / Ngu phap)

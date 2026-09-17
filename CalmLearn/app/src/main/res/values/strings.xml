@@ -145,8 +145,21 @@
     <string name="profile_language_value">Tiếng Việt</string>
     <string name="profile_about_title">Giới thiệu Đề tài Đồ án</string>
     <string name="profile_about_desc">Xem lại Onboarding &amp; Mục tiêu</string>
+    <string name="profile_achievements_title">Huy hiệu của tôi</string>
+    <string name="profile_achievements_desc">Xem toàn bộ thành tích đã đạt được</string>
     <string name="profile_logout">Đăng xuất tài khoản</string>
     <string name="profile_logout_confirm">Bạn có chắc muốn đăng xuất khỏi CalmLearn?</string>
+
+    <!-- Achievement list / detail (2 Activity moi, dieu huong bang Intent) -->
+    <string name="achievement_list_title">Huy hiệu của tôi</string>
+    <string name="achievement_list_subtitle">Chạm vào một huy hiệu để xem chi tiết</string>
+    <string name="achievement_status_unlocked">Đã mở khóa</string>
+    <string name="achievement_status_locked">Đang tiến hành</string>
+    <string name="achievement_progress_format">%1$d/%2$d</string>
+    <string name="achievement_detail_title">Chi tiết huy hiệu</string>
+    <string name="achievement_detail_progress_label">Tiến độ</string>
+    <string name="achievement_detail_btn_mark_viewed">Đánh dấu đã xem</string>
+    <string name="achievement_seen_toast">Đã xem: %1$s</string>
 
     <!-- Common -->
     <string name="action_back">Quay lại</string>

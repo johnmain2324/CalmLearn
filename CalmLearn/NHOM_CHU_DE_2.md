@@ -150,7 +150,7 @@ nhưng 5 loại bắt buộc là 5 loại ở trên.)*
 ## 2. Các View trong màn hình Đăng ký + XML attributes + danh sách Events + phương thức xử lý + ví dụ
 
 File liên quan: [`fragment_register.xml`](app/src/main/res/layout/fragment_register.xml) và
-[`RegisterFragment.kt`](app/src/main/java/com/example/calmlearn/ui/register/RegisterFragment.kt).
+[`RegisterFragment.kt`](app/src/main/java/com/education/calmlearn/ui/register/RegisterFragment.kt).
 
 ### 2.1. EditText — ô nhập liệu
 **View dùng:** `etFullName`, `etEmail`, `etPassword`, `etConfirmPassword`.

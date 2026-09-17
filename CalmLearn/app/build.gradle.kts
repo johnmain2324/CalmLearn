@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.calmlearn"
+    namespace = "com.education.calmlearn"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.calmlearn"
+        applicationId = "com.education.calmlearn"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

@@ -6,92 +6,92 @@
 
     <fragment
         android:id="@+id/onboardingFragment"
-        android:name="com.example.calmlearn.ui.onboarding.OnboardingFragment"
+        android:name="com.education.calmlearn.ui.onboarding.OnboardingFragment"
         android:label="Onboarding" />
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.calmlearn.ui.home.HomeFragment"
+        android:name="com.education.calmlearn.ui.home.HomeFragment"
         android:label="Home" />
 
     <fragment
         android:id="@+id/lessonsFragment"
-        android:name="com.example.calmlearn.ui.lessons.LessonsFragment"
+        android:name="com.education.calmlearn.ui.lessons.LessonsFragment"
         android:label="Lessons" />
 
     <fragment
         android:id="@+id/practiceFragment"
-        android:name="com.example.calmlearn.ui.practice.PracticeFragment"
+        android:name="com.education.calmlearn.ui.practice.PracticeFragment"
         android:label="Practice" />
 
     <fragment
         android:id="@+id/progressFragment"
-        android:name="com.example.calmlearn.ui.progress.ProgressFragment"
+        android:name="com.education.calmlearn.ui.progress.ProgressFragment"
         android:label="Progress" />
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.calmlearn.ui.profile.ProfileFragment"
+        android:name="com.education.calmlearn.ui.profile.ProfileFragment"
         android:label="Profile" />
 
     <fragment
         android:id="@+id/topicDetailFragment"
-        android:name="com.example.calmlearn.ui.lessons.topic.TopicDetailFragment"
+        android:name="com.education.calmlearn.ui.lessons.topic.TopicDetailFragment"
         android:label="TopicDetail" />
 
     <fragment
         android:id="@+id/wordDetailFragment"
-        android:name="com.example.calmlearn.ui.lessons.word.WordDetailFragment"
+        android:name="com.education.calmlearn.ui.lessons.word.WordDetailFragment"
         android:label="WordDetail" />
 
     <fragment
         android:id="@+id/flashcardFragment"
-        android:name="com.example.calmlearn.ui.lessons.flashcard.FlashcardFragment"
+        android:name="com.education.calmlearn.ui.lessons.flashcard.FlashcardFragment"
         android:label="Flashcard" />
 
     <fragment
         android:id="@+id/grammarDetailFragment"
-        android:name="com.example.calmlearn.ui.lessons.grammar.GrammarDetailFragment"
+        android:name="com.education.calmlearn.ui.lessons.grammar.GrammarDetailFragment"
         android:label="GrammarDetail" />
 
     <fragment
         android:id="@+id/speakingFragment"
-        android:name="com.example.calmlearn.ui.speaking.SpeakingFragment"
+        android:name="com.education.calmlearn.ui.speaking.SpeakingFragment"
         android:label="Speaking" />
 
     <fragment
         android:id="@+id/listeningListFragment"
-        android:name="com.example.calmlearn.ui.listening.ListeningListFragment"
+        android:name="com.education.calmlearn.ui.listening.ListeningListFragment"
         android:label="ListeningList" />
 
     <fragment
         android:id="@+id/listeningFragment"
-        android:name="com.example.calmlearn.ui.listening.ListeningFragment"
+        android:name="com.education.calmlearn.ui.listening.ListeningFragment"
         android:label="Listening" />
 
     <fragment
         android:id="@+id/quizFragment"
-        android:name="com.example.calmlearn.ui.quiz.QuizFragment"
+        android:name="com.education.calmlearn.ui.quiz.QuizFragment"
         android:label="Quiz" />
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.example.calmlearn.ui.register.RegisterFragment"
+        android:name="com.education.calmlearn.ui.register.RegisterFragment"
         android:label="Register" />
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.calmlearn.ui.login.LoginFragment"
+        android:name="com.education.calmlearn.ui.login.LoginFragment"
         android:label="Login" />
 
     <fragment
         android:id="@+id/forgotPasswordFragment"
-        android:name="com.example.calmlearn.ui.forgotpassword.ForgotPasswordFragment"
+        android:name="com.education.calmlearn.ui.forgotpassword.ForgotPasswordFragment"
         android:label="ForgotPassword" />
 
     <fragment
         android:id="@+id/verifyEmailFragment"
-        android:name="com.example.calmlearn.ui.verifyemail.VerifyEmailFragment"
+        android:name="com.education.calmlearn.ui.verifyemail.VerifyEmailFragment"
         android:label="VerifyEmail">
         <argument
             android:name="autoSend"
