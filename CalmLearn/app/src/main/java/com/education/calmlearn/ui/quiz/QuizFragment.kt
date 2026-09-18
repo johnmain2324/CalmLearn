@@ -5,12 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.education.calmlearn.R
 import com.education.calmlearn.data.mock.MockData
 import com.education.calmlearn.data.model.QuizQuestion
+import com.education.calmlearn.data.progress.ProgressRepositoryProvider
+import com.education.calmlearn.data.progress.ProgressResult
 import com.education.calmlearn.databinding.FragmentQuizBinding
 import com.education.calmlearn.ui.common.OptionsController
+import com.education.calmlearn.ui.common.StudySessionTracker
+import kotlinx.coroutines.launch
 
 class QuizFragment : Fragment() {
 
@@ -19,6 +24,12 @@ class QuizFragment : Fragment() {
 
     private val questions: List<QuizQuestion> = MockData.quizQuestions.take(5)
     private lateinit var optionsController: OptionsController
+
+    /** Quiz duy nhat hien co (luon cung 5 cau dau tien cua MockData.quizQuestions) - dung lam khoa
+     *  chong farm XP theo ngay (xem ProgressRepository.recordQuizResult). Khi co nhieu quiz theo
+     *  chu de/bai hoc, moi quiz can mot id rieng thay vi hang so nay. */
+    private val quizId = "general_quiz"
+    private val studyTracker = StudySessionTracker()
 
     private var currentIndex = 0
     private var correctCount = 0
@@ -88,8 +99,7 @@ class QuizFragment : Fragment() {
         binding.quizResultGroup.visibility = View.VISIBLE
 
         binding.resultScore.text = getString(R.string.quiz_result_score_format, correctCount, questions.size)
-        val xp = correctCount * 10
-        binding.resultXp.text = getString(R.string.quiz_result_xp_format, xp)
+        binding.resultXp.text = getString(R.string.quiz_result_xp_format, 0)
 
         binding.resultMessage.setText(
             when {
@@ -98,6 +108,26 @@ class QuizFragment : Fragment() {
                 else -> R.string.quiz_result_retry
             }
         )
+
+        persistQuizResult()
+    }
+
+    /**
+     * Ghi that ket qua quiz xuong Firestore (thay vi chi hien "+X XP" tren man hinh nhu truoc).
+     * So XP hien thi la so THAT su duoc cong trong lan nay - se la 0 neu quiz nay da duoc lam va
+     * cong XP trong ngay hom nay roi (xem ProgressRepository.recordQuizResult).
+     */
+    private fun persistQuizResult() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val before = ProgressRepositoryProvider.repository.loadProgress()
+            val xpBefore = (before as? ProgressResult.Loaded)?.progress?.xp ?: 0
+
+            val result = ProgressRepositoryProvider.repository.recordQuizResult(quizId, correctCount, questions.size)
+            if (result is ProgressResult.Loaded) {
+                val xpEarned = (result.progress.xp - xpBefore).coerceAtLeast(0)
+                binding.resultXp.text = getString(R.string.quiz_result_xp_format, xpEarned)
+            }
+        }
     }
 
     private fun restartQuiz() {
@@ -106,6 +136,19 @@ class QuizFragment : Fragment() {
         binding.quizContentGroup.visibility = View.VISIBLE
         binding.btnQuizAction.visibility = View.VISIBLE
         renderQuestion(0)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        studyTracker.start()
+    }
+
+    override fun onPause() {
+        val seconds = studyTracker.elapsedSecondsAndReset()
+        if (seconds > 0) {
+            lifecycleScope.launch { ProgressRepositoryProvider.repository.addStudySeconds(seconds) }
+        }
+        super.onPause()
     }
 
     override fun onDestroyView() {

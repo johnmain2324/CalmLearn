@@ -8,11 +8,16 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.education.calmlearn.R
 import com.education.calmlearn.data.mock.MockData
 import com.education.calmlearn.data.model.VocabWord
+import com.education.calmlearn.data.progress.ProgressRepositoryProvider
+import com.education.calmlearn.data.progress.ProgressResult
 import com.education.calmlearn.databinding.FragmentWordDetailBinding
+import com.education.calmlearn.ui.common.StudySessionTracker
+import kotlinx.coroutines.launch
 
 class WordDetailFragment : Fragment() {
 
@@ -20,6 +25,7 @@ class WordDetailFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var word: VocabWord
+    private val studyTracker = StudySessionTracker()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,12 +43,15 @@ class WordDetailFragment : Fragment() {
         word = MockData.vocabWords.firstOrNull { it.id == wordId } ?: MockData.vocabWords.first()
 
         renderWord()
+        hydrateProgress()
 
         binding.btnBack.setOnClickListener { findNavController().popBackStack() }
 
         binding.btnFavorite.setOnClickListener {
-            word.isFavorite = !word.isFavorite
+            val newValue = !word.isFavorite
+            word.isFavorite = newValue
             updateFavoriteIcon()
+            persistFavorite(newValue)
         }
 
         binding.btnPlaySample.setOnClickListener {
@@ -50,8 +59,44 @@ class WordDetailFragment : Fragment() {
         }
 
         binding.btnMarkLearned.setOnClickListener {
-            word.isLearned = !word.isLearned
+            val newValue = !word.isLearned
+            word.isLearned = newValue
             updateLearnedButton()
+            persistLearned(newValue)
+        }
+    }
+
+    /** Dong bo lai trang thai da hoc/yeu thich that cua nguoi dung tu Firestore (vd sau khi mo
+     *  lai app) - noi dung tu khong doi, chi hai co nay co the khac voi gia tri mac dinh ban dau. */
+    private fun hydrateProgress() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = ProgressRepositoryProvider.repository.loadProgress()
+            if (result is ProgressResult.Loaded) {
+                MockData.applyProgress(result.progress)
+                renderWord()
+            }
+        }
+    }
+
+    private fun persistFavorite(favorite: Boolean) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = ProgressRepositoryProvider.repository.setFavorite(word.id, favorite)
+            if (result is ProgressResult.ReadError) {
+                word.isFavorite = !favorite
+                updateFavoriteIcon()
+                Toast.makeText(requireContext(), R.string.progress_sync_error, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun persistLearned(learned: Boolean) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = ProgressRepositoryProvider.repository.setWordLearned(word.id, learned)
+            if (result is ProgressResult.ReadError) {
+                word.isLearned = !learned
+                updateLearnedButton()
+                Toast.makeText(requireContext(), R.string.progress_sync_error, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -108,6 +153,19 @@ class WordDetailFragment : Fragment() {
                 if (word.isLearned) R.color.success else R.color.white
             )
         )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        studyTracker.start()
+    }
+
+    override fun onPause() {
+        val seconds = studyTracker.elapsedSecondsAndReset()
+        if (seconds > 0) {
+            lifecycleScope.launch { ProgressRepositoryProvider.repository.addStudySeconds(seconds) }
+        }
+        super.onPause()
     }
 
     override fun onDestroyView() {

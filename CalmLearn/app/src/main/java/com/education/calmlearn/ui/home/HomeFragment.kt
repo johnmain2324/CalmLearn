@@ -11,6 +11,9 @@ import androidx.navigation.fragment.findNavController
 import com.education.calmlearn.R
 import com.education.calmlearn.data.auth.AuthRepositoryProvider
 import com.education.calmlearn.data.auth.ProfileResult
+import com.education.calmlearn.data.mock.MockData
+import com.education.calmlearn.data.progress.ProgressRepositoryProvider
+import com.education.calmlearn.data.progress.ProgressResult
 import com.education.calmlearn.databinding.FragmentHomeBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -34,6 +37,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         loadCurrentUser()
+        loadProgress()
 
         binding.btnContinueCourse.setOnClickListener { openTopic("travel") }
         binding.itemTopicTravel.root.setOnClickListener { openTopic("travel") }
@@ -100,6 +104,41 @@ class HomeFragment : Fragment() {
         }
     }
 
+    /** Thay tvStreakValue/tvXpValue/tvCoursePercent tu trang thai "chua co du lieu" (dat trong
+     *  loadCurrentUser()) bang du lieu THAT, doc tu LearningProgress (xem data/progress/). The
+     *  "khoa hoc dang tiep dien" tren Home la chu de "travel" (Travel English, co dinh) nen % that
+     *  cua no chinh la % tu vung da hoc that trong chu de nay - xem MockData.topicPercent(). Rieng
+     *  "muc tieu hom nay" (phut hoc/ngay) CHUA co co che theo doi thoi gian hoc that trong app nen
+     *  van giu trang thai "chua co du lieu" thay vi bia so phut - can mot cong viec rieng (theo doi
+     *  thoi gian phien hoc) truoc khi co the hien thi so that o day. */
+    private fun loadProgress() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = ProgressRepositoryProvider.repository.loadProgress()
+            if (result is ProgressResult.Loaded) {
+                binding.tvStreakValue.text = getString(R.string.streak_value_format, result.progress.streak)
+                binding.tvXpValue.text = getString(R.string.xp_value_format, result.progress.xp)
+
+                MockData.applyProgress(result.progress)
+                val coursePercent = MockData.topicPercent(HOME_COURSE_TOPIC_ID)
+                binding.courseProgress.progress = coursePercent
+                binding.tvCoursePercent.text = getString(R.string.home_course_percent_format, coursePercent)
+
+                val studyMinutes = result.progress.todayStudySeconds / 60
+                val goalPercent = ((studyMinutes * 100) / DAILY_GOAL_MINUTES).coerceIn(0, 100)
+                binding.goalProgress.progress = goalPercent
+                binding.tvGoalPercent.text = getString(R.string.home_goal_percent_format, goalPercent)
+                binding.tvGoalMinutes.text =
+                    getString(R.string.home_goal_minutes_format, studyMinutes, DAILY_GOAL_MINUTES)
+                val remainingMinutes = DAILY_GOAL_MINUTES - studyMinutes
+                binding.tvGoalRemaining.text = if (remainingMinutes > 0) {
+                    getString(R.string.home_goal_remaining_format, remainingMinutes)
+                } else {
+                    getString(R.string.home_goal_remaining_done)
+                }
+            }
+        }
+    }
+
     private fun openTopic(topicId: String) {
         findNavController().navigate(R.id.action_global_topicDetail, bundleOf("topicId" to topicId))
     }
@@ -119,5 +158,15 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private companion object {
+        /** Chu de co dinh dang duoc gioi thieu trong the "Khoa hoc dang tiep dien" tren Home
+         *  (Travel English - xem string home_course_name/home_course_lesson). */
+        const val HOME_COURSE_TOPIC_ID = "travel"
+
+        /** Muc tieu phut hoc/ngay, khop voi noi dung tinh "Muc tieu 20 phut / ngay" da co san
+         *  (xem string home_week_progress_goal). */
+        const val DAILY_GOAL_MINUTES = 20
     }
 }

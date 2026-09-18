@@ -1,21 +1,32 @@
 package com.education.calmlearn.ui.speaking
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.education.calmlearn.R
 import com.education.calmlearn.data.mock.MockData
 import com.education.calmlearn.data.model.SpeakingItem
 import com.education.calmlearn.data.model.SpeakingLevel
+import com.education.calmlearn.data.progress.ProgressRepositoryProvider
 import com.education.calmlearn.databinding.FragmentSpeakingBinding
+import com.education.calmlearn.ui.common.StudySessionTracker
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlin.random.Random
+import java.util.Locale
+import kotlinx.coroutines.launch
 
 private enum class MicState { IDLE, LISTENING, PROCESSING, RESULT }
 
@@ -24,11 +35,47 @@ class SpeakingFragment : Fragment() {
     private var _binding: FragmentSpeakingBinding? = null
     private val binding get() = _binding!!
 
-    private val handler = Handler(Looper.getMainLooper())
     private var currentLevel = SpeakingLevel.WORD
     private var items: List<SpeakingItem> = emptyList()
     private var currentIndex = 0
     private var micState = MicState.IDLE
+    private var speechRecognizer: SpeechRecognizer? = null
+    private var textToSpeech: TextToSpeech? = null
+    private var ttsReady = false
+    private val studyTracker = StudySessionTracker()
+
+    private val requestAudioPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) {
+            beginListening()
+        } else {
+            Toast.makeText(requireContext(), R.string.speaking_permission_denied, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private val recognitionListener = object : RecognitionListener {
+        override fun onReadyForSpeech(params: Bundle?) {}
+        override fun onBeginningOfSpeech() {}
+        override fun onRmsChanged(rmsdB: Float) {}
+        override fun onBufferReceived(buffer: ByteArray?) {}
+        override fun onPartialResults(partialResults: Bundle?) {}
+        override fun onEvent(eventType: Int, params: Bundle?) {}
+
+        override fun onEndOfSpeech() {
+            startProcessing()
+        }
+
+        override fun onError(error: Int) {
+            finishWithResult(isCorrect = false)
+        }
+
+        override fun onResults(results: Bundle?) {
+            val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).orEmpty()
+            val target = items.getOrNull(currentIndex)?.text.orEmpty()
+            finishWithResult(isCorrect = matches.any { matchesTarget(it, target) })
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,10 +95,14 @@ class SpeakingFragment : Fragment() {
         binding.tabPhrase.setOnClickListener { selectLevel(SpeakingLevel.PHRASE) }
         binding.tabSentence.setOnClickListener { selectLevel(SpeakingLevel.SENTENCE) }
 
-        binding.btnPlaySample.setOnClickListener { /* simulated sample playback, no audio in prototype */ }
+        textToSpeech = TextToSpeech(requireContext()) { status ->
+            ttsReady = status == TextToSpeech.SUCCESS
+            if (ttsReady) textToSpeech?.language = Locale.US
+        }
+        binding.btnPlaySample.setOnClickListener { playSample() }
 
         binding.micButton.setOnClickListener {
-            if (micState == MicState.IDLE) startListening()
+            if (micState == MicState.IDLE) onMicTapped()
         }
 
         binding.btnResultSecondary.setOnClickListener { resetToIdle() }
@@ -100,12 +151,54 @@ class SpeakingFragment : Fragment() {
         resetToIdle()
     }
 
-    private fun startListening() {
+    /** Kiem tra thiet bi co ho tro nhan dien giong noi khong, roi xin quyen RECORD_AUDIO neu can,
+     *  truoc khi thuc su bat dau nghe (xem beginListening()). */
+    private fun onMicTapped() {
+        if (!SpeechRecognizer.isRecognitionAvailable(requireContext())) {
+            Toast.makeText(requireContext(), R.string.speaking_recognition_unavailable, Toast.LENGTH_SHORT).show()
+            return
+        }
+        val hasPermission = ContextCompat.checkSelfPermission(
+            requireContext(), Manifest.permission.RECORD_AUDIO
+        ) == PackageManager.PERMISSION_GRANTED
+        if (hasPermission) {
+            beginListening()
+        } else {
+            requestAudioPermission.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
+    /** Doc mau THAT noi dung can luyen bang TextToSpeech (truoc day la nut khong lam gi ca). */
+    private fun playSample() {
+        val engine = textToSpeech
+        val target = items.getOrNull(currentIndex)?.text
+        if (engine == null || !ttsReady || target.isNullOrBlank()) {
+            Toast.makeText(requireContext(), R.string.speaking_tts_unavailable, Toast.LENGTH_SHORT).show()
+            return
+        }
+        engine.speak(target, TextToSpeech.QUEUE_FLUSH, null, "speaking_sample")
+    }
+
+    /** Bat dau nghe THAT bang SpeechRecognizer cua he thong (khong con mo phong) - ket qua dung/
+     *  sai duoc quyet dinh boi noi dung nguoi dung THAT SU noi ra, so khop voi [SpeakingItem.text]
+     *  (xem matchesTarget()), khong con Random. */
+    private fun beginListening() {
         micState = MicState.LISTENING
         binding.micButton.setBackgroundResource(R.drawable.bg_circle_teal)
         binding.micHint.setText(R.string.speaking_listening_hint)
         binding.resultGroup.visibility = View.GONE
-        handler.postDelayed({ startProcessing() }, 1500)
+
+        val recognizer = SpeechRecognizer.createSpeechRecognizer(requireContext())
+        speechRecognizer = recognizer
+        recognizer.setRecognitionListener(recognitionListener)
+        recognizer.startListening(
+            Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US")
+                putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3)
+                putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, requireContext().packageName)
+            }
+        )
     }
 
     private fun startProcessing() {
@@ -115,17 +208,18 @@ class SpeakingFragment : Fragment() {
         binding.micButton.visibility = View.INVISIBLE
         binding.micProcessingSpinner.visibility = View.VISIBLE
         binding.micHint.setText(R.string.speaking_processing_hint)
-        handler.postDelayed({ showResult() }, 1000)
     }
 
-    private fun showResult() {
+    private fun finishWithResult(isCorrect: Boolean) {
+        speechRecognizer?.destroy()
+        speechRecognizer = null
         if (_binding == null) return
+
         micState = MicState.RESULT
         binding.micProcessingSpinner.visibility = View.GONE
         binding.micButton.visibility = View.VISIBLE
         binding.micButton.setBackgroundResource(R.drawable.bg_circle_coral)
 
-        val isCorrect = Random.nextInt(10) < 7
         binding.resultGroup.visibility = View.VISIBLE
         binding.btnResultSecondary.visibility = if (isCorrect) View.GONE else View.VISIBLE
 
@@ -148,9 +242,24 @@ class SpeakingFragment : Fragment() {
         }
     }
 
+    /** So khop noi dung nhan dien duoc voi noi dung can luyen - bo qua hoa/thuong, dau cau, va
+     *  chap nhan khop mot phan (SpeechRecognizer hay them/bot tu dem khi nghe cau dai). */
+    private fun matchesTarget(spoken: String, target: String): Boolean {
+        val normalizedSpoken = normalize(spoken)
+        val normalizedTarget = normalize(target)
+        if (normalizedTarget.isEmpty()) return false
+        return normalizedSpoken == normalizedTarget ||
+            normalizedSpoken.contains(normalizedTarget) ||
+            normalizedTarget.contains(normalizedSpoken)
+    }
+
+    private fun normalize(text: String): String =
+        text.lowercase(Locale.US).replace(Regex("[^a-z0-9 ]"), "").trim().replace(Regex("\\s+"), " ")
+
     private fun resetToIdle() {
         micState = MicState.IDLE
-        handler.removeCallbacksAndMessages(null)
+        speechRecognizer?.destroy()
+        speechRecognizer = null
         binding.micButton.visibility = View.VISIBLE
         binding.micButton.setBackgroundResource(R.drawable.bg_circle_coral)
         binding.micProcessingSpinner.visibility = View.GONE
@@ -166,6 +275,17 @@ class SpeakingFragment : Fragment() {
         } else {
             showPracticeContent(visible = false)
             binding.completionGroup.visibility = View.VISIBLE
+            persistSessionCompleted()
+        }
+    }
+
+    /** Ghi nhan da hoan thanh mot luot luyen phat am o cap do hien tai - xem
+     *  ProgressRepository.recordSpeakingSessionCompleted. Du ket qua dung/sai tung cau gio la THAT
+     *  (SpeechRecognizer), man hinh nay van la luyen tap (khong gioi han so lan thu lai nhu Quiz)
+     *  nen van chi ghi nhan SU KIEN hoan thanh ca luot, khong luu do chinh xac tung cau. */
+    private fun persistSessionCompleted() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            ProgressRepositoryProvider.repository.recordSpeakingSessionCompleted(currentLevel.name)
         }
     }
 
@@ -174,8 +294,25 @@ class SpeakingFragment : Fragment() {
         if (visible) binding.completionGroup.visibility = View.GONE
     }
 
+    override fun onResume() {
+        super.onResume()
+        studyTracker.start()
+    }
+
+    override fun onPause() {
+        val seconds = studyTracker.elapsedSecondsAndReset()
+        if (seconds > 0) {
+            lifecycleScope.launch { ProgressRepositoryProvider.repository.addStudySeconds(seconds) }
+        }
+        super.onPause()
+    }
+
     override fun onDestroyView() {
-        handler.removeCallbacksAndMessages(null)
+        speechRecognizer?.destroy()
+        speechRecognizer = null
+        textToSpeech?.stop()
+        textToSpeech?.shutdown()
+        textToSpeech = null
         super.onDestroyView()
         _binding = null
     }

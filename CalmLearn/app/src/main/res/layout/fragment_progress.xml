@@ -147,8 +147,8 @@
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
-            <include layout="@layout/item_stat_streak" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
-            <include layout="@layout/item_stat_words" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" />
+            <include android:id="@+id/statStreak" layout="@layout/item_stat_streak" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
+            <include android:id="@+id/statWords" layout="@layout/item_stat_words" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" />
         </LinearLayout>
 
         <LinearLayout
@@ -157,8 +157,8 @@
             android:layout_marginTop="12dp"
             android:orientation="horizontal">
 
-            <include layout="@layout/item_stat_lessons" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
-            <include layout="@layout/item_stat_quiz" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" />
+            <include android:id="@+id/statLessons" layout="@layout/item_stat_lessons" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
+            <include android:id="@+id/statQuiz" layout="@layout/item_stat_quiz" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" />
         </LinearLayout>
 
         <LinearLayout
@@ -167,8 +167,8 @@
             android:layout_marginTop="12dp"
             android:orientation="horizontal">
 
-            <include layout="@layout/item_stat_speaking" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
-            <include layout="@layout/item_stat_total" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" />
+            <include android:id="@+id/statSpeaking" layout="@layout/item_stat_speaking" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
+            <include android:id="@+id/statTotal" layout="@layout/item_stat_total" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" />
         </LinearLayout>
 
         <!-- Achievements -->

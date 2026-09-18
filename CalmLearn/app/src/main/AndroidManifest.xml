@@ -5,6 +5,17 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <!-- Nhan dien giong noi that trong man Luyen phat am (SpeechRecognizer) -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- Bat buoc tu Android 11 (API 30) de SpeechRecognizer.isRecognitionAvailable() nhan dung
+         dich vu nhan dien giong noi cua he thong (package visibility) -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

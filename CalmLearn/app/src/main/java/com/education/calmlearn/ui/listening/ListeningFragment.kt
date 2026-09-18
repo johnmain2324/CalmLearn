@@ -3,18 +3,26 @@ package com.education.calmlearn.ui.listening
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.education.calmlearn.R
 import com.education.calmlearn.data.mock.MockData
 import com.education.calmlearn.data.model.ListeningLesson
+import com.education.calmlearn.data.progress.ProgressRepositoryProvider
 import com.education.calmlearn.databinding.FragmentListeningBinding
 import com.education.calmlearn.ui.common.OptionsController
+import com.education.calmlearn.ui.common.StudySessionTracker
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.util.Locale
+import kotlinx.coroutines.launch
 
 class ListeningFragment : Fragment() {
 
@@ -24,21 +32,24 @@ class ListeningFragment : Fragment() {
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var lesson: ListeningLesson
     private lateinit var optionsController: OptionsController
+    private val studyTracker = StudySessionTracker()
+
+    private var textToSpeech: TextToSpeech? = null
+    private var ttsReady = false
 
     private var elapsedSeconds = 0
     private var isPlaying = false
     private var currentQuestionIndex = 0
     private var questionChecked = false
 
+    /** Chi con dung de cap nhat thanh tien do/dong ho theo tung giay TRONG KHI dang phat that
+     *  (isPlaying=true) - viec DUNG phat khi noi xong duoc quyet dinh boi su kien that cua
+     *  TextToSpeech (onStopPlayback(), goi tu UtteranceProgressListener.onDone/onError), khong con
+     *  phai doan mo theo lesson.durationSeconds nhu truoc. */
     private val tickRunnable = object : Runnable {
         override fun run() {
             if (_binding == null || !isPlaying) return
             elapsedSeconds += 1
-            if (elapsedSeconds >= lesson.durationSeconds) {
-                elapsedSeconds = 0
-                isPlaying = false
-                binding.btnPlayPause.setImageResource(R.drawable.ic_play)
-            }
             updatePlayerUi()
             if (isPlaying) handler.postDelayed(this, 1000)
         }
@@ -68,10 +79,28 @@ class ListeningFragment : Fragment() {
 
         binding.btnBack.setOnClickListener { findNavController().popBackStack() }
 
+        textToSpeech = TextToSpeech(requireContext()) { status ->
+            ttsReady = status == TextToSpeech.SUCCESS
+            if (ttsReady) {
+                textToSpeech?.language = Locale.US
+                textToSpeech?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String?) {}
+                    override fun onDone(utteranceId: String?) {
+                        if (utteranceId == UTTERANCE_ID_LAST_LINE) stopPlaybackOnMainThread()
+                    }
+                    override fun onError(utteranceId: String?, errorCode: Int) {
+                        stopPlaybackOnMainThread()
+                    }
+                    @Deprecated("Deprecated in the platform API - required override on API < 21")
+                    override fun onError(utteranceId: String?) {
+                        stopPlaybackOnMainThread()
+                    }
+                })
+            }
+        }
+
         binding.btnPlayPause.setOnClickListener {
-            isPlaying = !isPlaying
-            binding.btnPlayPause.setImageResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
-            if (isPlaying) handler.postDelayed(tickRunnable, 1000)
+            if (isPlaying) stopPlayback() else startPlayback()
         }
 
         optionsController = OptionsController(binding.optionsContainer)
@@ -114,13 +143,62 @@ class ListeningFragment : Fragment() {
             } else {
                 binding.questionGroup.visibility = View.GONE
                 binding.completionGroup.visibility = View.VISIBLE
+                persistLessonCompleted()
             }
         }
     }
 
+    /** Ghi nhan da hoan thanh xong toan bo cau hoi cua bai nghe nay - xem
+     *  ProgressRepository.recordListeningLessonCompleted. */
+    private fun persistLessonCompleted() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            ProgressRepositoryProvider.repository.recordListeningLessonCompleted(lesson.id)
+        }
+    }
+
+    /** Phat that toan bo hoi thoai bang TextToSpeech (khong con dem gio suong nhu truoc) - lan
+     *  luot doc tung dong trong lesson.transcript, "Nhan vien"/"Khach" deu duoc doc cung mot giong
+     *  he thong (TTS khong phan biet nguoi noi). Vi TTS khong ho tro tam dung/tiep tuc giua chung
+     *  mot cau, bam tam dung se dung han va bam phat lai se doc lai tu dau. */
+    private fun startPlayback() {
+        val engine = textToSpeech
+        if (engine == null || !ttsReady) {
+            Toast.makeText(requireContext(), R.string.listening_tts_unavailable, Toast.LENGTH_SHORT).show()
+            return
+        }
+        isPlaying = true
+        elapsedSeconds = 0
+        binding.btnPlayPause.setImageResource(R.drawable.ic_pause)
+        updatePlayerUi()
+
+        lesson.transcript.forEachIndexed { index, line ->
+            val queueMode = if (index == 0) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
+            val utteranceId = if (index == lesson.transcript.lastIndex) UTTERANCE_ID_LAST_LINE else "line_$index"
+            engine.speak(line.line, queueMode, null, utteranceId)
+        }
+        handler.postDelayed(tickRunnable, 1000)
+    }
+
+    private fun stopPlayback() {
+        isPlaying = false
+        textToSpeech?.stop()
+        handler.removeCallbacks(tickRunnable)
+        if (_binding != null) {
+            binding.btnPlayPause.setImageResource(R.drawable.ic_play)
+        }
+    }
+
+    /** UtteranceProgressListener chay tren luong nen cua TTS engine, khong phai main thread - phai
+     *  quay ve main thread truoc khi dung cham vao View. */
+    private fun stopPlaybackOnMainThread() {
+        activity?.runOnUiThread { stopPlayback() }
+    }
+
     private fun updatePlayerUi() {
         binding.playerProgress.max = lesson.durationSeconds
-        binding.playerProgress.progress = elapsedSeconds
+        // TTS that su co the noi lau/nhanh hon uoc luong durationSeconds trong MockData - gioi han
+        // gia tri hien thi de thanh tien do khong vuot qua max, dong ho van hien so giay that.
+        binding.playerProgress.progress = elapsedSeconds.coerceAtMost(lesson.durationSeconds)
         binding.playerTime.text = "${formatTime(elapsedSeconds)} / ${formatTime(lesson.durationSeconds)}"
     }
 
@@ -130,9 +208,29 @@ class ListeningFragment : Fragment() {
         return String.format("%d:%02d", minutes, seconds)
     }
 
+    override fun onResume() {
+        super.onResume()
+        studyTracker.start()
+    }
+
+    override fun onPause() {
+        val seconds = studyTracker.elapsedSecondsAndReset()
+        if (seconds > 0) {
+            lifecycleScope.launch { ProgressRepositoryProvider.repository.addStudySeconds(seconds) }
+        }
+        super.onPause()
+    }
+
     override fun onDestroyView() {
         handler.removeCallbacksAndMessages(null)
+        textToSpeech?.stop()
+        textToSpeech?.shutdown()
+        textToSpeech = null
         super.onDestroyView()
         _binding = null
+    }
+
+    private companion object {
+        const val UTTERANCE_ID_LAST_LINE = "listening_last_line"
     }
 }

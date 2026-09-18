@@ -14,6 +14,7 @@ import com.education.calmlearn.data.model.Topic
 import com.education.calmlearn.data.model.TranscriptLine
 import com.education.calmlearn.data.model.User
 import com.education.calmlearn.data.model.VocabWord
+import com.education.calmlearn.data.progress.LearningProgress
 
 /**
  * In-memory sample data for the CalmLearn UI prototype.
@@ -116,6 +117,62 @@ object MockData {
     )
 
     fun wordsForTopic(topicId: String): List<VocabWord> = vocabWords.filter { it.topicId == topicId }
+
+    /** % tu vung THAT da hoc trong mot chu de, tinh tu trang thai isLearned hien tai cua
+     *  vocabWords (phai goi applyProgress() truoc de trang thai nay la du lieu that, khong phai
+     *  gia tri mac dinh false). Thay the cho Topic.learnedWords/percent co dinh trong MockData. */
+    fun topicPercent(topicId: String): Int {
+        val words = wordsForTopic(topicId)
+        if (words.isEmpty()) return 0
+        return (words.count { it.isLearned } * 100) / words.size
+    }
+
+    /** "Bai hoc hoan thanh" (Progress) = so chu de tu vung da hoc HET tu + so bai ngu phap da xem
+     *  qua mini-quiz. Phai goi applyProgress() truoc de topicPercent() phan anh dung trang thai
+     *  that. */
+    fun lessonsCompletedCount(progress: LearningProgress): Int {
+        val topicsCompleted = topics.count { topicPercent(it.id) == 100 }
+        return topicsCompleted + progress.completedGrammarLessonIds.size
+    }
+
+    /** Ap trang thai tien do that (da hoc/yeu thich) cua nguoi dung dang dang nhap len danh sach
+     *  tu vung trong bo nho - noi dung tu (dinh nghia, vi du...) van giu nguyen, chi hai co isLearned/
+     *  isFavorite duoc dong bo lai tu Firestore (xem data/progress/ProgressRepository.kt). */
+    fun applyProgress(progress: LearningProgress) {
+        vocabWords.forEach { word ->
+            word.isLearned = progress.learnedWordIds.contains(word.id)
+            word.isFavorite = progress.favoriteWordIds.contains(word.id)
+        }
+    }
+
+    /**
+     * Danh gia lai trang thai mo khoa/tien do cua tat ca huy hieu tu du lieu tien do THAT (khong
+     * con so lieu mau co dinh cho huy hieu nao nua - ca 5 huy hieu deu co nguon du lieu that trong
+     * LearningProgress, xem ProgressRepository).
+     */
+    fun applyAchievementProgress(progress: LearningProgress) {
+        achievements.firstOrNull { it.id == "ach_streak" }?.let { achievement ->
+            achievement.progressCurrent = progress.streak.coerceAtMost(achievement.progressTotal)
+            achievement.isUnlocked = progress.streak >= achievement.progressTotal
+        }
+        achievements.firstOrNull { it.id == "ach_words" }?.let { achievement ->
+            val learnedCount = progress.learnedWordIds.size
+            achievement.progressCurrent = learnedCount.coerceAtMost(achievement.progressTotal)
+            achievement.isUnlocked = learnedCount >= achievement.progressTotal
+        }
+        achievements.firstOrNull { it.id == "ach_speaking" }?.let { achievement ->
+            achievement.progressCurrent = progress.speakingSessionCount.coerceAtMost(achievement.progressTotal)
+            achievement.isUnlocked = progress.speakingSessionCount >= achievement.progressTotal
+        }
+        achievements.firstOrNull { it.id == "ach_quiz" }?.let { achievement ->
+            achievement.progressCurrent = progress.highAccuracyQuizCount.coerceAtMost(achievement.progressTotal)
+            achievement.isUnlocked = progress.highAccuracyQuizCount >= achievement.progressTotal
+        }
+        achievements.firstOrNull { it.id == "ach_listener" }?.let { achievement ->
+            achievement.progressCurrent = progress.listeningSessionCount.coerceAtMost(achievement.progressTotal)
+            achievement.isUnlocked = progress.listeningSessionCount >= achievement.progressTotal
+        }
+    }
 
     val grammarLessons = listOf(
         GrammarLesson(

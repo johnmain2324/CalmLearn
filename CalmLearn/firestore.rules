@@ -26,6 +26,24 @@ service cloud.firestore {
 
       allow delete: if false;
     }
+
+    // Tien do hoc tap (tu da hoc, yeu thich, XP, streak) - TACH RIENG khoi document "users/{userId}"
+    // vi isValidProfile() ben duoi chi cho phep dung 4 truong co dinh cua ho so, khong lien quan gi
+    // toi tien do hoc. Cung nguyen tac so huu: chi chinh chu tai khoan (request.auth.uid == userId)
+    // moi doc/ghi duoc document tien do cua minh - khong mo quyen cho nguoi khac.
+    match /learningProgress/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && isValidProgress(request.resource.data);
+
+      allow update: if request.auth != null
+        && request.auth.uid == userId
+        && isValidProgress(request.resource.data);
+
+      allow delete: if false;
+    }
   }
 
   function isValidProfile(data) {
@@ -36,5 +54,37 @@ service cloud.firestore {
       && data.email == request.auth.token.email
       && data.gender is string
       && data.gender in ['MALE', 'FEMALE', 'OTHER'];
+  }
+
+  // Client ghi tung phan (arrayUnion/arrayRemove, hoac set(..., merge: true)) nen mot lan ghi co
+  // the chi chua MOT VAI truong trong so nay - vi vay chi kiem tra KIEU DU LIEU cho truong nao THAT
+  // SU co mat trong request.resource.data (sau khi merge), khong doi hoi phai co du ca 7 truong.
+  function isValidProgress(data) {
+    return data.keys().hasOnly([
+        'learnedWordIds', 'favoriteWordIds', 'xpAwardedWordIds', 'quizXpAwardedKeys',
+        'speakingSessionAwardedKeys', 'speakingSessionCount',
+        'listeningSessionAwardedKeys', 'listeningSessionCount',
+        'todayStudySeconds', 'todayStudyDate', 'totalStudySeconds', 'completedGrammarLessonIds',
+        'xp', 'streak', 'lastActiveDate', 'lastQuizAccuracyPercent', 'highAccuracyQuizCount', 'updatedAt'
+      ])
+      && (!('learnedWordIds' in data) || data.learnedWordIds is list)
+      && (!('favoriteWordIds' in data) || data.favoriteWordIds is list)
+      && (!('xpAwardedWordIds' in data) || data.xpAwardedWordIds is list)
+      && (!('quizXpAwardedKeys' in data) || data.quizXpAwardedKeys is list)
+      && (!('speakingSessionAwardedKeys' in data) || data.speakingSessionAwardedKeys is list)
+      && (!('speakingSessionCount' in data) || (data.speakingSessionCount is int && data.speakingSessionCount >= 0))
+      && (!('listeningSessionAwardedKeys' in data) || data.listeningSessionAwardedKeys is list)
+      && (!('listeningSessionCount' in data) || (data.listeningSessionCount is int && data.listeningSessionCount >= 0))
+      && (!('todayStudySeconds' in data) || (data.todayStudySeconds is int && data.todayStudySeconds >= 0))
+      && (!('todayStudyDate' in data) || data.todayStudyDate is string)
+      && (!('totalStudySeconds' in data) || (data.totalStudySeconds is int && data.totalStudySeconds >= 0))
+      && (!('completedGrammarLessonIds' in data) || data.completedGrammarLessonIds is list)
+      && (!('xp' in data) || (data.xp is int && data.xp >= 0))
+      && (!('streak' in data) || (data.streak is int && data.streak >= 0))
+      && (!('lastActiveDate' in data) || data.lastActiveDate is string)
+      && (!('lastQuizAccuracyPercent' in data) || (data.lastQuizAccuracyPercent is int
+            && data.lastQuizAccuracyPercent >= 0 && data.lastQuizAccuracyPercent <= 100))
+      && (!('highAccuracyQuizCount' in data) || (data.highAccuracyQuizCount is int && data.highAccuracyQuizCount >= 0))
+      && (!('updatedAt' in data) || data.updatedAt is timestamp);
   }
 }

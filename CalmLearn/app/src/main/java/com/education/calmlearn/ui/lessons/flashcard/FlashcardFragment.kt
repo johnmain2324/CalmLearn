@@ -5,12 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.education.calmlearn.R
 import com.education.calmlearn.data.mock.MockData
 import com.education.calmlearn.data.model.VocabWord
+import com.education.calmlearn.data.progress.ProgressRepositoryProvider
+import com.education.calmlearn.data.progress.ProgressResult
 import com.education.calmlearn.databinding.FragmentFlashcardBinding
+import com.education.calmlearn.ui.common.StudySessionTracker
+import kotlinx.coroutines.launch
 
 class FlashcardFragment : Fragment() {
 
@@ -18,6 +23,7 @@ class FlashcardFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var words: List<VocabWord>
+    private val studyTracker = StudySessionTracker()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,12 +50,18 @@ class FlashcardFragment : Fragment() {
 
         binding.btnBack.setOnClickListener { findNavController().popBackStack() }
 
+        hydrateProgress()
+
         binding.btnKnowIt.setOnClickListener {
-            words[binding.flashcardPager.currentItem].isLearned = true
+            val word = words[binding.flashcardPager.currentItem]
+            word.isLearned = true
+            persistLearned(word.id, true)
             goToNextCard()
         }
         binding.btnStillLearning.setOnClickListener {
-            words[binding.flashcardPager.currentItem].isLearned = false
+            val word = words[binding.flashcardPager.currentItem]
+            word.isLearned = false
+            persistLearned(word.id, false)
             goToNextCard()
         }
         binding.btnRestart.setOnClickListener {
@@ -70,10 +82,38 @@ class FlashcardFragment : Fragment() {
         }
     }
 
+    private fun hydrateProgress() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = ProgressRepositoryProvider.repository.loadProgress()
+            if (result is ProgressResult.Loaded) {
+                MockData.applyProgress(result.progress)
+            }
+        }
+    }
+
+    private fun persistLearned(wordId: String, learned: Boolean) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            ProgressRepositoryProvider.repository.setWordLearned(wordId, learned)
+        }
+    }
+
     private fun updateProgress(position: Int) {
         binding.flashcardProgress.text = getString(R.string.flashcard_progress_format, position + 1, words.size)
         binding.flashcardProgressBar.max = words.size
         binding.flashcardProgressBar.progress = position + 1
+    }
+
+    override fun onResume() {
+        super.onResume()
+        studyTracker.start()
+    }
+
+    override fun onPause() {
+        val seconds = studyTracker.elapsedSecondsAndReset()
+        if (seconds > 0) {
+            lifecycleScope.launch { ProgressRepositoryProvider.repository.addStudySeconds(seconds) }
+        }
+        super.onPause()
     }
 
     override fun onDestroyView() {

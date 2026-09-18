@@ -15,6 +15,8 @@ import com.education.calmlearn.R
 import com.education.calmlearn.data.auth.AuthRepositoryProvider
 import com.education.calmlearn.data.auth.Gender
 import com.education.calmlearn.data.auth.ProfileResult
+import com.education.calmlearn.data.progress.ProgressRepositoryProvider
+import com.education.calmlearn.data.progress.ProgressResult
 import com.education.calmlearn.databinding.FragmentProfileBinding
 import com.education.calmlearn.ui.achievement.AchievementListActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -40,6 +42,7 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         loadCurrentUser()
+        loadProgress()
 
         binding.rowAccount.root.setOnClickListener {
             Toast.makeText(requireContext(), R.string.profile_account, Toast.LENGTH_SHORT).show()
@@ -106,6 +109,16 @@ class ProfileFragment : Fragment() {
                     binding.tvProfileName.text = getString(R.string.profile_load_error)
                     binding.tvProfileGender.text = getString(R.string.profile_gender_unset)
                 }
+            }
+        }
+    }
+
+    private fun loadProgress() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val result = ProgressRepositoryProvider.repository.loadProgress()
+            if (result is ProgressResult.Loaded) {
+                binding.tvStreakValue.text = getString(R.string.streak_value_format, result.progress.streak)
+                binding.tvXpValue.text = getString(R.string.xp_value_format, result.progress.xp)
             }
         }
     }

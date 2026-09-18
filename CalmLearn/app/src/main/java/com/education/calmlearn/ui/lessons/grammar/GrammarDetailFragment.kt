@@ -5,13 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.education.calmlearn.R
 import com.education.calmlearn.data.mock.MockData
 import com.education.calmlearn.data.model.GrammarLesson
+import com.education.calmlearn.data.progress.ProgressRepositoryProvider
 import com.education.calmlearn.databinding.FragmentGrammarDetailBinding
 import com.education.calmlearn.databinding.ItemGrammarExampleBinding
 import com.education.calmlearn.ui.common.OptionsController
+import com.education.calmlearn.ui.common.StudySessionTracker
+import kotlinx.coroutines.launch
 
 class GrammarDetailFragment : Fragment() {
 
@@ -20,6 +24,7 @@ class GrammarDetailFragment : Fragment() {
 
     private lateinit var lesson: GrammarLesson
     private lateinit var optionsController: OptionsController
+    private val studyTracker = StudySessionTracker()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,6 +70,9 @@ class GrammarDetailFragment : Fragment() {
                     optionsController.showResult(quiz.correctIndex)
                     binding.quizExplanation.text = quiz.explanation
                     binding.quizExplanation.visibility = View.VISIBLE
+                    lifecycleScope.launch {
+                        ProgressRepositoryProvider.repository.recordGrammarLessonCompleted(lesson.id)
+                    }
                 }
             }
         } else {
@@ -73,6 +81,19 @@ class GrammarDetailFragment : Fragment() {
         }
 
         binding.btnBack.setOnClickListener { findNavController().popBackStack() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        studyTracker.start()
+    }
+
+    override fun onPause() {
+        val seconds = studyTracker.elapsedSecondsAndReset()
+        if (seconds > 0) {
+            lifecycleScope.launch { ProgressRepositoryProvider.repository.addStudySeconds(seconds) }
+        }
+        super.onPause()
     }
 
     override fun onDestroyView() {

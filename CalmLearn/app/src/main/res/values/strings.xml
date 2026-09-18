@@ -25,6 +25,21 @@
     <string name="home_goal_remaining_empty">Bắt đầu ngay</string>
     <string name="home_course_percent_empty">0% hoàn tất</string>
 
+    <!-- Tien do hoc tap that (data/progress/) - dung chung cho Home, Progress, Profile -->
+    <string name="streak_value_format">%1$d ngày</string>
+    <string name="xp_value_format">%1$d XP</string>
+    <string name="words_learned_format">%1$d từ</string>
+    <string name="home_course_percent_format">%1$d%% hoàn tất</string>
+    <string name="home_goal_percent_format">%1$d%% hoàn thành</string>
+    <string name="home_goal_minutes_format">Đã học: %1$d / %2$d phút</string>
+    <string name="home_goal_remaining_format">Còn %1$d phút nữa</string>
+    <string name="home_goal_remaining_done">Đã hoàn thành mục tiêu hôm nay!</string>
+    <string name="quiz_accuracy_format">%1$d%%</string>
+    <string name="speaking_sessions_format">%1$d lượt</string>
+    <string name="total_study_time_format">%1$dh %2$dm</string>
+    <string name="lessons_completed_format">%1$d bài</string>
+    <string name="progress_sync_error">Không đồng bộ được, vui lòng thử lại.</string>
+
     <!-- Ho so nguoi dung (Trang chu / Ho so) - trang thai trong khi tai / khong co du lieu that -->
     <string name="profile_name_loading">Đang tải…</string>
     <string name="profile_name_fallback">Người dùng CalmLearn</string>
@@ -294,6 +309,9 @@
     <string name="speaking_level_sentence">Câu</string>
     <string name="speaking_tip_label">Gợi ý phát âm</string>
     <string name="speaking_idle_hint">Chạm vào micro và đọc to nội dung trên</string>
+    <string name="speaking_permission_denied">Cần quyền truy cập micro để luyện phát âm.</string>
+    <string name="speaking_recognition_unavailable">Thiết bị này chưa hỗ trợ nhận diện giọng nói.</string>
+    <string name="speaking_tts_unavailable">Thiết bị này chưa hỗ trợ đọc mẫu phát âm.</string>
     <string name="speaking_listening_hint">Đang nghe… hãy đọc to rõ ràng</string>
     <string name="speaking_processing_hint">Đang phân tích phát âm…</string>
     <string name="speaking_correct_title">Phát âm chuẩn!</string>
@@ -310,6 +328,7 @@
     <string name="listening_question_label">Câu hỏi</string>
     <string name="listening_explanation_label">Giải thích</string>
     <string name="listening_complete_title">Hoàn thành bài nghe!</string>
+    <string name="listening_tts_unavailable">Thiết bị này chưa hỗ trợ đọc văn bản thành giọng nói.</string>
 
     <!-- Quiz -->
     <string name="quiz_title">Quiz trắc nghiệm</string>

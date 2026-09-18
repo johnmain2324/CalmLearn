@@ -7,7 +7,7 @@ data class Achievement(
     val title: String,
     val description: String,
     @DrawableRes val iconRes: Int,
-    val isUnlocked: Boolean,
-    val progressCurrent: Int,
+    var isUnlocked: Boolean,
+    var progressCurrent: Int,
     val progressTotal: Int
 )
