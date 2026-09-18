@@ -15,6 +15,7 @@ import com.education.calmlearn.data.model.TranscriptLine
 import com.education.calmlearn.data.model.User
 import com.education.calmlearn.data.model.VocabWord
 import com.education.calmlearn.data.progress.LearningProgress
+import com.education.calmlearn.data.vocab.VocabRepositoryProvider
 
 /**
  * In-memory sample data for the CalmLearn UI prototype.
@@ -65,56 +66,31 @@ object MockData {
         Topic("movie", "Giải trí & Phim ảnh", R.drawable.ic_film, R.drawable.bg_icon_square_amber, 32, 8)
     )
 
-    // 5 sample words per topic — enough to demonstrate list, detail and flashcard flows.
-    val vocabWords: MutableList<VocabWord> = mutableListOf(
-        VocabWord("travel_1", "travel", "journey", "/ˈdʒɜːni/", "n.", "hành trình, chuyến đi", "a trip from one place to another, especially a long one", "Our journey to the mountains took six hours.", "Hành trình của chúng tôi đến vùng núi mất sáu tiếng.", listOf("trip", "voyage"), isFavorite = true, isLearned = true),
-        VocabWord("travel_2", "travel", "itinerary", "/aɪˈtɪnərəri/", "n.", "lịch trình", "a planned route or schedule for a journey", "She emailed everyone the full itinerary before the trip.", "Cô ấy đã gửi email lịch trình đầy đủ cho mọi người trước chuyến đi.", listOf("schedule", "plan"), isLearned = true),
-        VocabWord("travel_3", "travel", "luggage", "/ˈlʌɡɪdʒ/", "n.", "hành lý", "bags and suitcases used to carry belongings while travelling", "Please keep your luggage with you at all times.", "Vui lòng giữ hành lý bên mình mọi lúc.", listOf("baggage"), isLearned = true),
-        VocabWord("travel_4", "travel", "boarding pass", "/ˈbɔːdɪŋ pɑːs/", "n.", "thẻ lên máy bay", "a document allowing a passenger to board a flight", "Don't forget to show your boarding pass at the gate.", "Đừng quên xuất trình thẻ lên máy bay tại cổng.", listOf("ticket")),
-        VocabWord("travel_5", "travel", "delay", "/dɪˈleɪ/", "n./v.", "sự trì hoãn / trì hoãn", "a period of time when something is later than expected", "The train delay made us miss our connection.", "Sự trì hoãn của tàu khiến chúng tôi lỡ chuyến nối tiếp.", listOf("postponement")),
+    /**
+     * Tu vung THAT, nap tu SQLite qua VocabRepository (xem data/vocab/) - KHONG con
+     * hardcode literal nao o day nua. 40 tu Phase 1 (5 tu x 8 chu de, giu dung id cu
+     * "travel_1"... de tuong thich voi learnedWordIds/favoriteWordIds da luu trong
+     * Firestore) duoc sinh boi pipeline ETL offline (scripts/vocab_etl/) va dong goi
+     * san trong app/src/main/assets/vocab.db - xem SQLITE_VOCAB.md o goc project.
+     * Rong cho den khi [ensureVocabWordsLoaded] duoc goi lan dau.
+     */
+    var vocabWords: MutableList<VocabWord> = mutableListOf()
+        private set
 
-        VocabWord("daily_1", "daily", "routine", "/ruːˈtiːn/", "n.", "thói quen hằng ngày", "the usual series of things you do at a particular time", "Waking up at 6 AM is part of my daily routine.", "Thức dậy lúc 6 giờ sáng là một phần thói quen hằng ngày của tôi.", listOf("habit"), isFavorite = true, isLearned = true),
-        VocabWord("daily_2", "daily", "chore", "/tʃɔːr/", "n.", "việc vặt", "a routine task, especially a household one", "Washing dishes is my least favorite chore.", "Rửa bát là việc vặt tôi ít thích nhất.", listOf("task"), isLearned = true),
-        VocabWord("daily_3", "daily", "errand", "/ˈerənd/", "n.", "việc lặt vặt cần đi ra ngoài", "a short trip to do a specific task, like shopping", "I need to run a few errands this afternoon.", "Chiều nay tôi cần đi làm vài việc lặt vặt.", listOf("task"), isLearned = true),
-        VocabWord("daily_4", "daily", "commute", "/kəˈmjuːt/", "v./n.", "đi lại (giữa nhà và nơi làm)", "to travel regularly between home and work", "She commutes to the city by bus every day.", "Cô ấy đi làm bằng xe buýt vào thành phố mỗi ngày.", listOf("travel"), isLearned = true),
-        VocabWord("daily_5", "daily", "leisure", "/ˈleʒər/", "n.", "thời gian rảnh rỗi", "time spent doing what you enjoy, not working", "He spends his leisure time reading novels.", "Anh ấy dành thời gian rảnh để đọc tiểu thuyết.", listOf("free time")),
+    private var vocabWordsLoaded = false
 
-        VocabWord("food_1", "food", "appetizer", "/ˈæpɪtaɪzər/", "n.", "món khai vị", "a small dish served before the main course", "We shared an appetizer while waiting for the main dish.", "Chúng tôi dùng chung một món khai vị trong lúc chờ món chính.", listOf("starter"), isFavorite = true),
-        VocabWord("food_2", "food", "reservation", "/ˌrezərˈveɪʃn/", "n.", "sự đặt chỗ", "an arrangement to have a table, room, etc. kept for you", "I made a reservation for two at 7 PM.", "Tôi đã đặt chỗ cho hai người lúc 7 giờ tối.", listOf("booking")),
-        VocabWord("food_3", "food", "recipe", "/ˈresəpi/", "n.", "công thức nấu ăn", "a set of instructions for preparing a dish", "This is my grandmother's recipe for spring rolls.", "Đây là công thức làm chả giò của bà tôi.", listOf("formula")),
-        VocabWord("food_4", "food", "bland", "/blænd/", "adj.", "nhạt, ít gia vị", "having little or no flavor", "The soup tasted a bit bland without salt.", "Món súp có vị hơi nhạt khi thiếu muối.", listOf("tasteless")),
-        VocabWord("food_5", "food", "leftovers", "/ˈleftoʊvərz/", "n.", "đồ ăn thừa", "food remaining after a meal", "We kept the leftovers in the fridge for tomorrow.", "Chúng tôi để đồ ăn thừa trong tủ lạnh cho ngày mai.", listOf("remains")),
-
-        VocabWord("tech_1", "tech", "upgrade", "/ˈʌpɡreɪd/", "v./n.", "nâng cấp", "to improve a device or system to a better version", "I upgraded my phone's storage last week.", "Tôi đã nâng cấp dung lượng lưu trữ điện thoại tuần trước.", listOf("update")),
-        VocabWord("tech_2", "tech", "battery life", "/ˈbætəri laɪf/", "n.", "thời lượng pin", "how long a device runs before needing a charge", "This laptop has excellent battery life.", "Chiếc laptop này có thời lượng pin rất tốt.", listOf("charge duration")),
-        VocabWord("tech_3", "tech", "malware", "/ˈmælwer/", "n.", "phần mềm độc hại", "software designed to damage or disrupt a system", "The download contained hidden malware.", "Tệp tải xuống chứa phần mềm độc hại ẩn.", listOf("virus")),
-        VocabWord("tech_4", "tech", "password", "/ˈpæswɜːrd/", "n.", "mật khẩu", "a secret word or phrase used to access an account", "Never share your password with anyone.", "Đừng bao giờ chia sẻ mật khẩu của bạn với bất kỳ ai.", listOf("passcode")),
-        VocabWord("tech_5", "tech", "device", "/dɪˈvaɪs/", "n.", "thiết bị", "a piece of equipment made for a particular purpose", "Please turn off all electronic devices before takeoff.", "Vui lòng tắt tất cả thiết bị điện tử trước khi cất cánh.", listOf("gadget")),
-
-        VocabWord("school_1", "school", "assignment", "/əˈsaɪnmənt/", "n.", "bài tập được giao", "a task or piece of work given to someone", "The assignment is due next Monday.", "Bài tập phải nộp vào thứ Hai tới.", listOf("homework")),
-        VocabWord("school_2", "school", "lecture", "/ˈlektʃər/", "n.", "bài giảng", "an educational talk to an audience", "The professor gave a two-hour lecture on economics.", "Giáo sư đã giảng bài hai tiếng về kinh tế học.", listOf("class")),
-        VocabWord("school_3", "school", "scholarship", "/ˈskɒlərʃɪp/", "n.", "học bổng", "financial aid given to a student for their studies", "She received a full scholarship to study abroad.", "Cô ấy được nhận học bổng toàn phần để du học.", listOf("grant")),
-        VocabWord("school_4", "school", "deadline", "/ˈdedlaɪn/", "n.", "hạn chót", "the latest time by which something must be finished", "The submission deadline is Friday at noon.", "Hạn nộp bài là trưa thứ Sáu.", listOf("due date")),
-        VocabWord("school_5", "school", "campus", "/ˈkæmpəs/", "n.", "khuôn viên trường", "the grounds and buildings of a university", "The campus has a large library and a sports center.", "Khuôn viên trường có thư viện lớn và trung tâm thể thao.", listOf("grounds")),
-
-        VocabWord("work_1", "work", "resume", "/ˈrezʊmeɪ/", "n.", "sơ yếu lý lịch", "a document summarizing your work experience and skills", "Update your resume before applying for the job.", "Hãy cập nhật sơ yếu lý lịch trước khi ứng tuyển.", listOf("CV")),
-        VocabWord("work_2", "work", "candidate", "/ˈkændɪdət/", "n.", "ứng viên", "a person who applies for a job", "Three candidates were shortlisted for the interview.", "Ba ứng viên đã được chọn vào vòng phỏng vấn.", listOf("applicant")),
-        VocabWord("work_3", "work", "deadline", "/ˈdedlaɪn/", "n.", "hạn chót", "the latest time a task must be completed", "We must meet the project deadline this Friday.", "Chúng ta phải hoàn thành dự án đúng hạn thứ Sáu này.", listOf("due date")),
-        VocabWord("work_4", "work", "promotion", "/prəˈmoʊʃn/", "n.", "sự thăng chức", "advancement to a higher position at work", "He got a promotion after two years at the company.", "Anh ấy được thăng chức sau hai năm làm việc tại công ty.", listOf("advancement")),
-        VocabWord("work_5", "work", "colleague", "/ˈkɒliːɡ/", "n.", "đồng nghiệp", "a person you work with", "My colleague helped me finish the report.", "Đồng nghiệp của tôi đã giúp tôi hoàn thành báo cáo.", listOf("coworker")),
-
-        VocabWord("social_1", "social", "acquaintance", "/əˈkweɪntəns/", "n.", "người quen", "someone you know but not closely", "He's just a business acquaintance, not a close friend.", "Anh ấy chỉ là người quen trong công việc, không phải bạn thân.", listOf("contact")),
-        VocabWord("social_2", "social", "apologize", "/əˈpɒlədʒaɪz/", "v.", "xin lỗi", "to say sorry for something you did wrong", "She apologized for being late to the meeting.", "Cô ấy đã xin lỗi vì đến trễ cuộc họp.", listOf("say sorry")),
-        VocabWord("social_3", "social", "compliment", "/ˈkɒmplɪmənt/", "n./v.", "lời khen / khen ngợi", "an expression of praise or admiration", "He complimented her on the excellent presentation.", "Anh ấy khen cô ấy về bài thuyết trình xuất sắc.", listOf("praise")),
-        VocabWord("social_4", "social", "invite", "/ɪnˈvaɪt/", "v.", "mời", "to ask someone to attend an event", "We invited our neighbors to the housewarming party.", "Chúng tôi mời hàng xóm đến tiệc tân gia.", listOf("ask")),
-        VocabWord("social_5", "social", "gathering", "/ˈɡæðərɪŋ/", "n.", "buổi tụ họp", "an occasion when people come together", "The family gathering happens every Lunar New Year.", "Buổi tụ họp gia đình diễn ra vào mỗi dịp Tết.", listOf("get-together")),
-
-        VocabWord("movie_1", "movie", "plot", "/plɒt/", "n.", "cốt truyện", "the main events of a story", "The plot twist at the end surprised everyone.", "Tình tiết bất ngờ ở cuối phim khiến mọi người ngạc nhiên.", listOf("storyline")),
-        VocabWord("movie_2", "movie", "subtitle", "/ˈsʌbtaɪtl/", "n.", "phụ đề", "translated text shown on screen during a film", "I watched the film with English subtitles.", "Tôi đã xem phim với phụ đề tiếng Anh.", listOf("caption")),
-        VocabWord("movie_3", "movie", "sequel", "/ˈsiːkwəl/", "n.", "phần tiếp theo", "a film that continues the story of an earlier one", "The sequel was even better than the original.", "Phần tiếp theo còn hay hơn cả bản gốc.", listOf("follow-up")),
-        VocabWord("movie_4", "movie", "cast", "/kæst/", "n.", "dàn diễn viên", "the actors who perform in a film", "The cast includes several award-winning actors.", "Dàn diễn viên gồm nhiều diễn viên từng đoạt giải.", listOf("actors")),
-        VocabWord("movie_5", "movie", "premiere", "/prɪˈmɪər/", "n.", "buổi công chiếu", "the first public showing of a film", "Fans lined up outside the premiere all night.", "Người hâm mộ xếp hàng bên ngoài buổi công chiếu suốt đêm.", listOf("opening"))
-    )
+    /**
+     * Nap tu vung tu SQLite (qua [VocabRepositoryProvider]) MOT LAN roi cache lai
+     * trong [vocabWords] - an toan de goi lai nhieu lan tu nhieu Fragment khac nhau
+     * (TopicDetailFragment/WordDetailFragment/FlashcardFragment/HomeFragment/
+     * ProgressFragment), cung pattern voi cac ham hydrateProgress() da co san goi
+     * ProgressRepository trong lifecycleScope.launch.
+     */
+    suspend fun ensureVocabWordsLoaded() {
+        if (vocabWordsLoaded) return
+        vocabWords = VocabRepositoryProvider.repository.getAllWords().toMutableList()
+        vocabWordsLoaded = true
+    }
 
     fun wordsForTopic(topicId: String): List<VocabWord> = vocabWords.filter { it.topicId == topicId }
 

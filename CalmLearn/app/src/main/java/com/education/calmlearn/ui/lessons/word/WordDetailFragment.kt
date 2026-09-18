@@ -39,30 +39,41 @@ class WordDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val wordId = requireArguments().getString("wordId") ?: MockData.vocabWords.first().id
-        word = MockData.vocabWords.firstOrNull { it.id == wordId } ?: MockData.vocabWords.first()
-
-        renderWord()
-        hydrateProgress()
+        val wordId = requireArguments().getString("wordId")
+        loadWordThenProgress(wordId)
 
         binding.btnBack.setOnClickListener { findNavController().popBackStack() }
-
-        binding.btnFavorite.setOnClickListener {
-            val newValue = !word.isFavorite
-            word.isFavorite = newValue
-            updateFavoriteIcon()
-            persistFavorite(newValue)
-        }
 
         binding.btnPlaySample.setOnClickListener {
             Toast.makeText(requireContext(), R.string.action_play_sample, Toast.LENGTH_SHORT).show()
         }
+    }
 
-        binding.btnMarkLearned.setOnClickListener {
-            val newValue = !word.isLearned
-            word.isLearned = newValue
-            updateLearnedButton()
-            persistLearned(newValue)
+    /** Nap tu vung tu SQLite (qua MockData.ensureVocabWordsLoaded - xem data/vocab/) TRUOC, roi
+     *  moi dong bo tien do that tu Firestore - cac nut Yeu thich/Da thuoc chi duoc bat sau khi
+     *  [word] da co gia tri that (tranh bam truoc khi nap xong gay loi lateinit). */
+    private fun loadWordThenProgress(wordId: String?) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            MockData.ensureVocabWordsLoaded()
+            word = (wordId?.let { id -> MockData.vocabWords.firstOrNull { it.id == id } }
+                ?: MockData.vocabWords.firstOrNull())
+                ?: return@launch
+            renderWord()
+
+            binding.btnFavorite.setOnClickListener {
+                val newValue = !word.isFavorite
+                word.isFavorite = newValue
+                updateFavoriteIcon()
+                persistFavorite(newValue)
+            }
+            binding.btnMarkLearned.setOnClickListener {
+                val newValue = !word.isLearned
+                word.isLearned = newValue
+                updateLearnedButton()
+                persistLearned(newValue)
+            }
+
+            hydrateProgress()
         }
     }
 

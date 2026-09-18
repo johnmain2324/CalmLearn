@@ -8,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.education.calmlearn.data.auth.AuthRepositoryProvider
 import com.education.calmlearn.data.onboarding.OnboardingPrefs
+import com.education.calmlearn.data.vocab.VocabRepositoryProvider
 import com.education.calmlearn.databinding.ActivityMainBinding
 import com.education.calmlearn.ui.start.StartDestination
 import com.education.calmlearn.ui.start.StartDestinationResolver
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        VocabRepositoryProvider.init(applicationContext)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

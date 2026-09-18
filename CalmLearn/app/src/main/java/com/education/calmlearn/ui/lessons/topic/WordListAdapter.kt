@@ -20,6 +20,8 @@ class WordListAdapter(
         notifyDataSetChanged()
     }
 
+    fun currentWords(): List<VocabWord> = words.toList()
+
     inner class WordViewHolder(val binding: ItemWordRowBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordViewHolder {

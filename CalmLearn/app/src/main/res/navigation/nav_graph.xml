@@ -75,6 +75,16 @@
         android:label="Quiz" />
 
     <fragment
+        android:id="@+id/vocabListFragment"
+        android:name="com.education.calmlearn.ui.vocab.VocabListFragment"
+        android:label="VocabList" />
+
+    <fragment
+        android:id="@+id/addWordFragment"
+        android:name="com.education.calmlearn.ui.vocab.AddWordFragment"
+        android:label="AddWord" />
+
+    <fragment
         android:id="@+id/registerFragment"
         android:name="com.education.calmlearn.ui.register.RegisterFragment"
         android:label="Register" />
@@ -161,5 +171,13 @@
     <action
         android:id="@+id/action_global_verifyEmail"
         app:destination="@id/verifyEmailFragment" />
+
+    <action
+        android:id="@+id/action_global_vocabList"
+        app:destination="@id/vocabListFragment" />
+
+    <action
+        android:id="@+id/action_global_addWord"
+        app:destination="@id/addWordFragment" />
 
 </navigation>

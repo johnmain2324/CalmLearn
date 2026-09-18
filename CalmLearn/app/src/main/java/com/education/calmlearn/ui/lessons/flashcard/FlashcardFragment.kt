@@ -38,37 +38,49 @@ class FlashcardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val topicId = requireArguments().getString("topicId") ?: MockData.topics.first().id
-        words = MockData.wordsForTopic(topicId).ifEmpty { MockData.vocabWords }
 
-        binding.flashcardPager.adapter = FlashcardPagerAdapter(words)
         binding.flashcardPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 updateProgress(position)
             }
         })
-        updateProgress(0)
 
         binding.btnBack.setOnClickListener { findNavController().popBackStack() }
 
-        hydrateProgress()
+        loadWordsThenProgress(topicId)
+    }
 
-        binding.btnKnowIt.setOnClickListener {
-            val word = words[binding.flashcardPager.currentItem]
-            word.isLearned = true
-            persistLearned(word.id, true)
-            goToNextCard()
-        }
-        binding.btnStillLearning.setOnClickListener {
-            val word = words[binding.flashcardPager.currentItem]
-            word.isLearned = false
-            persistLearned(word.id, false)
-            goToNextCard()
-        }
-        binding.btnRestart.setOnClickListener {
-            binding.completionGroup.visibility = View.GONE
-            binding.actionButtonsGroup.visibility = View.VISIBLE
-            binding.flashcardPager.setCurrentItem(0, false)
+    /** Nap tu vung tu SQLite (qua MockData.ensureVocabWordsLoaded - xem data/vocab/) TRUOC, roi
+     *  moi gan adapter/nut bam va dong bo tien do that tu Firestore - tranh dung [words] truoc
+     *  khi nap xong (lateinit). */
+    private fun loadWordsThenProgress(topicId: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            MockData.ensureVocabWordsLoaded()
+            words = MockData.wordsForTopic(topicId).ifEmpty { MockData.vocabWords }
+
+            binding.flashcardPager.adapter = FlashcardPagerAdapter(words)
             updateProgress(0)
+
+            binding.btnKnowIt.setOnClickListener {
+                val word = words[binding.flashcardPager.currentItem]
+                word.isLearned = true
+                persistLearned(word.id, true)
+                goToNextCard()
+            }
+            binding.btnStillLearning.setOnClickListener {
+                val word = words[binding.flashcardPager.currentItem]
+                word.isLearned = false
+                persistLearned(word.id, false)
+                goToNextCard()
+            }
+            binding.btnRestart.setOnClickListener {
+                binding.completionGroup.visibility = View.GONE
+                binding.actionButtonsGroup.visibility = View.VISIBLE
+                binding.flashcardPager.setCurrentItem(0, false)
+                updateProgress(0)
+            }
+
+            hydrateProgress()
         }
     }
 

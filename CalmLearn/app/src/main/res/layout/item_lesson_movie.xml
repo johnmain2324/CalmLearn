@@ -28,19 +28,21 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/tvWordCount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="32 từ vựng"
+        android:text="0 từ vựng"
         android:textColor="@color/text_secondary"
         android:textSize="11sp" />
 
     <ProgressBar
+        android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="6dp"
         android:layout_marginTop="10dp"
         android:max="100"
-        android:progress="25"
+        android:progress="0"
         android:progressDrawable="@drawable/progress_amber" />
 
     <LinearLayout
@@ -50,17 +52,19 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/tvLearnedCount"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="8/32"
+            android:text="0/0"
             android:textColor="@color/text_secondary"
             android:textSize="11sp" />
 
         <TextView
+            android:id="@+id/tvPercent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="25%"
+            android:text="0%"
             android:textColor="@color/text_primary"
             android:textSize="11sp"
             android:textStyle="bold" />

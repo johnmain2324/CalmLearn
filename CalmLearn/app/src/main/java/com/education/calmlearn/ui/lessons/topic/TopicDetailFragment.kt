@@ -44,7 +44,6 @@ class TopicDetailFragment : Fragment() {
 
         topicId = requireArguments().getString("topicId") ?: MockData.topics.first().id
         val topic = MockData.topics.firstOrNull { it.id == topicId } ?: MockData.topics.first()
-        allWords = MockData.wordsForTopic(topicId)
 
         binding.topicTitle.text = topic.title
         binding.topicProgress.text =
@@ -69,8 +68,7 @@ class TopicDetailFragment : Fragment() {
         )
         binding.wordList.layoutManager = LinearLayoutManager(requireContext())
         binding.wordList.adapter = adapter
-        adapter.submitList(allWords)
-        hydrateProgress()
+        loadWordsThenProgress()
 
         binding.btnBack.setOnClickListener { findNavController().popBackStack() }
         binding.btnOpenFlashcards.setOnClickListener {
@@ -84,6 +82,18 @@ class TopicDetailFragment : Fragment() {
             }
             override fun afterTextChanged(s: Editable?) {}
         })
+    }
+
+    /** Nap tu vung tu SQLite (qua MockData.ensureVocabWordsLoaded - xem data/vocab/) TRUOC, roi
+     *  moi dong bo tien do that tu Firestore - phai theo dung thu tu nay vi hydrateProgress() doc
+     *  danh sach [allWords] da duoc MockData nap tu SQLite. */
+    private fun loadWordsThenProgress() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            MockData.ensureVocabWordsLoaded()
+            allWords = MockData.wordsForTopic(topicId)
+            adapter.submitList(currentFilteredWords())
+            hydrateProgress()
+        }
     }
 
     /** Dong bo trang thai da hoc/yeu thich that tu Firestore, roi cap nhat lai tieu de "X/Y tu da

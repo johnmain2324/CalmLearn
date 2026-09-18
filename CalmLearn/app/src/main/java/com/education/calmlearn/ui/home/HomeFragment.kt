@@ -118,6 +118,7 @@ class HomeFragment : Fragment() {
                 binding.tvStreakValue.text = getString(R.string.streak_value_format, result.progress.streak)
                 binding.tvXpValue.text = getString(R.string.xp_value_format, result.progress.xp)
 
+                MockData.ensureVocabWordsLoaded()
                 MockData.applyProgress(result.progress)
                 val coursePercent = MockData.topicPercent(HOME_COURSE_TOPIC_ID)
                 binding.courseProgress.progress = coursePercent

@@ -36,3 +36,10 @@ local.properties
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# Vocab ETL: du lieu tho tai ve + CSV trung gian (co the sinh lai bang script) - chi
+# giu lai code ETL va ket qua cuoi cung (app/src/main/assets/vocab.db, co commit).
+/CalmLearn/scripts/vocab_etl/raw/
+/CalmLearn/scripts/vocab_etl/out/
+__pycache__/
+*.pyc

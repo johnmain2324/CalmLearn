@@ -95,6 +95,10 @@
     <string name="lessons_flashcards">Flashcards</string>
     <string name="lessons_tab_vocab">Từ vựng theo chủ đề (8 chủ đề)</string>
     <string name="lessons_tab_grammar">Ngữ pháp căn bản (6 chủ điểm)</string>
+    <!-- So lieu THAT tren the chu de (tinh dong tu vocab.db + ProgressRepository - xem
+         LessonsFragment.refreshTopicStats()), khong con la text cung trong item_lesson_*.xml -->
+    <string name="lessons_topic_word_count_format">%1$d từ vựng</string>
+    <string name="lessons_topic_percent_format">%1$d%%</string>
 
     <!-- Practice -->
     <string name="practice_title">Trung tâm luyện tập</string>
@@ -286,6 +290,31 @@
     <string name="word_detail_synonyms_label">Từ đồng nghĩa</string>
     <string name="word_detail_mark_learned">Đánh dấu đã học</string>
     <string name="word_detail_learned">Đã học</string>
+
+    <!-- Vocab list (danh sach tu, doc tu SQLite qua VocabRepository - xem data/vocab/) -->
+    <string name="vocab_list_title">Danh sách từ vựng</string>
+    <string name="vocab_list_search_hint">Tìm từ hoặc nghĩa tiếng Việt…</string>
+    <string name="vocab_list_count_format">%1$d từ</string>
+    <string name="vocab_list_empty">Chưa có từ nào. Nhấn dấu + để thêm từ mới.</string>
+    <string name="lessons_open_vocab_list">Xem danh sách từ vựng (SQLite)</string>
+
+    <!-- Them tu (man 13 - INSERT that vao SQLite qua VocabRepository) -->
+    <string name="add_word_title">Thêm từ mới</string>
+    <string name="add_word_label_word">Từ mới *</string>
+    <string name="add_word_hint_word">Ví dụ: journey</string>
+    <string name="add_word_label_topic">Chủ đề</string>
+    <string name="add_word_label_pos">Từ loại</string>
+    <string name="add_word_hint_pos">Ví dụ: n., v., adj.</string>
+    <string name="add_word_label_meaning_vi">Nghĩa tiếng Việt</string>
+    <string name="add_word_label_definition">Định nghĩa (tiếng Anh)</string>
+    <string name="add_word_label_example_en">Câu ví dụ (tiếng Anh)</string>
+    <string name="add_word_label_example_vi">Câu ví dụ (tiếng Việt)</string>
+    <string name="add_word_label_synonyms">Từ đồng nghĩa (cách nhau bởi dấu phẩy)</string>
+    <string name="add_word_label_note">Ghi chú cá nhân</string>
+    <string name="add_word_btn_save">Lưu từ mới</string>
+    <string name="add_word_error_word_required">Vui lòng nhập từ mới</string>
+    <string name="add_word_success">Đã lưu từ mới vào SQLite</string>
+    <string name="add_word_error_generic">Không thể lưu từ mới, vui lòng thử lại</string>
 
     <!-- Flashcard -->
     <string name="flashcard_tap_hint">Chạm vào thẻ để lật mặt sau</string>

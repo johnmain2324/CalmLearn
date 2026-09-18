@@ -51,6 +51,7 @@ class ProgressFragment : Fragment() {
                 binding.statTotal.statTotalValue.text =
                     getString(R.string.total_study_time_format, totalMinutes / 60, totalMinutes % 60)
 
+                MockData.ensureVocabWordsLoaded()
                 MockData.applyProgress(result.progress)
                 binding.statLessons.statLessonsValue.text =
                     getString(R.string.lessons_completed_format, MockData.lessonsCompletedCount(result.progress))
