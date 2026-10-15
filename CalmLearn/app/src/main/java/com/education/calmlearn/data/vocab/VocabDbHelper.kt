@@ -1,6 +1,8 @@
 package com.education.calmlearn.data.vocab
 
+import android.content.ContentValues
 import android.content.Context
+import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import java.io.File
@@ -96,36 +98,132 @@ class VocabDbHelper(private val context: Context) :
     }
 
     /**
-     * Du an sinh vien, moi ban phat hanh (DATABASE_VERSION) tuong ung mot ban
-     * vocab.db moi duoc dong lai tu dau boi ETL - nen nang cap don gian bang
-     * xoa + tao lai toan bo bang, roi de [ensureDatabaseCopiedFromAssets] ghi
-     * de bang du lieu moi (khong viet ALTER TABLE tung buoc nhu app san xuat
-     * that, vi chua co du lieu nguoi dung can giu lai o cac bang ETL - rieng
-     * du lieu nguoi dung tu them o `user_words`/`words(is_manual=1)` khong bi
-     * dung tren duoi 1 nang cap thuong vi ETL chi ghi lai file moi khi co thay
-     * doi schema, khong xoa database dang chay tren may nguoi dung).
+     * Ban sao du lieu NGUOI DUNG trong bo nho - gom cac dong `words(is_manual=1)`
+     * va cac dong con (user_words/definitions/synonyms/examples) tro toi chung.
+     */
+    private class UserDataBackup(
+        val words: List<ContentValues>,
+        val definitions: List<ContentValues>,
+        val synonyms: List<ContentValues>,
+        val examples: List<ContentValues>,
+        val userWords: List<ContentValues>
+    )
+
+    /**
+     * Thu tu BAT BUOC: (1) backup vao bo nho -> (2) DROP + onCreate -> (3) insert
+     * lai backup. Phai backup TRUOC khi DROP vi sau DROP du lieu nguoi dung da
+     * mat vinh vien; phai insert lai SAU onCreate vi luc do bang moi co cau truc
+     * dung de nhan du lieu. Insert lai trong 1 transaction de hoac khoi phuc het,
+     * hoac khong khoi phuc gi (khong de lai du lieu nua chung).
+     *
+     * Luu y: trong onUpgrade() file .db dang duoc framework mo + dang trong
+     * transaction nen KHONG the xoa/ghi de file tu assets o day. Vi vay day chi
+     * la lop an toan (giu duoc du lieu nguoi dung, bang ETL tam thoi rong). Duong
+     * nang cap day du (nap lai vocab goc tu assets) nam o
+     * [ensureDatabaseCopiedFromAssets] - chay TRUOC khi helper mo file, nen xoa va
+     * copy file duoc an toan; do do onUpgrade() thuong khong con bi goi.
      */
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        val backup = backupUserData(db)
         db.execSQL("DROP TABLE IF EXISTS ${VocabContract.UserWords.TABLE}")
         db.execSQL("DROP TABLE IF EXISTS ${VocabContract.Examples.TABLE}")
         db.execSQL("DROP TABLE IF EXISTS ${VocabContract.Synonyms.TABLE}")
         db.execSQL("DROP TABLE IF EXISTS ${VocabContract.Definitions.TABLE}")
         db.execSQL("DROP TABLE IF EXISTS ${VocabContract.Words.TABLE}")
         onCreate(db)
+        restoreUserData(db, backup)
+    }
+
+    /** Doc cac dong nguoi dung tu them ra Cursor -> ContentValues (giu trong bo nho). */
+    private fun backupUserData(db: SQLiteDatabase): UserDataBackup {
+        val manualIds =
+            "SELECT ${VocabContract.Words.ID} FROM ${VocabContract.Words.TABLE} WHERE ${VocabContract.Words.IS_MANUAL} = 1"
+
+        fun readAll(sql: String): List<ContentValues> {
+            val rows = mutableListOf<ContentValues>()
+            db.rawQuery(sql, null).use { c ->
+                while (c.moveToNext()) {
+                    val values = ContentValues()
+                    DatabaseUtils.cursorRowToContentValues(c, values)
+                    rows += values
+                }
+            }
+            return rows
+        }
+
+        fun readChildren(table: String, wordIdColumn: String) =
+            readAll("SELECT * FROM $table WHERE $wordIdColumn IN ($manualIds)")
+
+        return UserDataBackup(
+            words = readAll("SELECT * FROM ${VocabContract.Words.TABLE} WHERE ${VocabContract.Words.IS_MANUAL} = 1"),
+            definitions = readChildren(VocabContract.Definitions.TABLE, VocabContract.Definitions.WORD_ID),
+            synonyms = readChildren(VocabContract.Synonyms.TABLE, VocabContract.Synonyms.WORD_ID),
+            examples = readChildren(VocabContract.Examples.TABLE, VocabContract.Examples.WORD_ID),
+            userWords = readChildren(VocabContract.UserWords.TABLE, VocabContract.UserWords.WORD_ID)
+        )
+    }
+
+    /**
+     * Insert lai backup vao 5 bang trong 1 transaction. words truoc, cac bang con
+     * sau (khoa ngoai word_id). Bo cot `id` tu tang cua bang con de SQLite tu cap
+     * id moi - tranh dung id voi cac dong ETL vua nap lai.
+     */
+    private fun restoreUserData(db: SQLiteDatabase, backup: UserDataBackup) {
+        db.beginTransaction()
+        try {
+            backup.words.forEach {
+                db.insertWithOnConflict(VocabContract.Words.TABLE, null, it, SQLiteDatabase.CONFLICT_REPLACE)
+            }
+            fun restoreChildren(table: String, idColumn: String, rows: List<ContentValues>) {
+                rows.forEach { row ->
+                    val values = ContentValues(row).apply { remove(idColumn) }
+                    db.insert(table, null, values)
+                }
+            }
+            restoreChildren(VocabContract.Definitions.TABLE, VocabContract.Definitions.ID, backup.definitions)
+            restoreChildren(VocabContract.Synonyms.TABLE, VocabContract.Synonyms.ID, backup.synonyms)
+            restoreChildren(VocabContract.Examples.TABLE, VocabContract.Examples.ID, backup.examples)
+            restoreChildren(VocabContract.UserWords.TABLE, VocabContract.UserWords.ID, backup.userWords)
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
     }
 
     /**
      * Copy nguyen byte file `assets/vocab.db` (da co san du lieu tu ETL) vao
-     * dung duong dan database cua app NEU CHUA TON TAI - khong parse/chay SQL
-     * gi ca vi asset da la 1 file SQLite hoan chinh. An toan de goi nhieu lan
-     * (kiem tra ton tai truoc). Phai goi truoc lan dau [getReadableDatabase]/
-     * [getWritableDatabase] de framework mo dung file da co du lieu thay vi
-     * tao moi database rong roi goi [onCreate].
+     * dung duong dan database cua app. An toan de goi nhieu lan. Phai goi truoc
+     * lan dau [getReadableDatabase]/[getWritableDatabase] de framework mo dung
+     * file da co du lieu thay vi tao moi database rong roi goi [onCreate].
+     *
+     * Truong hop NANG CAP (file da ton tai nhung user_version < DATABASE_VERSION):
+     * lam o day vi helper chua mo file nen duoc phep xoa/ghi de. Thu tu: backup
+     * du lieu nguoi dung vao bo nho -> dong helper + xoa file cu (kem -journal/
+     * -wal/-shm) -> copy vocab.db moi tu assets (nap lai tu vung goc) -> mo lai
+     * va insert backup. File assets moi PHAI co `PRAGMA user_version` = so
+     * DATABASE_VERSION moi (build_sqlite.py), neu khong onUpgrade() se bi goi.
      */
     fun ensureDatabaseCopiedFromAssets() {
         val destFile: File = context.getDatabasePath(VocabContract.DATABASE_NAME)
-        if (destFile.exists()) return
+        if (!destFile.exists()) {
+            copyAssetTo(destFile)
+            return
+        }
 
+        val installedVersion = SQLiteDatabase.openDatabase(destFile.path, null, SQLiteDatabase.OPEN_READONLY)
+            .use { it.version }
+        if (installedVersion >= VocabContract.DATABASE_VERSION) return
+
+        val backup = SQLiteDatabase.openDatabase(destFile.path, null, SQLiteDatabase.OPEN_READONLY)
+            .use { backupUserData(it) }
+        close()
+        listOf("", "-journal", "-wal", "-shm").forEach { File(destFile.path + it).delete() }
+        copyAssetTo(destFile)
+        SQLiteDatabase.openDatabase(destFile.path, null, SQLiteDatabase.OPEN_READWRITE)
+            .use { restoreUserData(it, backup) }
+    }
+
+    private fun copyAssetTo(destFile: File) {
         destFile.parentFile?.mkdirs()
         context.assets.open(VocabContract.DATABASE_NAME).use { input ->
             FileOutputStream(destFile).use { output ->

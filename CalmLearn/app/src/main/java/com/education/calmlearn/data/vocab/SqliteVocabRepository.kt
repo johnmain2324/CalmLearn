@@ -186,6 +186,31 @@ class SqliteVocabRepository(context: Context) : VocabRepository {
         VocabResult.Updated
     }
 
+    /**
+     * Lay 1 tu + dinh nghia dau tien bang DUNG 1 cau SQL JOIN (khac readWords/
+     * cursorToWord phai query rieng bang definitions cho moi tu - N+1 query).
+     * INNER JOIN nen tu khong co dinh nghia nao se tra ve null. Dinh nghia dau
+     * tien = definitions.id nho nhat; LIMIT 1 de chi lay 1 dong ket qua.
+     * Tra ve cap (word, definition) vi VocabWord day du can them synonyms/example.
+     */
+    suspend fun getWordWithFirstDefinition(wordId: String): Pair<String, String>? = withContext(Dispatchers.IO) {
+        val db = openReadable()
+        val cursor = db.rawQuery(
+            """
+            SELECT ${VocabContract.Words.TABLE}.${VocabContract.Words.WORD},
+                   ${VocabContract.Definitions.TABLE}.${VocabContract.Definitions.DEFINITION}
+            FROM ${VocabContract.Words.TABLE}
+            INNER JOIN ${VocabContract.Definitions.TABLE}
+                    ON ${VocabContract.Definitions.TABLE}.${VocabContract.Definitions.WORD_ID} = ${VocabContract.Words.TABLE}.${VocabContract.Words.ID}
+            WHERE ${VocabContract.Words.TABLE}.${VocabContract.Words.ID} = ?
+            ORDER BY ${VocabContract.Definitions.TABLE}.${VocabContract.Definitions.ID} ASC
+            LIMIT 1
+            """.trimIndent(),
+            arrayOf(wordId)
+        )
+        cursor.use { c -> if (c.moveToFirst()) c.getString(0) to c.getString(1) else null }
+    }
+
     /** Doc danh sach words that hop dinh nghia dau tien + toan bo dong nghia + vi du uu tien. */
     private fun readWords(db: SQLiteDatabase, selection: String?, selectionArgs: Array<String>?): List<VocabWord> {
         val words = mutableListOf<VocabWord>()
