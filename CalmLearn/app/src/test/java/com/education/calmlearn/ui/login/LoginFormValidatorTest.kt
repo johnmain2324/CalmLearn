@@ -27,7 +27,6 @@ class LoginFormValidatorTest {
 
     @Test
     fun `password is not trimmed so a whitespace-only password is accepted by validator`() {
-        // Chinh sach: khong tu trim mat khau - day la hanh vi co chu dich, khong phai bo sot.
         assertNull(LoginFormValidator.errors(LoginInput(email = "a@example.com", password = "   ")).password)
     }
 

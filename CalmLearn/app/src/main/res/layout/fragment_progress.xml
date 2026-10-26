@@ -29,7 +29,6 @@
             android:textColor="@color/text_secondary"
             android:textSize="13sp" />
 
-        <!-- Weekly chart card -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -131,7 +130,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Detailed stats -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -171,7 +169,6 @@
             <include android:id="@+id/statTotal" layout="@layout/item_stat_total" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" />
         </LinearLayout>
 
-        <!-- Achievements -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

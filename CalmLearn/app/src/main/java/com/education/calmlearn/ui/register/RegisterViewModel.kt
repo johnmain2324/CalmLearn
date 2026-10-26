@@ -30,15 +30,11 @@ class RegisterViewModel(
     var agreedToTerms: Boolean = false
         private set
 
-    /** Trang thai an/hien cua tung o mat khau - luu o day de song sot qua luc xoay man hinh
-     *  (o mat khau duoc dat android:saveEnabled="false" nen Fragment phai tu ap lai tu day). */
     var isPasswordVisible: Boolean = false
         private set
     var isConfirmPasswordVisible: Boolean = false
         private set
 
-    /** Cac truong nguoi dung da tung tuong tac (go chu hoac roi khoi o) - chi loi cua truong da
-     *  "touched" moi duoc hien ra, tranh do loi ngay khi vua mo man hinh. */
     private val touchedFields = mutableSetOf<RegisterField>()
 
     private val _fieldErrors = MutableLiveData(RegisterFieldErrors())
@@ -62,8 +58,7 @@ class RegisterViewModel(
 
     fun onPasswordChanged(value: String) {
         password = value
-        // Doi mat khau goc co the lam sai lech xac nhan mat khau - recompute() ben duoi se tu
-        // danh gia lai loi confirmPassword neu o do da duoc tuong tac truoc do.
+
         onFieldTouched(RegisterField.PASSWORD)
     }
 
@@ -90,7 +85,6 @@ class RegisterViewModel(
         isConfirmPasswordVisible = visible
     }
 
-    /** Goi khi mot o rieng le mat focus (vd nguoi dung tab qua ma khong go gi) de danh dau touched. */
     fun onFieldBlurred(field: RegisterField) {
         onFieldTouched(field)
     }
@@ -101,8 +95,6 @@ class RegisterViewModel(
         recomputeErrors()
     }
 
-    /** Loi tu dich vu (backend) khong con dung sau khi nguoi dung sua du lieu - xoa de tranh
-     *  hien lai loi cu gay hieu lam. */
     private fun clearServiceErrorIfStale() {
         if (_uiState.value is FormUiState.Error) {
             _uiState.value = FormUiState.Idle
@@ -116,9 +108,8 @@ class RegisterViewModel(
     }
 
     fun submit() {
-        if (_uiState.value == FormUiState.Loading) return // chan gui yeu cau trung
+        if (_uiState.value == FormUiState.Loading) return
 
-        // Bam Dang ky = coi nhu da "tuong tac" toan bo form, de hien du loi con thieu/sai.
         touchedFields.addAll(RegisterField.entries)
         val input = currentInput()
         val allErrors = RegisterFormValidator.errors(input)
@@ -133,7 +124,7 @@ class RegisterViewModel(
             val result = try {
                 repository.register(input.fullName, input.email, password, input.gender!!)
             } catch (cancellation: CancellationException) {
-                throw cancellation // khong duoc nuot cancellation cua coroutine
+                throw cancellation
             } catch (unexpected: Exception) {
                 RegisterResult.Error(AuthErrorReason.UNKNOWN)
             }
@@ -145,9 +136,6 @@ class RegisterViewModel(
         }
     }
 
-    /** Goi ngay sau khi Fragment da xu ly xong Success/RequiresNextStep (vd da dieu huong) de
-     *  trang thai nay khong bi "phat lai" va dieu huong them lan nua neu observer duoc dang ky lai
-     *  (vi du do xoay man hinh dung luc). */
     fun consumeTerminalState() {
         if (_uiState.value == FormUiState.Success || _uiState.value == FormUiState.RequiresNextStep) {
             _uiState.value = FormUiState.Idle

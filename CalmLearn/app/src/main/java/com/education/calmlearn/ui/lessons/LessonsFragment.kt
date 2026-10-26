@@ -23,8 +23,6 @@ class LessonsFragment : Fragment() {
     private var _binding: FragmentLessonsBinding? = null
     private val binding get() = _binding!!
 
-    /** 4 view dong tren 1 the chu de (xem item_lesson_*.xml) - gan gia tri THAT
-     *  tu SQLite (tong so tu) + Firestore (so tu da hoc) trong [refreshTopicStats]. */
     private class TopicCardViews(
         val wordCount: TextView,
         val progressBar: ProgressBar,
@@ -80,18 +78,11 @@ class LessonsFragment : Fragment() {
         binding.itemGerund.root.setOnClickListener { openGrammar("gerund") }
     }
 
-    /** Goi lai moi lan quay lai tab nay (khong chi luc tao view lan dau) vi nguoi dung co the
-     *  vua danh dau hoc xong tu o man khac (Hoc tu/Flashcard) roi quay lai - so lieu phai la
-     *  THAT tai thoi diem hien tai, khong duoc dung so cu. */
     override fun onResume() {
         super.onResume()
         refreshTopicStats()
     }
 
-    /** Tong so tu = COUNT that tu bang words trong vocab.db theo topic_id (qua VocabRepository,
-     *  tu chay tren Dispatchers.IO - xem SqliteVocabRepository). So da hoc = so id trong
-     *  learnedWordIds (Firestore, qua ProgressRepository) thuoc ve dung chu de do. Neu tai khoan
-     *  chua hoc tu nao trong chu de thi hien dung 0/tong, 0% - khong bia so khac 0. */
     private fun refreshTopicStats() {
         viewLifecycleOwner.lifecycleScope.launch {
             val progressResult = ProgressRepositoryProvider.repository.loadProgress()

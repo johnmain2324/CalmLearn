@@ -16,12 +16,6 @@ import com.education.calmlearn.ui.common.FormUiState
 import com.education.calmlearn.ui.common.hideKeyboard
 import com.education.calmlearn.ui.common.toMessageRes
 
-/**
- * Man hinh Quen mat khau. Logic kiem tra email va goi AuthRepository nam trong
- * [ForgotPasswordViewModel]. Chi hien thong bao "da gui" khi dich vu that tra ve thanh cong -
- * voi [com.education.calmlearn.data.auth.UnavailableAuthRepository] hien tai, dieu nay se khong
- * xay ra cho den khi nhom noi dich vu xac thuc that.
- */
 class ForgotPasswordFragment : Fragment() {
 
     private var _binding: FragmentForgotPasswordBinding? = null
@@ -94,7 +88,7 @@ class ForgotPasswordFragment : Fragment() {
         binding.btnSubmit.text = if (isLoading) "" else getString(R.string.forgot_password_btn_submit)
         binding.btnSubmit.isEnabled = !isLoading && viewModel.isFormValid.value == true
         binding.etEmail.isEnabled = !isLoading
-        // Khoa lien ket dieu huong trong luc dang gui, tranh nguoi dung roi man hinh giua chung.
+
         binding.btnBack.isEnabled = !isLoading
         binding.tvBackToLogin.isEnabled = !isLoading
 
@@ -104,7 +98,7 @@ class ForgotPasswordFragment : Fragment() {
                 binding.tvError.visibility = View.VISIBLE
             }
             FormUiState.Success -> {
-                // Thong bao trung tinh, khong tiet lo email co ton tai trong he thong hay khong.
+
                 binding.tvError.visibility = View.INVISIBLE
                 binding.tvSubtitle.text = getString(R.string.forgot_password_success)
                 binding.etEmail.isEnabled = false
@@ -112,7 +106,7 @@ class ForgotPasswordFragment : Fragment() {
                 binding.btnSubmit.alpha = 0.5f
             }
             else -> {
-                // Idle/Loading: an banner loi dich vu cu (vd nguoi dung vua sua lai email sau loi).
+
                 binding.tvError.visibility = View.INVISIBLE
             }
         }

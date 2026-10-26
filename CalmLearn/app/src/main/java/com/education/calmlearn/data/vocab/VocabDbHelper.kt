@@ -8,21 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper
 import java.io.File
 import java.io.FileOutputStream
 
-/**
- * CSDL tu vung that (SQLite chuan, khong dung Room) - xem so do bang + giai
- * thich day du tai SQLITE_VOCAB.md o goc project.
- *
- * App dung pattern "prepackaged SQLite database": [ensureDatabaseCopiedFromAssets]
- * copy nguyen file `assets/vocab.db` (da duoc dong goi san du lieu boi
- * scripts/vocab_etl/build_sqlite.py tren may tinh, KHONG tai/xu ly gi luc app
- * chay) vao dung thu muc database cua app TRUOC khi SQLiteOpenHelper mo no lan
- * dau - nen trong tinh huong binh thuong, [onCreate] se KHONG duoc framework
- * goi (file da ton tai san). [onCreate] van chua day du CREATE TABLE that (khop
- * 1-1 voi schema trong build_sqlite.py) de: (1) la "luoi an toan" neu vi ly do
- * nao do buoc copy o tren khong chay (vd test/mo truc tiep DATABASE_NAME ma
- * chua goi ham copy), va (2) chung minh ro rang lop nay dung dung API
- * SQLiteOpenHelper.onCreate()/onUpgrade() nhu yeu cau.
- */
 class VocabDbHelper(private val context: Context) :
     SQLiteOpenHelper(context, VocabContract.DATABASE_NAME, null, VocabContract.DATABASE_VERSION) {
 
@@ -97,10 +82,6 @@ class VocabDbHelper(private val context: Context) :
         db.execSQL("CREATE INDEX idx_words_topic_id ON ${VocabContract.Words.TABLE}(${VocabContract.Words.TOPIC_ID})")
     }
 
-    /**
-     * Ban sao du lieu NGUOI DUNG trong bo nho - gom cac dong `words(is_manual=1)`
-     * va cac dong con (user_words/definitions/synonyms/examples) tro toi chung.
-     */
     private class UserDataBackup(
         val words: List<ContentValues>,
         val definitions: List<ContentValues>,
@@ -109,20 +90,6 @@ class VocabDbHelper(private val context: Context) :
         val userWords: List<ContentValues>
     )
 
-    /**
-     * Thu tu BAT BUOC: (1) backup vao bo nho -> (2) DROP + onCreate -> (3) insert
-     * lai backup. Phai backup TRUOC khi DROP vi sau DROP du lieu nguoi dung da
-     * mat vinh vien; phai insert lai SAU onCreate vi luc do bang moi co cau truc
-     * dung de nhan du lieu. Insert lai trong 1 transaction de hoac khoi phuc het,
-     * hoac khong khoi phuc gi (khong de lai du lieu nua chung).
-     *
-     * Luu y: trong onUpgrade() file .db dang duoc framework mo + dang trong
-     * transaction nen KHONG the xoa/ghi de file tu assets o day. Vi vay day chi
-     * la lop an toan (giu duoc du lieu nguoi dung, bang ETL tam thoi rong). Duong
-     * nang cap day du (nap lai vocab goc tu assets) nam o
-     * [ensureDatabaseCopiedFromAssets] - chay TRUOC khi helper mo file, nen xoa va
-     * copy file duoc an toan; do do onUpgrade() thuong khong con bi goi.
-     */
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         val backup = backupUserData(db)
         db.execSQL("DROP TABLE IF EXISTS ${VocabContract.UserWords.TABLE}")
@@ -134,7 +101,6 @@ class VocabDbHelper(private val context: Context) :
         restoreUserData(db, backup)
     }
 
-    /** Doc cac dong nguoi dung tu them ra Cursor -> ContentValues (giu trong bo nho). */
     private fun backupUserData(db: SQLiteDatabase): UserDataBackup {
         val manualIds =
             "SELECT ${VocabContract.Words.ID} FROM ${VocabContract.Words.TABLE} WHERE ${VocabContract.Words.IS_MANUAL} = 1"
@@ -163,11 +129,6 @@ class VocabDbHelper(private val context: Context) :
         )
     }
 
-    /**
-     * Insert lai backup vao 5 bang trong 1 transaction. words truoc, cac bang con
-     * sau (khoa ngoai word_id). Bo cot `id` tu tang cua bang con de SQLite tu cap
-     * id moi - tranh dung id voi cac dong ETL vua nap lai.
-     */
     private fun restoreUserData(db: SQLiteDatabase, backup: UserDataBackup) {
         db.beginTransaction()
         try {
@@ -190,19 +151,6 @@ class VocabDbHelper(private val context: Context) :
         }
     }
 
-    /**
-     * Copy nguyen byte file `assets/vocab.db` (da co san du lieu tu ETL) vao
-     * dung duong dan database cua app. An toan de goi nhieu lan. Phai goi truoc
-     * lan dau [getReadableDatabase]/[getWritableDatabase] de framework mo dung
-     * file da co du lieu thay vi tao moi database rong roi goi [onCreate].
-     *
-     * Truong hop NANG CAP (file da ton tai nhung user_version < DATABASE_VERSION):
-     * lam o day vi helper chua mo file nen duoc phep xoa/ghi de. Thu tu: backup
-     * du lieu nguoi dung vao bo nho -> dong helper + xoa file cu (kem -journal/
-     * -wal/-shm) -> copy vocab.db moi tu assets (nap lai tu vung goc) -> mo lai
-     * va insert backup. File assets moi PHAI co `PRAGMA user_version` = so
-     * DATABASE_VERSION moi (build_sqlite.py), neu khong onUpgrade() se bi goi.
-     */
     fun ensureDatabaseCopiedFromAssets() {
         val destFile: File = context.getDatabasePath(VocabContract.DATABASE_NAME)
         if (!destFile.exists()) {

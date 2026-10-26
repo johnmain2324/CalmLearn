@@ -103,7 +103,6 @@ class LoginViewModel(
         }
     }
 
-    /** Google Sign-In chua duoc cau hinh trong project - chi bao ro cho nguoi dung, khong vao thang Trang chu. */
     fun onGoogleSignInClicked() {
         _googleUnavailableEvent.value = Unit
     }
@@ -112,7 +111,6 @@ class LoginViewModel(
         _googleUnavailableEvent.value = null
     }
 
-    /** Xem RegisterViewModel.consumeTerminalState(): tranh Success/RequiresNextStep bi "phat lai" gay dieu huong nhieu lan. */
     fun consumeTerminalState() {
         if (_uiState.value == FormUiState.Success || _uiState.value == FormUiState.RequiresNextStep) {
             _uiState.value = FormUiState.Idle

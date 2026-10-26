@@ -22,14 +22,6 @@ import com.education.calmlearn.ui.common.toMessageRes
 import com.education.calmlearn.ui.common.toggleEditTextPasswordVisibility
 import com.education.calmlearn.ui.verifyemail.VerifyEmailFragment
 
-/**
- * Man hinh Dang ky. Logic kiem tra du lieu va goi AuthRepository nam trong [RegisterViewModel] de
- * Fragment chi tap trung hien thi va nhan thao tac nguoi dung.
- *
- * Loi nhap lieu duoc hien RIENG cho tung truong (ngay canh o nhap, chi sau khi nguoi dung da
- * tuong tac hoac roi khoi o) - khac voi loi DICH VU (banner tvError dung chung, chi xuat hien khi
- * AuthRepository that tra ve loi).
- */
 class RegisterFragment : Fragment() {
 
     private var _binding: FragmentRegisterBinding? = null
@@ -72,8 +64,6 @@ class RegisterFragment : Fragment() {
         binding.cbAgree.isChecked = viewModel.agreedToTerms
         setGenderSelection(viewModel.gender)
 
-        // Cac o mat khau dat android:saveEnabled="false" (xem fragment_register.xml) nen phai tu
-        // ap lai trang thai an/hien tu ViewModel, khong the trong cay vao co che tu luu cua EditText.
         applyEditTextPasswordVisibility(binding.etPassword, binding.btnTogglePassword, viewModel.isPasswordVisible)
         applyEditTextPasswordVisibility(binding.etConfirmPassword, binding.btnToggleConfirmPassword, viewModel.isConfirmPasswordVisible)
     }
@@ -92,8 +82,6 @@ class RegisterFragment : Fragment() {
         binding.etConfirmPassword.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) viewModel.onFieldBlurred(RegisterField.CONFIRM_PASSWORD) }
     }
 
-    /** "Next" chuyen sang o tiep theo, "Done" gui form - ca hai deu goi chung submit() nen khong
-     *  the gui trung voi nut tren man hinh (submit() da tu chan trung o tang ViewModel). */
     private fun setupImeActions() {
         binding.etFullName.setOnEditorActionListener { _, actionId, _ -> onNextTo(actionId, binding.etEmail) }
         binding.etEmail.setOnEditorActionListener { _, actionId, _ -> onNextTo(actionId, binding.etPassword) }
@@ -195,9 +183,7 @@ class RegisterFragment : Fragment() {
             FormUiState.RequiresNextStep -> {
                 binding.tvError.visibility = View.INVISIBLE
                 viewModel.consumeTerminalState()
-                // Tai khoan da tao (co the da hoac chua luu xong ho so) nhung CHUA co phien hop le
-                // (con thieu xac minh email) - dua sang man hinh Xac minh email, KHONG vao thang
-                // Trang chu. autoSend=true vi day la lan dau, chua tung gui email xac minh nao.
+
                 findNavController().navigate(
                     R.id.action_global_verifyEmail,
                     bundleOf(VerifyEmailFragment.ARG_AUTO_SEND to true)
@@ -221,7 +207,7 @@ class RegisterFragment : Fragment() {
             binding.rgGender.getChildAt(i).isEnabled = enabled
         }
         binding.cbAgree.isEnabled = enabled
-        // Khoa ca lien ket dieu huong trong luc dang gui, tranh nguoi dung roi man hinh giua chung.
+
         binding.btnBack.isEnabled = enabled
         binding.tvGoToLogin.isEnabled = enabled
     }

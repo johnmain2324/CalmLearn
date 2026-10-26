@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:padding="20dp">
 
-    <!-- Front face -->
     <LinearLayout
         android:id="@+id/cardFront"
         android:layout_width="match_parent"
@@ -61,7 +60,6 @@
             android:textSize="12sp" />
     </LinearLayout>
 
-    <!-- Back face -->
     <LinearLayout
         android:id="@+id/cardBack"
         android:layout_width="match_parent"

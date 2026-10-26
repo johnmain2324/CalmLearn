@@ -11,14 +11,6 @@ import com.education.calmlearn.data.auth.UserProfile
 import com.education.calmlearn.data.auth.VerificationCheckResult
 import kotlinx.coroutines.CompletableDeferred
 
-/**
- * AuthRepository gia lap CHI dung trong unit test (khong duoc dua vao luong ung dung chinh -
- * AuthRepositoryProvider dung FirebaseAuthRepository that). Cho phep:
- * - Dat san ket qua tra ve (Success/Error/Verification...) cho tung phuong thuc.
- * - "Giu" (hold) mot loi goi de kiem tra trang thai Loading giua chung, roi "tha" (release) khi test san sang.
- * - Gia lap ngoai le bat ngo tu dich vu (throwOnNextCall) de kiem tra ViewModel khong bi ket Loading.
- * - Dem so lan goi de kiem tra khong gui yeu cau trung.
- */
 class FakeAuthRepository : AuthRepository {
 
     var registerCallCount = 0

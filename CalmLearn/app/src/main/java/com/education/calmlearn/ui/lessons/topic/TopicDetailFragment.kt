@@ -84,9 +84,6 @@ class TopicDetailFragment : Fragment() {
         })
     }
 
-    /** Nap tu vung tu SQLite (qua MockData.ensureVocabWordsLoaded - xem data/vocab/) TRUOC, roi
-     *  moi dong bo tien do that tu Firestore - phai theo dung thu tu nay vi hydrateProgress() doc
-     *  danh sach [allWords] da duoc MockData nap tu SQLite. */
     private fun loadWordsThenProgress() {
         viewLifecycleOwner.lifecycleScope.launch {
             MockData.ensureVocabWordsLoaded()
@@ -96,8 +93,6 @@ class TopicDetailFragment : Fragment() {
         }
     }
 
-    /** Dong bo trang thai da hoc/yeu thich that tu Firestore, roi cap nhat lai tieu de "X/Y tu da
-     *  hoc" bang so lieu THAT (khong con dung so tinh Topic.learnedWords co dinh trong MockData). */
     private fun hydrateProgress() {
         viewLifecycleOwner.lifecycleScope.launch {
             val result = ProgressRepositoryProvider.repository.loadProgress()

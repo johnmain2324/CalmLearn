@@ -42,10 +42,6 @@ class ListeningFragment : Fragment() {
     private var currentQuestionIndex = 0
     private var questionChecked = false
 
-    /** Chi con dung de cap nhat thanh tien do/dong ho theo tung giay TRONG KHI dang phat that
-     *  (isPlaying=true) - viec DUNG phat khi noi xong duoc quyet dinh boi su kien that cua
-     *  TextToSpeech (onStopPlayback(), goi tu UtteranceProgressListener.onDone/onError), khong con
-     *  phai doan mo theo lesson.durationSeconds nhu truoc. */
     private val tickRunnable = object : Runnable {
         override fun run() {
             if (_binding == null || !isPlaying) return
@@ -148,18 +144,12 @@ class ListeningFragment : Fragment() {
         }
     }
 
-    /** Ghi nhan da hoan thanh xong toan bo cau hoi cua bai nghe nay - xem
-     *  ProgressRepository.recordListeningLessonCompleted. */
     private fun persistLessonCompleted() {
         viewLifecycleOwner.lifecycleScope.launch {
             ProgressRepositoryProvider.repository.recordListeningLessonCompleted(lesson.id)
         }
     }
 
-    /** Phat that toan bo hoi thoai bang TextToSpeech (khong con dem gio suong nhu truoc) - lan
-     *  luot doc tung dong trong lesson.transcript, "Nhan vien"/"Khach" deu duoc doc cung mot giong
-     *  he thong (TTS khong phan biet nguoi noi). Vi TTS khong ho tro tam dung/tiep tuc giua chung
-     *  mot cau, bam tam dung se dung han va bam phat lai se doc lai tu dau. */
     private fun startPlayback() {
         val engine = textToSpeech
         if (engine == null || !ttsReady) {
@@ -188,16 +178,13 @@ class ListeningFragment : Fragment() {
         }
     }
 
-    /** UtteranceProgressListener chay tren luong nen cua TTS engine, khong phai main thread - phai
-     *  quay ve main thread truoc khi dung cham vao View. */
     private fun stopPlaybackOnMainThread() {
         activity?.runOnUiThread { stopPlayback() }
     }
 
     private fun updatePlayerUi() {
         binding.playerProgress.max = lesson.durationSeconds
-        // TTS that su co the noi lau/nhanh hon uoc luong durationSeconds trong MockData - gioi han
-        // gia tri hien thi de thanh tien do khong vuot qua max, dong ho van hien so giay that.
+
         binding.playerProgress.progress = elapsedSeconds.coerceAtMost(lesson.durationSeconds)
         binding.playerTime.text = "${formatTime(elapsedSeconds)} / ${formatTime(lesson.durationSeconds)}"
     }

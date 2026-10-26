@@ -109,7 +109,6 @@
             app:argType="boolean" />
     </fragment>
 
-    <!-- Global actions: reachable by id from any destination in this graph -->
     <action
         android:id="@+id/action_global_onboarding"
         app:destination="@id/onboardingFragment"

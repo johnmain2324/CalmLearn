@@ -19,8 +19,6 @@ class ForgotPasswordViewModel(
     var email: String = ""
         private set
 
-    /** Chi hien loi email sau khi nguoi dung da tuong tac (go chu hoac roi khoi o), khong do loi
-     *  ngay khi vua mo man hinh. */
     private var emailTouched = false
 
     private val _fieldError = MutableLiveData<Int?>(null)
@@ -69,8 +67,7 @@ class ForgotPasswordViewModel(
 
         _uiState.value = FormUiState.Loading
         viewModelScope.launch {
-            // Thong bao trung tinh: chi bao thanh cong khi dich vu that tra ve Success,
-            // khong tiet lo email co ton tai trong he thong hay khong.
+
             val result = try {
                 repository.sendPasswordResetEmail(trimmedEmail)
             } catch (cancellation: CancellationException) {

@@ -32,9 +32,6 @@ class ProgressFragment : Fragment() {
         loadProgress()
     }
 
-    /** Thay toan bo 6 the thong ke tinh (mau) bang so lieu THAT, cung nguon LearningProgress ma
-     *  Home dang dung (xem HomeFragment.loadProgress()) - khong tao them mot cach tinh tien do doc
-     *  lap thu hai. */
     private fun loadProgress() {
         viewLifecycleOwner.lifecycleScope.launch {
             val result = ProgressRepositoryProvider.repository.loadProgress()

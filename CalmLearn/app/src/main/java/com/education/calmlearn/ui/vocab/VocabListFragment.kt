@@ -20,12 +20,6 @@ import com.education.calmlearn.databinding.FragmentVocabListBinding
 import com.education.calmlearn.ui.lessons.topic.WordListAdapter
 import kotlinx.coroutines.launch
 
-/**
- * Man "09. Danh sach tu" - toan bo tu vung (moi chu de + tu nguoi dung tu them qua
- * man "Them tu"), doc THAT tu SQLite qua [VocabRepositoryProvider] (khong con qua
- * MockData.vocabWords cache dung o cac man Hoc tu, vi man nay can luon hien THAT
- * SU MOI NHAT trong SQLite - vd ngay sau khi vua them 1 tu o man 13).
- */
 class VocabListFragment : Fragment() {
 
     private var _binding: FragmentVocabListBinding? = null
@@ -68,8 +62,6 @@ class VocabListFragment : Fragment() {
         })
     }
 
-    /** Nap lai moi lan quay lai man nay (vd sau khi vua "Them tu" xong o man 13, hoac tien do
-     *  Firestore vua doi o man khac) de danh sach luon phan anh dung SQLite hien tai. */
     override fun onResume() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {

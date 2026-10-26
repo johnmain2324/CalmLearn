@@ -38,15 +38,12 @@ class StreakCalculatorTest {
 
     @Test
     fun `streak extends correctly across the leap day of a leap year`() {
-        // 2028 is a leap year: Feb 29 exists, so Feb 28 -> Feb 29 is a consecutive day.
         assertEquals(2, StreakCalculator.computeStreak("2028-02-29", "2028-02-28", 1))
-        // ...and Feb 29 -> Mar 1 is also consecutive.
         assertEquals(3, StreakCalculator.computeStreak("2028-03-01", "2028-02-29", 2))
     }
 
     @Test
     fun `a gap spanning the leap day still resets the streak`() {
-        // 2027 is NOT a leap year, so Feb 28 -> Mar 1 (skipping the nonexistent Feb 29) is a gap.
         assertEquals(1, StreakCalculator.computeStreak("2027-03-01", "2027-02-27", 5))
     }
 

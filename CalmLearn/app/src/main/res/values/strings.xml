@@ -2,14 +2,12 @@
 <resources>
     <string name="app_name">CalmLearn</string>
 
-    <!-- Bottom navigation -->
     <string name="nav_home">Trang chủ</string>
     <string name="nav_lessons">Bài học</string>
     <string name="nav_practice">Luyện tập</string>
     <string name="nav_progress">Tiến độ</string>
     <string name="nav_profile">Hồ sơ</string>
 
-    <!-- Home -->
     <string name="home_greeting">Chào buổi sáng,</string>
     <string name="home_user_name">Alex Nguyen</string>
     <string name="home_search_hint">Tìm từ vựng, ngữ pháp, bài học…</string>
@@ -17,7 +15,6 @@
     <string name="home_streak_label">Chuỗi học liên tục</string>
     <string name="home_xp_value">440 XP</string>
     <string name="home_xp_label">Hạng Sơ cấp A2</string>
-    <!-- Trang thai "chua co thanh tich" cho tai khoan that moi tao (chua trien khai theo doi tien do) -->
     <string name="home_streak_value_empty">0 ngày</string>
     <string name="home_xp_value_empty">0 XP</string>
     <string name="home_goal_percent_empty">0% hoàn thành</string>
@@ -25,7 +22,6 @@
     <string name="home_goal_remaining_empty">Bắt đầu ngay</string>
     <string name="home_course_percent_empty">0% hoàn tất</string>
 
-    <!-- Tien do hoc tap that (data/progress/) - dung chung cho Home, Progress, Profile -->
     <string name="streak_value_format">%1$d ngày</string>
     <string name="xp_value_format">%1$d XP</string>
     <string name="words_learned_format">%1$d từ</string>
@@ -40,7 +36,6 @@
     <string name="lessons_completed_format">%1$d bài</string>
     <string name="progress_sync_error">Không đồng bộ được, vui lòng thử lại.</string>
 
-    <!-- Ho so nguoi dung (Trang chu / Ho so) - trang thai trong khi tai / khong co du lieu that -->
     <string name="profile_name_loading">Đang tải…</string>
     <string name="profile_name_fallback">Người dùng CalmLearn</string>
     <string name="profile_email_loading">—</string>
@@ -89,18 +84,14 @@
     <string name="badge_speaking_title">Speaking Star</string>
     <string name="badge_status_earned">Đã đạt</string>
 
-    <!-- Lessons -->
     <string name="lessons_title">Khám phá bài học</string>
     <string name="lessons_subtitle">Từ vựng theo chủ đề &amp; ngữ pháp nền tảng</string>
     <string name="lessons_flashcards">Flashcards</string>
     <string name="lessons_tab_vocab">Từ vựng theo chủ đề (8 chủ đề)</string>
     <string name="lessons_tab_grammar">Ngữ pháp căn bản (6 chủ điểm)</string>
-    <!-- So lieu THAT tren the chu de (tinh dong tu vocab.db + ProgressRepository - xem
-         LessonsFragment.refreshTopicStats()), khong con la text cung trong item_lesson_*.xml -->
     <string name="lessons_topic_word_count_format">%1$d từ vựng</string>
     <string name="lessons_topic_percent_format">%1$d%%</string>
 
-    <!-- Practice -->
     <string name="practice_title">Trung tâm luyện tập</string>
     <string name="practice_subtitle">Chọn kỹ năng bạn muốn rèn luyện hôm nay</string>
     <string name="practice_streak_title">Luyện tập duy trì Streak</string>
@@ -121,7 +112,6 @@
     <string name="practice_flashcard_desc">Ôn tập nhanh nghĩa từ, phiên âm và ví dụ ngữ cảnh</string>
     <string name="practice_start">Bắt đầu</string>
 
-    <!-- Progress -->
     <string name="progress_title">Tiến độ học tập</string>
     <string name="progress_subtitle">Theo dõi nỗ lực và kết quả rèn luyện của bạn</string>
     <string name="progress_chart_title">Biểu đồ học tập 7 ngày</string>
@@ -151,7 +141,6 @@
     <string name="progress_badges_title">Huy hiệu &amp; Thành tựu</string>
     <string name="progress_badges_unlocked">3 / 5 Đã mở khóa</string>
 
-    <!-- Profile -->
     <string name="profile_title">Hồ sơ cá nhân</string>
     <string name="profile_email">alex.nguyen@student.edu.vn</string>
     <string name="profile_level">Trình độ: Tiếng Anh A2 (Sơ cấp)</string>
@@ -169,7 +158,6 @@
     <string name="profile_logout">Đăng xuất tài khoản</string>
     <string name="profile_logout_confirm">Bạn có chắc muốn đăng xuất khỏi CalmLearn?</string>
 
-    <!-- Achievement list / detail (2 Activity moi, dieu huong bang Intent) -->
     <string name="achievement_list_title">Huy hiệu của tôi</string>
     <string name="achievement_list_subtitle">Chạm vào một huy hiệu để xem chi tiết</string>
     <string name="achievement_status_unlocked">Đã mở khóa</string>
@@ -180,7 +168,6 @@
     <string name="achievement_detail_btn_mark_viewed">Đánh dấu đã xem</string>
     <string name="achievement_seen_toast">Đã xem: %1$s</string>
 
-    <!-- Common -->
     <string name="action_back">Quay lại</string>
     <string name="action_continue">Tiếp tục</string>
     <string name="action_retry">Thử lại</string>
@@ -194,12 +181,10 @@
     <string name="action_try_again">Làm lại</string>
     <string name="action_go_home">Về trang chủ</string>
 
-    <!-- Onboarding -->
     <string name="onboarding_skip">Bỏ qua</string>
     <string name="onboarding_next">Tiếp tục</string>
     <string name="onboarding_start">Bắt đầu học</string>
 
-    <!-- Register -->
     <string name="register_title">Tạo tài khoản</string>
     <string name="register_subtitle">Đăng ký để lưu lại tiến độ học tập của bạn</string>
     <string name="register_label_fullname">Họ và tên</string>
@@ -226,10 +211,8 @@
     <string name="register_have_account">Đã có tài khoản?</string>
     <string name="register_login_now">Đăng nhập</string>
 
-    <!-- Auth chung (Dang nhap / Dang ky / Quen mat khau) -->
     <string name="auth_brand_tagline">Học tiếng Anh mỗi ngày</string>
     <string name="cd_toggle_password">Hiện/ẩn mật khẩu</string>
-    <!-- Hien khi AuthRepository chua duoc noi voi dich vu xac thuc that (xem UnavailableAuthRepository) -->
     <string name="auth_error_service_not_configured">Chức năng chưa khả dụng: dịch vụ xác thực chưa được cấu hình. Vui lòng liên hệ nhóm phát triển.</string>
     <string name="auth_error_network">Không thể kết nối đến máy chủ. Vui lòng kiểm tra mạng và thử lại.</string>
     <string name="auth_error_invalid_credentials">Email hoặc mật khẩu không đúng.</string>
@@ -240,7 +223,6 @@
     <string name="auth_error_unknown">Đã có lỗi xảy ra. Vui lòng thử lại sau.</string>
     <string name="auth_google_unavailable">Đăng nhập Google chưa được cấu hình cho ứng dụng này.</string>
 
-    <!-- Xac minh email / hoan tat ho so (man hinh trung gian sau Dang ky, hoac khi Dang nhap phat hien tai khoan chua xac minh / chua co ho so) -->
     <string name="verify_title">Xác minh email</string>
     <string name="verify_profile_title">Hoàn tất hồ sơ</string>
     <string name="verify_subtitle_sent">Chúng tôi đã gửi email xác minh tới %1$s. Vui lòng mở email và bấm vào liên kết xác minh, sau đó quay lại đây và bấm \"Tôi đã xác minh\".</string>
@@ -254,7 +236,6 @@
     <string name="verify_still_not_verified">Email vẫn chưa được xác minh. Vui lòng kiểm tra lại hộp thư (kể cả mục Spam).</string>
     <string name="verify_back_to_login">Để sau, quay lại đăng nhập</string>
 
-    <!-- Login -->
     <string name="login_title">Chào mừng trở lại!</string>
     <string name="login_subtitle">Đăng nhập để tiếp tục hành trình học tiếng Anh của bạn.</string>
     <string name="login_label_email">Email</string>
@@ -270,7 +251,6 @@
     <string name="login_error_email">Email không hợp lệ</string>
     <string name="login_error_password">Vui lòng nhập mật khẩu</string>
 
-    <!-- Forgot password -->
     <string name="forgot_password_title">Quên mật khẩu?</string>
     <string name="forgot_password_subtitle">Đừng lo lắng! Hãy nhập email đã đăng ký, chúng tôi sẽ gửi hướng dẫn đặt lại mật khẩu cho bạn.</string>
     <string name="forgot_password_btn_submit">Gửi hướng dẫn</string>
@@ -279,26 +259,22 @@
     <string name="forgot_password_security_note">Vì sự an toàn của bạn, liên kết đặt lại mật khẩu sẽ hết hạn sau một khoảng thời gian.</string>
     <string name="forgot_password_success">Nếu email này tồn tại trong hệ thống, hướng dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra hộp thư của bạn.</string>
 
-    <!-- Topic detail -->
     <string name="topic_words_learned_format">%1$d/%2$d từ đã học</string>
     <string name="topic_search_hint">Tìm từ trong chủ đề này…</string>
     <string name="topic_open_flashcards">Học bằng Flashcard</string>
 
-    <!-- Word detail -->
     <string name="word_detail_definition_label">Định nghĩa</string>
     <string name="word_detail_example_label">Câu ví dụ</string>
     <string name="word_detail_synonyms_label">Từ đồng nghĩa</string>
     <string name="word_detail_mark_learned">Đánh dấu đã học</string>
     <string name="word_detail_learned">Đã học</string>
 
-    <!-- Vocab list (danh sach tu, doc tu SQLite qua VocabRepository - xem data/vocab/) -->
     <string name="vocab_list_title">Danh sách từ vựng</string>
     <string name="vocab_list_search_hint">Tìm từ hoặc nghĩa tiếng Việt…</string>
     <string name="vocab_list_count_format">%1$d từ</string>
     <string name="vocab_list_empty">Chưa có từ nào. Nhấn dấu + để thêm từ mới.</string>
     <string name="lessons_open_vocab_list">Xem danh sách từ vựng (SQLite)</string>
 
-    <!-- Them tu (man 13 - INSERT that vao SQLite qua VocabRepository) -->
     <string name="add_word_title">Thêm từ mới</string>
     <string name="add_word_label_word">Từ mới *</string>
     <string name="add_word_hint_word">Ví dụ: journey</string>
@@ -316,7 +292,6 @@
     <string name="add_word_success">Đã lưu từ mới vào SQLite</string>
     <string name="add_word_error_generic">Không thể lưu từ mới, vui lòng thử lại</string>
 
-    <!-- Flashcard -->
     <string name="flashcard_tap_hint">Chạm vào thẻ để lật mặt sau</string>
     <string name="flashcard_progress_format">Thẻ %1$d / %2$d</string>
     <string name="flashcard_know_it">Đã thuộc</string>
@@ -324,13 +299,11 @@
     <string name="flashcard_done_title">Bạn đã ôn xong bộ Flashcard!</string>
     <string name="flashcard_done_desc">Tiếp tục luyện tập mỗi ngày để ghi nhớ lâu hơn.</string>
 
-    <!-- Grammar detail -->
     <string name="grammar_formula_label">Công thức</string>
     <string name="grammar_examples_label">Ví dụ</string>
     <string name="grammar_note_label">Ghi chú</string>
     <string name="grammar_mini_quiz_label">Mini Quiz</string>
 
-    <!-- Speaking -->
     <string name="speaking_title">Luyện phát âm</string>
     <string name="speaking_progress_format">%1$d/%2$d</string>
     <string name="speaking_level_word">Từ</string>
@@ -350,7 +323,6 @@
     <string name="speaking_complete_title">Hoàn thành buổi luyện nói!</string>
     <string name="speaking_complete_desc">Bạn đã luyện tập xong toàn bộ nội dung ở cấp độ này.</string>
 
-    <!-- Listening -->
     <string name="listening_list_title">Luyện nghe</string>
     <string name="listening_list_subtitle">Chọn một bài hội thoại để bắt đầu</string>
     <string name="listening_transcript_label">Hội thoại</string>
@@ -359,7 +331,6 @@
     <string name="listening_complete_title">Hoàn thành bài nghe!</string>
     <string name="listening_tts_unavailable">Thiết bị này chưa hỗ trợ đọc văn bản thành giọng nói.</string>
 
-    <!-- Quiz -->
     <string name="quiz_title">Quiz trắc nghiệm</string>
     <string name="quiz_question_format">Câu %1$d/%2$d</string>
     <string name="quiz_explanation_label">Giải thích</string>

@@ -10,13 +10,6 @@ import com.education.calmlearn.data.auth.AuthErrorReason
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 
-/**
- * Implementation THAT cua [ProgressRepository], dung Cloud Firestore, collection rieng
- * [PROGRESS_COLLECTION] (KHONG chung document voi ho so trong "users" - xem firestore.rules,
- * isValidProfile() chi cho phep dung 4 truong co dinh nen khong the them truong tien do vao do).
- *
- * Moi nguoi dung chi co DUNG MOT document (id = uid), giong pattern cua FirebaseAuthRepository.
- */
 class FirebaseProgressRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance(),
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -40,8 +33,7 @@ class FirebaseProgressRepository(
         val uid = auth.currentUser?.uid ?: return ProgressResult.NotSignedIn
         return try {
             if (!learned) {
-                // Bo danh dau: chi bo khoi danh sach dang "da thuoc". KHONG dung toi xpAwardedWordIds
-                // nen sau nay danh dau lai se khong duoc cong XP lan thu hai.
+
                 val update = mapOf(
                     FIELD_LEARNED to FieldValue.arrayRemove(wordId),
                     FIELD_UPDATED_AT to FieldValue.serverTimestamp()
@@ -104,8 +96,7 @@ class FirebaseProgressRepository(
                 val alreadyAwarded = current.quizXpAwardedKeys.contains(awardKey)
                 val newQuizAwarded = if (alreadyAwarded) current.quizXpAwardedKeys else current.quizXpAwardedKeys + awardKey
                 val award = computeAward(today, current, alreadyAwarded, xpAmount)
-                // Chi tang bo dem "quiz dat >=90%" o LAN DAU TIEN trong ngay (dung chung cong voi
-                // XP) - lam lai quiz nhieu lan trong ngay khong lam tang bo dem them.
+
                 val newHighAccuracyCount = if (!alreadyAwarded && accuracyPercent >= HIGH_ACCURACY_THRESHOLD) {
                     current.highAccuracyQuizCount + 1
                 } else {
@@ -166,11 +157,6 @@ class FirebaseProgressRepository(
         }
     )
 
-    /**
-     * Logic dung chung cho "hoan thanh mot luot luyen tap" (Speaking/Listening): cong XP + streak +
-     * tang bo dem CHI o lan hoan thanh DAU TIEN trong ngay cua [awardKeyPrefix] (cap do Speaking
-     * hoac id bai Listening) - lam lai trong ngay van duoc nhung khong sinh them XP/bo dem.
-     */
     private suspend fun recordDailySessionCompleted(
         awardKeyPrefix: String,
         xpAmount: Int,
@@ -227,8 +213,7 @@ class FirebaseProgressRepository(
             val today = todayDateString()
             val result = firestore.runTransaction { transaction ->
                 val snapshot = transaction.get(progressDoc(uid))
-                // toLearningProgress() da tu dong tra ve 0 cho todayStudySeconds neu ngay luu khac
-                // hom nay, nen cong don o day luon dung du ngay co the vua sang.
+
                 val current = snapshot.toLearningProgress()
                 val newSeconds = current.todayStudySeconds + seconds
                 val newTotalSeconds = current.totalStudySeconds + seconds
@@ -327,9 +312,7 @@ class FirebaseProgressRepository(
             speakingSessionCount = (getLong(FIELD_SPEAKING_SESSION_COUNT) ?: 0L).toInt(),
             listeningSessionAwardedKeys = stringSet(FIELD_LISTENING_AWARDED),
             listeningSessionCount = (getLong(FIELD_LISTENING_SESSION_COUNT) ?: 0L).toInt(),
-            // Neu ngay luu trong Firestore khac hom nay, tuc da sang ngay moi ma chua co lan
-            // addStudySeconds() nao ghi de - coi nhu 0 giay cho hom nay (khong cong don sang ngay
-            // moi tu leftover cua hom qua).
+
             todayStudySeconds = if (getString(FIELD_TODAY_STUDY_DATE) == todayDateString()) {
                 (getLong(FIELD_TODAY_STUDY_SECONDS) ?: 0L).toInt()
             } else {
@@ -346,11 +329,6 @@ class FirebaseProgressRepository(
 
     private data class XpAward(val xp: Int, val streak: Int, val lastActiveDate: String)
 
-    /**
-     * Tinh XP/streak/ngay hoat dong MOI cho mot "hanh dong hoc tap" bat ky (hoc xong 1 tu, hoan
-     * thanh 1 quiz...) - dung CHUNG mot khai niem streak cho toan app: ngay nao co IT NHAT MOT
-     * hanh dong DAU TIEN (chua tung duoc cong thuong) thi tinh la mot ngay hoat dong.
-     */
     private fun computeAward(today: String, current: LearningProgress, alreadyAwarded: Boolean, xpAmount: Int): XpAward {
         return if (alreadyAwarded) {
             XpAward(current.xp, current.streak, current.lastActiveDate ?: today)
@@ -386,21 +364,15 @@ class FirebaseProgressRepository(
         const val FIELD_TOTAL_STUDY_SECONDS = "totalStudySeconds"
         const val FIELD_COMPLETED_GRAMMAR = "completedGrammarLessonIds"
 
-        /** So XP nguoi dung nhan duoc khi hoc xong MOT tu moi (lan dau tien). */
         const val WORD_LEARNED_XP = 10
 
-        /** So XP cho MOI cau dung trong quiz - khop voi cong thuc hien thi cu (correctCount * 10)
-         *  de trai nghiem khong doi, chi khac la gio duoc luu that va co gioi han chong farm. */
         const val QUIZ_XP_PER_CORRECT = 10
 
-        /** Nguong % dung de tinh vao huy hieu "Quiz Master" (xem MockData.applyAchievementProgress). */
         const val HIGH_ACCURACY_THRESHOLD = 90
 
-        /** So XP cho MOT luot luyen phat am / MOT bai luyen nghe hoan thanh (dau tien trong ngay). */
         const val SPEAKING_SESSION_XP = 15
         const val LISTENING_SESSION_XP = 15
 
-        /** So XP cho lan dau tien kiem tra mini-quiz cua mot bai ngu phap. */
         const val GRAMMAR_LESSON_XP = 10
     }
 }

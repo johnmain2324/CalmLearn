@@ -15,7 +15,6 @@
         android:paddingEnd="16dp"
         android:paddingTop="20dp">
 
-        <!-- Header: avatar + greeting + notification -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -89,7 +88,6 @@
             </FrameLayout>
         </LinearLayout>
 
-        <!-- Search bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -116,7 +114,6 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <!-- Streak + XP cards -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -205,7 +202,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Daily goal -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -282,7 +278,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Continuing course banner -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -398,7 +393,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Quick practice section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -468,7 +462,6 @@
                 android:layout_weight="1" />
         </LinearLayout>
 
-        <!-- Daily challenge -->
         <LinearLayout
             android:id="@+id/btnDailyChallenge"
             android:layout_width="match_parent"
@@ -556,7 +549,6 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Suggested topics -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -614,7 +606,6 @@
             </LinearLayout>
         </HorizontalScrollView>
 
-        <!-- Weekly progress -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -663,7 +654,6 @@
                 android:layout_marginTop="14dp" />
         </LinearLayout>
 
-        <!-- Recent activity -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -760,7 +750,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Badges -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

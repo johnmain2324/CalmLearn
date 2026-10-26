@@ -50,9 +50,6 @@ class FlashcardFragment : Fragment() {
         loadWordsThenProgress(topicId)
     }
 
-    /** Nap tu vung tu SQLite (qua MockData.ensureVocabWordsLoaded - xem data/vocab/) TRUOC, roi
-     *  moi gan adapter/nut bam va dong bo tien do that tu Firestore - tranh dung [words] truoc
-     *  khi nap xong (lateinit). */
     private fun loadWordsThenProgress(topicId: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             MockData.ensureVocabWordsLoaded()

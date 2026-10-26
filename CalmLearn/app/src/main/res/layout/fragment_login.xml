@@ -15,7 +15,6 @@
         android:paddingHorizontal="20dp"
         android:paddingBottom="24dp">
 
-        <!-- Header: nut quay lai + thuong hieu -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,7 +59,6 @@
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
-        <!-- Email -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -95,7 +93,6 @@
             android:textSize="12sp"
             android:visibility="gone" />
 
-        <!-- Password -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -152,7 +149,6 @@
             android:textSize="12sp"
             android:visibility="gone" />
 
-        <!-- Ghi chu ve phien dang nhap (Firebase giu phien den khi Dang xuat - khong con checkbox "Ghi nho dang nhap") -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -161,7 +157,6 @@
             android:textColor="@color/text_secondary"
             android:textSize="12sp" />
 
-        <!-- Quen mat khau -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -221,7 +216,6 @@
                 android:visibility="gone" />
         </FrameLayout>
 
-        <!-- "Hoac" divider -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

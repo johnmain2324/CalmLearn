@@ -16,12 +16,6 @@ import com.education.calmlearn.databinding.FragmentVerifyEmailBinding
 import com.education.calmlearn.ui.common.FormUiState
 import com.education.calmlearn.ui.common.toMessageRes
 
-/**
- * Man hinh Xac minh email / Hoan tat ho so - dung CHUNG mot phien Firebase da duoc xac thuc tu
- * Dang ky hoac Dang nhap (xem VerifyEmailViewModel). Tuy trang thai that cua tai khoan ma hien
- * form "Hoan tat ho so" (Firestore chua co ho so) hoac nut "Gui lai email xac minh" (da co ho so,
- * chi con thieu xac minh).
- */
 class VerifyEmailFragment : Fragment() {
 
     private var _binding: FragmentVerifyEmailBinding? = null
@@ -79,7 +73,6 @@ class VerifyEmailFragment : Fragment() {
         viewModel.initialize(arguments?.getBoolean(ARG_AUTO_SEND, false) ?: false)
     }
 
-    /** Nguoi dung chu dong roi man hinh ma chua hoan tat - huy phien dang cho roi quay lai Dang nhap. */
     private fun leaveWithoutFinishing() {
         viewModel.abandon()
         findNavController().navigateUp()

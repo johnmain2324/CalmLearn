@@ -57,7 +57,6 @@ class VerifyEmailViewModelTest {
         viewModel.initialize(autoSend = true)
         advanceUntilIdle()
         assertTrue(viewModel.mode.value is VerifyEmailMode.ProfileForm)
-        // Khong duoc tu goi gui xac minh khi chua co ho so.
         assertEquals(0, fakeRepository.resendCallCount)
     }
 
@@ -121,10 +120,9 @@ class VerifyEmailViewModelTest {
         assertEquals(1, fakeRepository.completeProfileCallCount)
         assertEquals(0, fakeRepository.resendCallCount)
 
-        // Nguoi dung thu lai sau khi sua - khong bi khoa, va khong goi trung trong luc dang Loading.
         fakeRepository.completeProfileResult = AuthResult.Success
         viewModel.submitProfile()
-        viewModel.submitProfile() // trung lap trong luc dang Loading - phai bi bo qua
+        viewModel.submitProfile()
         advanceUntilIdle()
 
         assertEquals(2, fakeRepository.completeProfileCallCount)
@@ -181,7 +179,7 @@ class VerifyEmailViewModelTest {
 
         viewModel.checkAgain()
         assertEquals(FormUiState.Loading, viewModel.uiState.value)
-        viewModel.checkAgain() // trung lap trong luc dang Loading - phai bi bo qua
+        viewModel.checkAgain()
         advanceUntilIdle()
 
         assertEquals(1, fakeRepository.refreshCallCount)

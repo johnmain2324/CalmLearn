@@ -29,7 +29,6 @@
             android:textColor="@color/text_secondary"
             android:textSize="13sp" />
 
-        <!-- Streak banner -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

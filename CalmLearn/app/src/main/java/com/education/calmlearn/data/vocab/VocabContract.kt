@@ -1,9 +1,4 @@
 package com.education.calmlearn.data.vocab
-
-/**
- * Ten bang/cot cua vocab.db - PHAI khop dung voi schema sinh boi
- * scripts/vocab_etl/build_sqlite.py (xem SQLITE_VOCAB.md o goc project).
- */
 object VocabContract {
 
     const val DATABASE_NAME = "vocab.db"

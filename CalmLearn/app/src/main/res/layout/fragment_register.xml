@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Man hinh Dang ky - vi du minh hoa cho Nhom chu de 2:
-    1) RelativeLayout (root) + TableLayout (form) bo sung du 5 loai layout cua project
-       (cung voi LinearLayout, ConstraintLayout, FrameLayout, ScrollView da dung o cac man hinh khac).
-    2) Cac View thuong dung trong form dang ky: EditText, RadioGroup/RadioButton, CheckBox, Button.
--->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/registerRoot"
@@ -12,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <!-- Header: neo tren cung man hinh -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -44,7 +37,6 @@
             android:layout_marginStart="12dp" />
     </LinearLayout>
 
-    <!-- Nut Dang ky: neo duoi cung man hinh -->
     <FrameLayout
         android:id="@+id/submitContainer"
         android:layout_width="match_parent"
@@ -107,7 +99,6 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- Noi dung form, cuon duoc, nam giua header va nut Dang ky -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollContent"
         android:layout_width="match_parent"
@@ -131,7 +122,6 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="14sp" />
 
-            <!-- TableLayout: cot 0 la nhan (label), cot 1 la o nhap (stretch de lap day chieu rong) -->
             <TableLayout
                 android:id="@+id/tableForm"
                 android:layout_width="match_parent"
@@ -367,7 +357,6 @@
                 </TableRow>
             </TableLayout>
 
-            <!-- Banner loi tu DICH VU (backend) - khac voi loi nhap lieu hien rieng tung truong o tren. -->
             <TextView
                 android:id="@+id/tvError"
                 android:layout_width="match_parent"
@@ -387,7 +376,6 @@
                 android:textSize="13sp"
                 android:textStyle="bold" />
 
-            <!-- RadioGroup 3 lua chon, style dang "pill" theo thiet ke moi -->
             <RadioGroup
                 android:id="@+id/rgGender"
                 android:layout_width="match_parent"

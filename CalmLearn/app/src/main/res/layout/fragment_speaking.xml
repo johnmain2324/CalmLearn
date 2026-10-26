@@ -58,7 +58,6 @@
             android:paddingHorizontal="16dp"
             android:paddingBottom="24dp">
 
-            <!-- Level tabs -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -107,14 +106,12 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Practice content (hidden once the level is fully completed) -->
             <LinearLayout
                 android:id="@+id/practiceContentGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-            <!-- Content card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -215,7 +212,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- Mic section -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -254,7 +250,6 @@
                 android:textColor="@color/text_secondary"
                 android:textSize="13sp" />
 
-            <!-- Result -->
             <LinearLayout
                 android:id="@+id/resultGroup"
                 android:layout_width="match_parent"
@@ -348,7 +343,6 @@
 
             </LinearLayout>
 
-            <!-- Completion -->
             <LinearLayout
                 android:id="@+id/completionGroup"
                 android:layout_width="match_parent"

@@ -80,7 +80,6 @@
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 
-        <!-- Che do "Hoan tat ho so": chi hien khi Firestore CHUA co ho so cho tai khoan nay -->
         <LinearLayout
             android:id="@+id/profileFormGroup"
             android:layout_width="match_parent"
@@ -198,7 +197,6 @@
             </FrameLayout>
         </LinearLayout>
 
-        <!-- Che do "Xac minh email": chi hien khi ho so da co san, chi con thieu xac minh -->
         <LinearLayout
             android:id="@+id/verifyGroup"
             android:layout_width="match_parent"
@@ -246,7 +244,6 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Banner loi tu dich vu (chung cho ca hai che do) -->
         <TextView
             android:id="@+id/tvError"
             android:layout_width="match_parent"

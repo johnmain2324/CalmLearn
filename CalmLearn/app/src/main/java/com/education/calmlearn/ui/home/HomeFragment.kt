@@ -64,12 +64,6 @@ class HomeFragment : Fragment() {
         binding.btnBadgesViewAll.setOnClickListener { switchTab(R.id.progressFragment) }
     }
 
-    /**
-     * Hien ten that cua nguoi vua dang nhap (khong con hardcode "Alex Nguyen"/email mau - XML chi
-     * con dung tools:text cho preview, khong con android:text). XP/streak/muc tieu/khoa hoc dat ve
-     * trang thai "chua co du lieu" vi buoc nay chua trien khai theo doi tien do that - tranh gan
-     * nham so lieu mau (440 XP, 65% muc tieu, 70% khoa hoc...) thanh thanh tich that cua nguoi moi.
-     */
     private fun loadCurrentUser() {
         binding.tvUserName.text = getString(R.string.profile_name_loading)
 
@@ -86,8 +80,7 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             when (val result = AuthRepositoryProvider.repository.currentUserProfile()) {
                 is ProfileResult.Loaded -> {
-                    // Doi chieu UID truoc khi cap nhat UI: neu phien da doi (vd dang xuat/dang
-                    // nhap tai khoan khac ngay trong luc dang cho ket qua) thi bo qua ket qua cu.
+
                     if (result.profile.uid != requestedUid) return@launch
                     binding.tvUserName.text = result.profile.fullName.takeIf { it.isNotBlank() }
                         ?: result.profile.email.substringBefore('@').takeIf { it.isNotBlank() }
@@ -97,20 +90,13 @@ class HomeFragment : Fragment() {
                     binding.tvUserName.text = getString(R.string.profile_name_fallback)
                 }
                 is ProfileResult.ReadError -> {
-                    // Loi doc tam thoi - khong fabricate ten, chi hien trang thai trung tinh.
+
                     binding.tvUserName.text = getString(R.string.profile_name_fallback)
                 }
             }
         }
     }
 
-    /** Thay tvStreakValue/tvXpValue/tvCoursePercent tu trang thai "chua co du lieu" (dat trong
-     *  loadCurrentUser()) bang du lieu THAT, doc tu LearningProgress (xem data/progress/). The
-     *  "khoa hoc dang tiep dien" tren Home la chu de "travel" (Travel English, co dinh) nen % that
-     *  cua no chinh la % tu vung da hoc that trong chu de nay - xem MockData.topicPercent(). Rieng
-     *  "muc tieu hom nay" (phut hoc/ngay) CHUA co co che theo doi thoi gian hoc that trong app nen
-     *  van giu trang thai "chua co du lieu" thay vi bia so phut - can mot cong viec rieng (theo doi
-     *  thoi gian phien hoc) truoc khi co the hien thi so that o day. */
     private fun loadProgress() {
         viewLifecycleOwner.lifecycleScope.launch {
             val result = ProgressRepositoryProvider.repository.loadProgress()
@@ -162,12 +148,9 @@ class HomeFragment : Fragment() {
     }
 
     private companion object {
-        /** Chu de co dinh dang duoc gioi thieu trong the "Khoa hoc dang tiep dien" tren Home
-         *  (Travel English - xem string home_course_name/home_course_lesson). */
+
         const val HOME_COURSE_TOPIC_ID = "travel"
 
-        /** Muc tieu phut hoc/ngay, khop voi noi dung tinh "Muc tieu 20 phut / ngay" da co san
-         *  (xem string home_week_progress_goal). */
         const val DAILY_GOAL_MINUTES = 20
     }
 }

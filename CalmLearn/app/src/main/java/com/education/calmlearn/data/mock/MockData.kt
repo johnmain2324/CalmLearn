@@ -17,10 +17,6 @@ import com.education.calmlearn.data.model.VocabWord
 import com.education.calmlearn.data.progress.LearningProgress
 import com.education.calmlearn.data.vocab.VocabRepositoryProvider
 
-/**
- * In-memory sample data for the CalmLearn UI prototype.
- * Nothing here is persisted; the app restarts fresh every launch.
- */
 object MockData {
 
     val currentUser = User(
@@ -66,54 +62,34 @@ object MockData {
         Topic("movie", "Giải trí & Phim ảnh", R.drawable.ic_film, R.drawable.bg_icon_square_amber, 32, 8)
     )
 
-    /**
-     * Tu vung THAT, nap tu SQLite qua VocabRepository (xem data/vocab/) - KHONG con
-     * hardcode literal nao o day nua. 40 tu Phase 1 (5 tu x 8 chu de, giu dung id cu
-     * "travel_1"... de tuong thich voi learnedWordIds/favoriteWordIds da luu trong
-     * Firestore) duoc sinh boi pipeline ETL offline (scripts/vocab_etl/) va dong goi
-     * san trong app/src/main/assets/vocab.db - xem SQLITE_VOCAB.md o goc project.
-     * Rong cho den khi [ensureVocabWordsLoaded] duoc goi lan dau.
-     */
     var vocabWords: MutableList<VocabWord> = mutableListOf()
         private set
 
     private var vocabWordsLoaded = false
 
-    /**
-     * Nap tu vung tu SQLite (qua [VocabRepositoryProvider]) MOT LAN roi cache lai
-     * trong [vocabWords] - an toan de goi lai nhieu lan tu nhieu Fragment khac nhau
-     * (TopicDetailFragment/WordDetailFragment/FlashcardFragment/HomeFragment/
-     * ProgressFragment), cung pattern voi cac ham hydrateProgress() da co san goi
-     * ProgressRepository trong lifecycleScope.launch.
-     */
     suspend fun ensureVocabWordsLoaded() {
         if (vocabWordsLoaded) return
         vocabWords = VocabRepositoryProvider.repository.getAllWords().toMutableList()
         vocabWordsLoaded = true
     }
 
+    fun invalidateVocabWords() {
+        vocabWordsLoaded = false
+    }
+
     fun wordsForTopic(topicId: String): List<VocabWord> = vocabWords.filter { it.topicId == topicId }
 
-    /** % tu vung THAT da hoc trong mot chu de, tinh tu trang thai isLearned hien tai cua
-     *  vocabWords (phai goi applyProgress() truoc de trang thai nay la du lieu that, khong phai
-     *  gia tri mac dinh false). Thay the cho Topic.learnedWords/percent co dinh trong MockData. */
     fun topicPercent(topicId: String): Int {
         val words = wordsForTopic(topicId)
         if (words.isEmpty()) return 0
         return (words.count { it.isLearned } * 100) / words.size
     }
 
-    /** "Bai hoc hoan thanh" (Progress) = so chu de tu vung da hoc HET tu + so bai ngu phap da xem
-     *  qua mini-quiz. Phai goi applyProgress() truoc de topicPercent() phan anh dung trang thai
-     *  that. */
     fun lessonsCompletedCount(progress: LearningProgress): Int {
         val topicsCompleted = topics.count { topicPercent(it.id) == 100 }
         return topicsCompleted + progress.completedGrammarLessonIds.size
     }
 
-    /** Ap trang thai tien do that (da hoc/yeu thich) cua nguoi dung dang dang nhap len danh sach
-     *  tu vung trong bo nho - noi dung tu (dinh nghia, vi du...) van giu nguyen, chi hai co isLearned/
-     *  isFavorite duoc dong bo lai tu Firestore (xem data/progress/ProgressRepository.kt). */
     fun applyProgress(progress: LearningProgress) {
         vocabWords.forEach { word ->
             word.isLearned = progress.learnedWordIds.contains(word.id)
@@ -121,11 +97,6 @@ object MockData {
         }
     }
 
-    /**
-     * Danh gia lai trang thai mo khoa/tien do cua tat ca huy hieu tu du lieu tien do THAT (khong
-     * con so lieu mau co dinh cho huy hieu nao nua - ca 5 huy hieu deu co nguon du lieu that trong
-     * LearningProgress, xem ProgressRepository).
-     */
     fun applyAchievementProgress(progress: LearningProgress) {
         achievements.firstOrNull { it.id == "ach_streak" }?.let { achievement ->
             achievement.progressCurrent = progress.streak.coerceAtMost(achievement.progressTotal)

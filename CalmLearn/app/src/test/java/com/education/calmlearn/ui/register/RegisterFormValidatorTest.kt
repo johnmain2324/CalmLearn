@@ -66,7 +66,6 @@ class RegisterFormValidatorTest {
         assertEquals(R.string.register_error_fullname, errors.fullName)
         assertEquals(R.string.register_error_email, errors.email)
         assertEquals(R.string.register_error_terms, errors.terms)
-        // Cac truong con lai van hop le nen phai null, khong bi "an theo" loi dau tien nhu truoc.
         assertNull(errors.password)
         assertNull(errors.confirmPassword)
         assertNull(errors.gender)
@@ -81,8 +80,6 @@ class RegisterFormValidatorTest {
         ).visibleTo(touched)
         assertNull(stillMatching.confirmPassword)
 
-        // Nguoi dung doi mat khau goc sau khi da nhap xac nhan -> loi phai xuat hien lai vi
-        // confirmPassword da duoc "touched" tu truoc.
         val nowMismatched = RegisterFormValidator.errors(
             validInput().copy(password = "zzzzzz", confirmPassword = "abcdef")
         ).visibleTo(touched)

@@ -16,22 +16,14 @@ import com.education.calmlearn.ui.common.FormUiState
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
-/** Man hinh nay co 2 che do tuy vao trang thai that cua tai khoan dang "cho hoan tat". */
 sealed class VerifyEmailMode {
     object Loading : VerifyEmailMode()
 
-    /** Ho so Firestore CHUA co (dang ky bi gian doan truoc buoc luu ho so) - can nhap lai ten/gioi tinh. */
     data class ProfileForm(val email: String) : VerifyEmailMode()
 
-    /** Ho so da co, chi con thieu xac minh email. */
     data class Verify(val email: String) : VerifyEmailMode()
 }
 
-/**
- * ViewModel cho man hinh Xac minh email / Hoan tat ho so - noi den tu Dang ky (tai khoan vua tao)
- * hoac Dang nhap (phat hien tai khoan chua xac minh/chua co ho so). Dung CHUNG mot FirebaseUser
- * dang duoc giu (xem FirebaseAuthRepository) cho ca hai truong hop, khong yeu cau dang nhap lai.
- */
 class VerifyEmailViewModel(
     private val repository: AuthRepository = AuthRepositoryProvider.repository
 ) : ViewModel() {
@@ -39,12 +31,9 @@ class VerifyEmailViewModel(
     private val _mode = MutableLiveData<VerifyEmailMode>(VerifyEmailMode.Loading)
     val mode: LiveData<VerifyEmailMode> = _mode
 
-    /** Trang thai cho CA HAI thao tac (luu ho so, gui lai, kiem tra lai) - chi mot thao tac chay
-     *  tai mot thoi diem theo tung che do nen dung chung an toan. */
     private val _uiState = MutableLiveData<FormUiState>(FormUiState.Idle)
     val uiState: LiveData<FormUiState> = _uiState
 
-    /** Thong bao ngan hen (Toast) khong phai loi - vd "da gui lai", "van chua xac minh". */
     private val _infoEvent = MutableLiveData<Int?>(null)
     val infoEvent: LiveData<Int?> = _infoEvent
 
@@ -72,9 +61,6 @@ class VerifyEmailViewModel(
         _isProfileFormValid.value = fullName.trim().isNotEmpty() && gender != null
     }
 
-    /** Goi mot lan tu Fragment.onViewCreated(). [autoSend] chi true khi vua tu Dang ky sang (chua
-     *  tung gui email xac minh nao) - tu Dang nhap phat hien "chua xac minh" thi KHONG tu gui lai
-     *  (co the da gui truoc do, tranh spam). */
     fun initialize(autoSend: Boolean) {
         if (initialized) return
         initialized = true
@@ -96,7 +82,6 @@ class VerifyEmailViewModel(
         }
     }
 
-    /** Luu ho so (khi thieu) roi gui email xac minh ngay sau do - gop lam mot thao tac cho nguoi dung. */
     fun submitProfile() {
         if (_uiState.value == FormUiState.Loading) return
         val name = fullName.trim()
@@ -126,7 +111,6 @@ class VerifyEmailViewModel(
         }
     }
 
-    /** Gui (hoac gui lai) email xac minh. An toan khi goi nhieu lan - tu chan trung luc dang Loading. */
     fun resend() {
         if (_uiState.value == FormUiState.Loading) return
 
@@ -149,7 +133,6 @@ class VerifyEmailViewModel(
         }
     }
 
-    /** "Toi da xac minh - Kiem tra lai": tai lai du lieu tu Firebase (khong chi doc cache cu). */
     fun checkAgain() {
         if (_uiState.value == FormUiState.Loading) return
 
@@ -173,7 +156,6 @@ class VerifyEmailViewModel(
         }
     }
 
-    /** Nguoi dung chu dong roi man hinh ma chua hoan tat (Back / "De sau") - huy phien dang cho. */
     fun abandon() {
         repository.cancelPendingSession()
     }
@@ -182,7 +164,6 @@ class VerifyEmailViewModel(
         _infoEvent.value = null
     }
 
-    /** Xem RegisterViewModel.consumeTerminalState(): tranh Success bi "phat lai" gay dieu huong nhieu lan. */
     fun consumeTerminalState() {
         if (_uiState.value == FormUiState.Success) {
             _uiState.value = FormUiState.Idle

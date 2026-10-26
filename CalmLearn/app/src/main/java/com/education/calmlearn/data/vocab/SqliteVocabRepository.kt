@@ -11,13 +11,6 @@ import kotlinx.coroutines.withContext
 
 private const val MANUAL_ENTRY_SOURCE = "Nguoi dung tu nhap (man Them tu)"
 
-/**
- * Trien khai [VocabRepository] bang API SQLite chuan (SQLiteOpenHelper +
- * ContentValues + Cursor/query/rawQuery) - khong dung Room. Moi thao tac chay
- * tren Dispatchers.IO vi day la I/O dong bo (giong cach cac ham dung Firebase
- * Task.await() trong AuthRepository/ProgressRepository deu chay ngoai main thread,
- * chi khac o day la IO dia phuong thay vi mang).
- */
 class SqliteVocabRepository(context: Context) : VocabRepository {
 
     private val dbHelper = VocabDbHelper(context.applicationContext)
@@ -50,7 +43,7 @@ class SqliteVocabRepository(context: Context) : VocabRepository {
     override suspend fun searchWords(query: String): List<VocabWord> = withContext(Dispatchers.IO) {
         val db = openReadable()
         val like = "%${query.trim()}%"
-        // rawQuery + LIKE: tim theo tu HOAC nghia tieng Viet, khong phan biet hoa/thuong.
+
         val cursor = db.rawQuery(
             """
             SELECT ${VocabContract.Words.ID} FROM ${VocabContract.Words.TABLE}
@@ -186,13 +179,6 @@ class SqliteVocabRepository(context: Context) : VocabRepository {
         VocabResult.Updated
     }
 
-    /**
-     * Lay 1 tu + dinh nghia dau tien bang DUNG 1 cau SQL JOIN (khac readWords/
-     * cursorToWord phai query rieng bang definitions cho moi tu - N+1 query).
-     * INNER JOIN nen tu khong co dinh nghia nao se tra ve null. Dinh nghia dau
-     * tien = definitions.id nho nhat; LIMIT 1 de chi lay 1 dong ket qua.
-     * Tra ve cap (word, definition) vi VocabWord day du can them synonyms/example.
-     */
     suspend fun getWordWithFirstDefinition(wordId: String): Pair<String, String>? = withContext(Dispatchers.IO) {
         val db = openReadable()
         val cursor = db.rawQuery(
@@ -211,7 +197,6 @@ class SqliteVocabRepository(context: Context) : VocabRepository {
         cursor.use { c -> if (c.moveToFirst()) c.getString(0) to c.getString(1) else null }
     }
 
-    /** Doc danh sach words that hop dinh nghia dau tien + toan bo dong nghia + vi du uu tien. */
     private fun readWords(db: SQLiteDatabase, selection: String?, selectionArgs: Array<String>?): List<VocabWord> {
         val words = mutableListOf<VocabWord>()
         db.query(
@@ -258,7 +243,7 @@ class SqliteVocabRepository(context: Context) : VocabRepository {
             arrayOf(VocabContract.Examples.SENTENCE, VocabContract.Examples.SENTENCE_VI),
             "${VocabContract.Examples.WORD_ID} = ?", arrayOf(id),
             null, null,
-            // Uu tien vi du CO san ban dich tieng Viet (sentence_vi khong NULL) de hien thi du cap song ngu.
+
             "${VocabContract.Examples.SENTENCE_VI} IS NULL ASC, ${VocabContract.Examples.ID} ASC",
             "1"
         ).use { c ->

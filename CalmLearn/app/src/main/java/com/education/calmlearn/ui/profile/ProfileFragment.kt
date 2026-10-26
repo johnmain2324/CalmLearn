@@ -71,11 +71,6 @@ class ProfileFragment : Fragment() {
         binding.rowLogout.setOnClickListener { confirmLogout() }
     }
 
-    /**
-     * Hien ten, email, gioi tinh that cua nguoi dang dang nhap (khong con hardcode "Alex Nguyen"/
-     * email mau - XML chi con dung tools:text cho preview). XP/streak dat ve trang thai "chua co
-     * thanh tich" vi buoc nay chua trien khai theo doi tien do that.
-     */
     private fun loadCurrentUser() {
         binding.tvProfileName.text = getString(R.string.profile_name_loading)
         binding.tvProfileEmail.text = getString(R.string.profile_email_loading)
@@ -88,16 +83,14 @@ class ProfileFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             when (val result = AuthRepositoryProvider.repository.currentUserProfile()) {
                 is ProfileResult.Loaded -> {
-                    // Doi chieu UID truoc khi cap nhat UI: neu phien da doi (vd dang xuat/dang
-                    // nhap tai khoan khac ngay trong luc dang cho ket qua) thi bo qua ket qua cu.
+
                     if (result.profile.uid != requestedUid) return@launch
                     val profile = result.profile
                     binding.tvProfileName.text = profile.fullName.takeIf { it.isNotBlank() }
                         ?: profile.email.substringBefore('@').takeIf { it.isNotBlank() }
                         ?: getString(R.string.profile_name_fallback)
                     binding.tvProfileEmail.text = profile.email.ifBlank { getString(R.string.profile_email_loading) }
-                    // gender == null nghia la CHUA GHI NHAN - khong duoc tu suy dien thanh mot lua
-                    // chon Nam/Nu/Khac cu the nao (xem UserProfile.gender).
+
                     binding.tvProfileGender.text = profile.gender?.let { getString(genderLabelRes(it)) }
                         ?: getString(R.string.profile_gender_unset)
                 }
@@ -146,9 +139,7 @@ class ProfileFragment : Fragment() {
             .setTitle(R.string.profile_logout)
             .setMessage(R.string.profile_logout_confirm)
             .setPositiveButton(R.string.profile_logout) { _, _ ->
-                // Dua qua AuthRepository (khong dung co isLoggedIn cuc bo) roi ve man hinh
-                // Dang nhap; action_global_login xoa toan bo back stack nen Back se khong quay
-                // lai duoc cac man hinh can tai khoan.
+
                 AuthRepositoryProvider.repository.logout()
                 findNavController().navigate(R.id.action_global_login)
             }

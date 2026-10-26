@@ -151,8 +151,6 @@ class SpeakingFragment : Fragment() {
         resetToIdle()
     }
 
-    /** Kiem tra thiet bi co ho tro nhan dien giong noi khong, roi xin quyen RECORD_AUDIO neu can,
-     *  truoc khi thuc su bat dau nghe (xem beginListening()). */
     private fun onMicTapped() {
         if (!SpeechRecognizer.isRecognitionAvailable(requireContext())) {
             Toast.makeText(requireContext(), R.string.speaking_recognition_unavailable, Toast.LENGTH_SHORT).show()
@@ -168,7 +166,6 @@ class SpeakingFragment : Fragment() {
         }
     }
 
-    /** Doc mau THAT noi dung can luyen bang TextToSpeech (truoc day la nut khong lam gi ca). */
     private fun playSample() {
         val engine = textToSpeech
         val target = items.getOrNull(currentIndex)?.text
@@ -179,9 +176,6 @@ class SpeakingFragment : Fragment() {
         engine.speak(target, TextToSpeech.QUEUE_FLUSH, null, "speaking_sample")
     }
 
-    /** Bat dau nghe THAT bang SpeechRecognizer cua he thong (khong con mo phong) - ket qua dung/
-     *  sai duoc quyet dinh boi noi dung nguoi dung THAT SU noi ra, so khop voi [SpeakingItem.text]
-     *  (xem matchesTarget()), khong con Random. */
     private fun beginListening() {
         micState = MicState.LISTENING
         binding.micButton.setBackgroundResource(R.drawable.bg_circle_teal)
@@ -242,8 +236,6 @@ class SpeakingFragment : Fragment() {
         }
     }
 
-    /** So khop noi dung nhan dien duoc voi noi dung can luyen - bo qua hoa/thuong, dau cau, va
-     *  chap nhan khop mot phan (SpeechRecognizer hay them/bot tu dem khi nghe cau dai). */
     private fun matchesTarget(spoken: String, target: String): Boolean {
         val normalizedSpoken = normalize(spoken)
         val normalizedTarget = normalize(target)
@@ -279,10 +271,6 @@ class SpeakingFragment : Fragment() {
         }
     }
 
-    /** Ghi nhan da hoan thanh mot luot luyen phat am o cap do hien tai - xem
-     *  ProgressRepository.recordSpeakingSessionCompleted. Du ket qua dung/sai tung cau gio la THAT
-     *  (SpeechRecognizer), man hinh nay van la luyen tap (khong gioi han so lan thu lai nhu Quiz)
-     *  nen van chi ghi nhan SU KIEN hoan thanh ca luot, khong luu do chinh xac tung cau. */
     private fun persistSessionCompleted() {
         viewLifecycleOwner.lifecycleScope.launch {
             ProgressRepositoryProvider.repository.recordSpeakingSessionCompleted(currentLevel.name)

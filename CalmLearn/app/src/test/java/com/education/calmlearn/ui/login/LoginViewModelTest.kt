@@ -96,7 +96,6 @@ class LoginViewModelTest {
 
     @Test
     fun `a correctly formatted request is not automatically treated as authenticated`() = runTest(testDispatcher) {
-        // Dinh dang dung khong co nghia da xac thuc thanh cong - dich vu co the tra ve sai thong tin.
         fakeRepository.loginResult = LoginResult.Error(AuthErrorReason.INVALID_CREDENTIALS)
         viewModel.onEmailChanged("a@example.com")
         viewModel.onPasswordChanged("wrong-password")

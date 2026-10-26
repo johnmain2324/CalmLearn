@@ -55,8 +55,6 @@ class AchievementListActivity : AppCompatActivity() {
         hydrateAchievementProgress()
     }
 
-    /** Danh gia lai tien do that (streak/so tu da hoc/so lan quiz dat cao) truoc khi hien danh sach,
-     *  thay cho so lieu mau co dinh (xem MockData.applyAchievementProgress). */
     private fun hydrateAchievementProgress() {
         lifecycleScope.launch {
             val result = ProgressRepositoryProvider.repository.loadProgress()

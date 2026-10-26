@@ -109,7 +109,7 @@ class RegisterViewModelTest {
 
         viewModel.submit()
         assertEquals(FormUiState.Loading, viewModel.uiState.value)
-        viewModel.submit() // trung lap trong luc dang Loading - phai bi bo qua
+        viewModel.submit()
 
         fakeRepository.releaseRegisterGate()
         advanceUntilIdle()
@@ -195,8 +195,6 @@ class RegisterViewModelTest {
         viewModel.consumeTerminalState()
         assertEquals(FormUiState.Idle, viewModel.uiState.value)
 
-        // Goi lai lan nua (vd Fragment quan sat lai sau khi View duoc tao lai) khong duoc gay loi
-        // hay doi trang thai khac Idle.
         viewModel.consumeTerminalState()
         assertEquals(FormUiState.Idle, viewModel.uiState.value)
     }
@@ -208,7 +206,6 @@ class RegisterViewModelTest {
         viewModel.submit()
         assertEquals(FormUiState.Loading, viewModel.uiState.value)
 
-        // Gia lap nguoi dung roi man hinh (Fragment bi pop khoi back stack -> ViewModel cleared).
         val store = ViewModelStore()
         store.put("register", viewModel)
         store.clear()
@@ -216,7 +213,6 @@ class RegisterViewModelTest {
         fakeRepository.releaseRegisterGate()
         advanceUntilIdle()
 
-        // Ket qua den tre khong duoc cap nhat trang thai nua vi coroutine da bi huy cung ViewModel.
         assertEquals(FormUiState.Loading, viewModel.uiState.value)
     }
 }

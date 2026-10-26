@@ -17,11 +17,6 @@ import com.education.calmlearn.data.vocab.VocabResult
 import com.education.calmlearn.databinding.FragmentAddWordBinding
 import kotlinx.coroutines.launch
 
-/**
- * Man "13. Them tu" - form nhap 1 tu moi, luu THAT vao SQLite (INSERT that qua
- * VocabRepository.insertUserWord(), khong phai mock/giu tam trong bo nho) - xem
- * SQLITE_VOCAB.md o goc project cho luong demo day du.
- */
 class AddWordFragment : Fragment() {
 
     private var _binding: FragmentAddWordBinding? = null
@@ -80,6 +75,7 @@ class AddWordFragment : Fragment() {
             )
             when (result) {
                 is VocabResult.Inserted -> {
+                    MockData.invalidateVocabWords()
                     Toast.makeText(requireContext(), R.string.add_word_success, Toast.LENGTH_SHORT).show()
                     findNavController().popBackStack()
                 }

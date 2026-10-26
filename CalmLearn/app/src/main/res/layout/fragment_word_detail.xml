@@ -13,7 +13,6 @@
         android:paddingHorizontal="16dp"
         android:paddingTop="20dp">
 
-        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,7 +54,6 @@
                 android:contentDescription="@null" />
         </LinearLayout>
 
-        <!-- Word card -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -135,7 +133,6 @@
                 android:textSize="16sp" />
         </LinearLayout>
 
-        <!-- Definition -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -156,7 +153,6 @@
             android:textColor="@color/text_primary"
             android:textSize="14sp" />
 
-        <!-- Example -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -193,7 +189,6 @@
                 android:textSize="13sp" />
         </LinearLayout>
 
-        <!-- Synonyms -->
         <TextView
             android:id="@+id/synonymsLabel"
             android:layout_width="match_parent"
@@ -211,7 +206,6 @@
             android:layout_marginTop="8dp"
             android:orientation="horizontal" />
 
-        <!-- Mark as learned -->
         <TextView
             android:id="@+id/btnMarkLearned"
             android:layout_width="match_parent"

@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import com.education.calmlearn.R
 import com.education.calmlearn.data.auth.AuthErrorReason
 
-/** Anh xa ly do loi (tang data, khong phu thuoc Android) sang string resource de hien thi. */
 @StringRes
 fun AuthErrorReason.toMessageRes(): Int = when (this) {
     AuthErrorReason.SERVICE_NOT_CONFIGURED -> R.string.auth_error_service_not_configured

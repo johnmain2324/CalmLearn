@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Khoi thuong hieu dung chung cho 3 man hinh tai khoan (Dang nhap / Dang ky / Quen mat khau)
-    de tranh lap code giua cac man hinh.
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

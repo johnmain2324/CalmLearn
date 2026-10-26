@@ -15,7 +15,6 @@
         android:paddingEnd="16dp"
         android:paddingTop="20dp">
 
-        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,7 +40,6 @@
                 android:contentDescription="@null" />
         </LinearLayout>
 
-        <!-- Profile card -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -179,7 +177,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Settings list -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -206,7 +203,6 @@
             <include android:id="@+id/rowAbout" layout="@layout/item_settings_row_about" />
         </LinearLayout>
 
-        <!-- Huy hieu: mo luong Activity + Intent doc lap (AchievementListActivity) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -217,7 +213,6 @@
             <include android:id="@+id/rowAchievements" layout="@layout/item_settings_row_achievements" />
         </LinearLayout>
 
-        <!-- Logout -->
         <LinearLayout
             android:id="@+id/rowLogout"
             android:layout_width="match_parent"

@@ -13,7 +13,6 @@
         android:paddingHorizontal="16dp"
         android:paddingTop="20dp">
 
-        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,7 +64,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Player -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -114,7 +112,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Transcript -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -139,7 +136,6 @@
                 android:nestedScrollingEnabled="false" />
         </LinearLayout>
 
-        <!-- Question -->
         <LinearLayout
             android:id="@+id/questionGroup"
             android:layout_width="match_parent"
@@ -199,7 +195,6 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Completion -->
         <LinearLayout
             android:id="@+id/completionGroup"
             android:layout_width="match_parent"

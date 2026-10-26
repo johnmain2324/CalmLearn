@@ -25,9 +25,6 @@ class QuizFragment : Fragment() {
     private val questions: List<QuizQuestion> = MockData.quizQuestions.take(5)
     private lateinit var optionsController: OptionsController
 
-    /** Quiz duy nhat hien co (luon cung 5 cau dau tien cua MockData.quizQuestions) - dung lam khoa
-     *  chong farm XP theo ngay (xem ProgressRepository.recordQuizResult). Khi co nhieu quiz theo
-     *  chu de/bai hoc, moi quiz can mot id rieng thay vi hang so nay. */
     private val quizId = "general_quiz"
     private val studyTracker = StudySessionTracker()
 
@@ -112,11 +109,6 @@ class QuizFragment : Fragment() {
         persistQuizResult()
     }
 
-    /**
-     * Ghi that ket qua quiz xuong Firestore (thay vi chi hien "+X XP" tren man hinh nhu truoc).
-     * So XP hien thi la so THAT su duoc cong trong lan nay - se la 0 neu quiz nay da duoc lam va
-     * cong XP trong ngay hom nay roi (xem ProgressRepository.recordQuizResult).
-     */
     private fun persistQuizResult() {
         viewLifecycleOwner.lifecycleScope.launch {
             val before = ProgressRepositoryProvider.repository.loadProgress()

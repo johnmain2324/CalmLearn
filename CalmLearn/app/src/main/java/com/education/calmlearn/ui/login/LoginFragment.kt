@@ -22,13 +22,6 @@ import com.education.calmlearn.ui.common.toMessageRes
 import com.education.calmlearn.ui.common.toggleEditTextPasswordVisibility
 import com.education.calmlearn.ui.verifyemail.VerifyEmailFragment
 
-/**
- * Man hinh Dang nhap. Logic kiem tra du lieu va goi AuthRepository nam trong [LoginViewModel].
- *
- * DIEM CHO TICH HOP: repository hien tai ([com.education.calmlearn.data.auth.UnavailableAuthRepository])
- * luon tra ve loi "chua cau hinh dich vu xac thuc" - man hinh nay se khong bao gio dieu huong
- * that su ve Trang chu cho den khi nhom noi mot AuthRepository that.
- */
 class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
@@ -50,7 +43,7 @@ class LoginFragment : Fragment() {
 
         binding.etEmail.setText(viewModel.email)
         binding.etPassword.setText(viewModel.password)
-        // etPassword dat android:saveEnabled="false" nen phai tu ap lai trang thai an/hien tu ViewModel.
+
         applyEditTextPasswordVisibility(binding.etPassword, binding.btnTogglePassword, viewModel.isPasswordVisible)
 
         binding.btnBack.setOnClickListener { findNavController().navigateUp() }
@@ -148,17 +141,14 @@ class LoginFragment : Fragment() {
             }
             FormUiState.Success -> {
                 binding.tvError.visibility = View.INVISIBLE
-                // Thuc su xay ra chi khi AuthRepository that tra ve thanh cong; gan lai Idle ngay
-                // de trang thai nay khong "phat lai" gay dieu huong them lan nua.
+
                 viewModel.consumeTerminalState()
                 findNavController().navigate(R.id.action_global_home)
             }
             FormUiState.RequiresNextStep -> {
                 binding.tvError.visibility = View.INVISIBLE
                 viewModel.consumeTerminalState()
-                // Dung mat khau nhung chua du dieu kien vao app (email chua xac minh, hoac ho so
-                // chua luu xong tu lan dang ky truoc do) - dua sang man hinh Xac minh email.
-                // autoSend=false: co the da tung gui xac minh truoc do, khong tu gui them lan nua.
+
                 findNavController().navigate(
                     R.id.action_global_verifyEmail,
                     bundleOf(VerifyEmailFragment.ARG_AUTO_SEND to false)
@@ -174,7 +164,7 @@ class LoginFragment : Fragment() {
         binding.etEmail.isEnabled = enabled
         binding.etPassword.isEnabled = enabled
         binding.btnTogglePassword.isEnabled = enabled
-        // Khoa ca lien ket dieu huong trong luc dang gui, tranh nguoi dung roi man hinh giua chung.
+
         binding.btnBack.isEnabled = enabled
         binding.tvForgotPassword.isEnabled = enabled
         binding.tvGoToRegister.isEnabled = enabled

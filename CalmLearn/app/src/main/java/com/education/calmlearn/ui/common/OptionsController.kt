@@ -6,12 +6,6 @@ import androidx.core.content.ContextCompat
 import com.education.calmlearn.R
 import com.education.calmlearn.databinding.ItemQuizOptionBinding
 
-/**
- * Renders a list of selectable answer options inside [container] and manages
- * selected / correct / incorrect visual states. Shared by Quiz, Listening
- * comprehension questions and the grammar mini-quiz so the interaction stays
- * consistent everywhere a "pick one of N options" flow is needed.
- */
 class OptionsController(private val container: LinearLayout) {
 
     private var selectedIndex: Int? = null
