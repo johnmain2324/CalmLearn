@@ -1,0 +1,13 @@
+# Nested ignore file for the Android project in CalmLearn/ (only applies inside this folder).
+# It only adds what the repository-root .gitignore does not already cover; build/, .gradle/,
+# local.properties, *.iml and .DS_Store are already ignored there.
+
+# Personal IDE settings (Android Studio regenerates them when the project is opened)
+.idea/
+
+# Packaged build outputs
+*.apk
+*.aab
+
+# OS junk
+Thumbs.db
