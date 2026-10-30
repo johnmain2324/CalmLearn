@@ -147,7 +147,8 @@
     <string name="profile_streak_label">Chuỗi Streak</string>
     <string name="profile_xp_label">Tổng điểm thưởng</string>
     <string name="profile_account">Tài khoản cá nhân</string>
-    <string name="profile_reminder">Nhắc nhở học tập (8:00 PM)</string>
+    <string name="profile_settings_title">Cài đặt</string>
+    <string name="profile_settings_desc">Nhắc nhở học tập</string>
     <string name="profile_dark_mode">Chế độ tối (Dark Mode)</string>
     <string name="profile_language">Ngôn ngữ hiển thị</string>
     <string name="profile_language_value">Tiếng Việt</string>
@@ -157,6 +158,19 @@
     <string name="profile_achievements_desc">Xem toàn bộ thành tích đã đạt được</string>
     <string name="profile_logout">Đăng xuất tài khoản</string>
     <string name="profile_logout_confirm">Bạn có chắc muốn đăng xuất khỏi CalmLearn?</string>
+
+    <string name="edit_profile_title">Chỉnh sửa hồ sơ</string>
+    <string name="edit_profile_btn_save">Lưu thay đổi</string>
+
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_reminder_title">Nhắc nhở học tập</string>
+    <string name="settings_reminder_time">Giờ nhắc</string>
+    <string name="settings_reminder_time_value">%1$02d:%2$02d</string>
+    <string name="settings_notification_denied">Bạn cần cho phép thông báo để bật nhắc nhở học tập</string>
+
+    <string name="reminder_channel_name">Nhắc nhở học tập</string>
+    <string name="reminder_notification_title">Đến giờ học rồi</string>
+    <string name="reminder_notification_text">Dành vài phút ôn tập cùng CalmLearn hôm nay nhé.</string>
 
     <string name="achievement_list_title">Huy hiệu của tôi</string>
     <string name="achievement_list_subtitle">Chạm vào một huy hiệu để xem chi tiết</string>

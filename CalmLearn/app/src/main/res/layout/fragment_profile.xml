@@ -188,7 +188,7 @@
 
             <View style="@style/SettingsDivider" />
 
-            <include android:id="@+id/rowReminder" layout="@layout/item_settings_switch_reminder" />
+            <include android:id="@+id/rowSettings" layout="@layout/item_settings_row_settings" />
 
             <View style="@style/SettingsDivider" />
 

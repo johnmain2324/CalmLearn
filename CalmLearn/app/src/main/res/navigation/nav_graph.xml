@@ -109,6 +109,16 @@
             app:argType="boolean" />
     </fragment>
 
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.education.calmlearn.ui.editprofile.EditProfileFragment"
+        android:label="EditProfile" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.education.calmlearn.ui.settings.SettingsFragment"
+        android:label="Settings" />
+
     <action
         android:id="@+id/action_global_onboarding"
         app:destination="@id/onboardingFragment"
@@ -178,5 +188,13 @@
     <action
         android:id="@+id/action_global_addWord"
         app:destination="@id/addWordFragment" />
+
+    <action
+        android:id="@+id/action_global_editProfile"
+        app:destination="@id/editProfileFragment" />
+
+    <action
+        android:id="@+id/action_global_settings"
+        app:destination="@id/settingsFragment" />
 
 </navigation>

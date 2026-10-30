@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
@@ -45,7 +44,11 @@ class ProfileFragment : Fragment() {
         loadProgress()
 
         binding.rowAccount.root.setOnClickListener {
-            Toast.makeText(requireContext(), R.string.profile_account, Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_global_editProfile)
+        }
+
+        binding.rowSettings.root.setOnClickListener {
+            findNavController().navigate(R.id.action_global_settings)
         }
 
         binding.rowDarkMode.switchDarkMode.isChecked =
