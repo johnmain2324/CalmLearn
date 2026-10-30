@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 
@@ -197,13 +198,19 @@ class FirebaseAuthRepository(
         error.errorCode == "ERROR_TOO_MANY_REQUESTS"
 
     private suspend fun saveProfile(uid: String, fullName: String, email: String, gender: Gender) {
-        val profile = mapOf(
-            FIELD_FULL_NAME to fullName,
-            FIELD_EMAIL to email,
-            FIELD_GENDER to gender.name,
-            FIELD_CREATED_AT to FieldValue.serverTimestamp()
-        )
-        firestore.collection(USERS_COLLECTION).document(uid).set(profile).await()
+        val profileDoc = firestore.collection(USERS_COLLECTION).document(uid)
+        firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(profileDoc)
+            val profile = mutableMapOf<String, Any>(
+                FIELD_FULL_NAME to fullName,
+                FIELD_EMAIL to email,
+                FIELD_GENDER to gender.name
+            )
+            if (!snapshot.exists() || !snapshot.contains(FIELD_CREATED_AT)) {
+                profile[FIELD_CREATED_AT] = FieldValue.serverTimestamp()
+            }
+            transaction.set(profileDoc, profile, SetOptions.merge())
+        }.await()
     }
 
     private companion object {
