@@ -14,6 +14,7 @@ import com.education.calmlearn.data.progress.ProgressRepositoryProvider
 import com.education.calmlearn.data.progress.ProgressResult
 import com.education.calmlearn.databinding.FragmentQuizBinding
 import com.education.calmlearn.ui.common.OptionsController
+import com.education.calmlearn.ui.chatbot.ChatBubbleGate
 import com.education.calmlearn.ui.common.StudySessionTracker
 import kotlinx.coroutines.launch
 
@@ -47,6 +48,7 @@ class QuizFragment : Fragment() {
         binding.btnClose.setOnClickListener { findNavController().popBackStack() }
 
         optionsController = OptionsController(binding.quizOptionsContainer)
+        ChatBubbleGate.setQuizInProgress(true)
         renderQuestion(0)
 
         binding.btnQuizAction.setOnClickListener { onActionClicked() }
@@ -94,6 +96,7 @@ class QuizFragment : Fragment() {
         binding.quizContentGroup.visibility = View.GONE
         binding.btnQuizAction.visibility = View.GONE
         binding.quizResultGroup.visibility = View.VISIBLE
+        ChatBubbleGate.setQuizInProgress(false)
 
         binding.resultScore.text = getString(R.string.quiz_result_score_format, correctCount, questions.size)
         binding.resultXp.text = getString(R.string.quiz_result_xp_format, 0)
@@ -127,6 +130,7 @@ class QuizFragment : Fragment() {
         binding.quizResultGroup.visibility = View.GONE
         binding.quizContentGroup.visibility = View.VISIBLE
         binding.btnQuizAction.visibility = View.VISIBLE
+        ChatBubbleGate.setQuizInProgress(true)
         renderQuestion(0)
     }
 
@@ -145,6 +149,7 @@ class QuizFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        ChatBubbleGate.setQuizInProgress(false)
         _binding = null
     }
 }

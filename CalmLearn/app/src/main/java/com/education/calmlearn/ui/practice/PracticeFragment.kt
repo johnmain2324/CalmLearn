@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.education.calmlearn.R
 import com.education.calmlearn.databinding.FragmentPracticeBinding
+import com.education.calmlearn.ui.chatbot.ChatbotBottomSheet
 
 class PracticeFragment : Fragment() {
 
@@ -40,7 +41,7 @@ class PracticeFragment : Fragment() {
             findNavController().navigate(R.id.action_global_flashcard, bundleOf("topicId" to "travel"))
         }
         binding.itemChatbot.root.setOnClickListener {
-            findNavController().navigate(R.id.action_global_chatbot)
+            ChatbotBottomSheet.show(requireActivity().supportFragmentManager)
         }
     }
 

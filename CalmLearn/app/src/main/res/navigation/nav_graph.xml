@@ -119,11 +119,6 @@
         android:name="com.education.calmlearn.ui.settings.SettingsFragment"
         android:label="Settings" />
 
-    <fragment
-        android:id="@+id/chatbotFragment"
-        android:name="com.education.calmlearn.ui.chatbot.ChatbotFragment"
-        android:label="Chatbot" />
-
     <action
         android:id="@+id/action_global_onboarding"
         app:destination="@id/onboardingFragment"
@@ -201,9 +196,5 @@
     <action
         android:id="@+id/action_global_settings"
         app:destination="@id/settingsFragment" />
-
-    <action
-        android:id="@+id/action_global_chatbot"
-        app:destination="@id/chatbotFragment" />
 
 </navigation>

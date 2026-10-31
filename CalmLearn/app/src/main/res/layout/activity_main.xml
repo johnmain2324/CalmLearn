@@ -30,4 +30,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
+    <ImageView
+        android:id="@+id/chatBubble"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_circle_teal"
+        android:clickable="true"
+        android:contentDescription="@string/chatbot_bubble_description"
+        android:elevation="6dp"
+        android:focusable="true"
+        android:padding="15dp"
+        android:src="@drawable/ic_chat"
+        android:tint="@color/white"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
