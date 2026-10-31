@@ -70,15 +70,18 @@
                 android:layout_height="44dp">
 
                 <ImageView
+                    android:id="@+id/btnNotifications"
                     android:layout_width="44dp"
                     android:layout_height="44dp"
                     android:background="@drawable/bg_card"
                     android:padding="11dp"
                     android:src="@drawable/ic_bell"
                     android:tint="@color/text_primary"
-                    android:contentDescription="@null" />
+                    android:contentDescription="@string/notifications_title" />
 
                 <View
+                    android:id="@+id/viewNotificationDot"
+                    android:visibility="gone"
                     android:layout_width="9dp"
                     android:layout_height="9dp"
                     android:layout_gravity="top|end"

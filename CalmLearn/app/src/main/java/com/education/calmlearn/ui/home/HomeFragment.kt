@@ -12,6 +12,7 @@ import com.education.calmlearn.R
 import com.education.calmlearn.data.auth.AuthRepositoryProvider
 import com.education.calmlearn.data.auth.ProfileResult
 import com.education.calmlearn.data.mock.MockData
+import com.education.calmlearn.data.notifications.NotificationPrefs
 import com.education.calmlearn.data.progress.ProgressRepositoryProvider
 import com.education.calmlearn.data.progress.ProgressResult
 import com.education.calmlearn.databinding.FragmentHomeBinding
@@ -62,6 +63,10 @@ class HomeFragment : Fragment() {
         binding.btnQuickPracticeSeeAll.setOnClickListener { switchTab(R.id.practiceFragment) }
         binding.btnWeekDetail.setOnClickListener { switchTab(R.id.progressFragment) }
         binding.btnBadgesViewAll.setOnClickListener { switchTab(R.id.progressFragment) }
+
+        binding.btnNotifications.setOnClickListener {
+            findNavController().navigate(R.id.action_global_notifications)
+        }
     }
 
     private fun loadCurrentUser() {
@@ -106,6 +111,10 @@ class HomeFragment : Fragment() {
 
                 MockData.ensureVocabWordsLoaded()
                 MockData.applyProgress(result.progress)
+                MockData.applyAchievementProgress(result.progress)
+                val seenIds = NotificationPrefs(requireContext()).seenAchievementIds()
+                binding.viewNotificationDot.visibility =
+                    if (MockData.achievements.any { it.isUnlocked && it.id !in seenIds }) View.VISIBLE else View.GONE
                 val coursePercent = MockData.topicPercent(HOME_COURSE_TOPIC_ID)
                 binding.courseProgress.progress = coursePercent
                 binding.tvCoursePercent.text = getString(R.string.home_course_percent_format, coursePercent)

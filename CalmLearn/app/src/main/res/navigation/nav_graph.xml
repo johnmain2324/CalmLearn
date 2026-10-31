@@ -119,6 +119,11 @@
         android:name="com.education.calmlearn.ui.settings.SettingsFragment"
         android:label="Settings" />
 
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.education.calmlearn.ui.notifications.NotificationsFragment"
+        android:label="Notifications" />
+
     <action
         android:id="@+id/action_global_onboarding"
         app:destination="@id/onboardingFragment"
@@ -196,5 +201,9 @@
     <action
         android:id="@+id/action_global_settings"
         app:destination="@id/settingsFragment" />
+
+    <action
+        android:id="@+id/action_global_notifications"
+        app:destination="@id/notificationsFragment" />
 
 </navigation>
