@@ -44,6 +44,26 @@ service cloud.firestore {
 
       allow delete: if false;
     }
+
+    // Lich su hoi thoai voi chatbot - moi tai khoan chi doc/tao duoc tin nhan cua chinh minh, khong sua/xoa.
+    match /chatConversations/{userId}/messages/{messageId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && isValidChatMessage(request.resource.data);
+
+      allow update, delete: if false;
+    }
+  }
+
+  function isValidChatMessage(data) {
+    return data.keys().hasOnly(['role', 'text', 'createdAt'])
+      && data.role in ['user', 'model']
+      && data.text is string
+      && data.text.size() > 0
+      && data.text.size() < 4000
+      && data.createdAt is timestamp;
   }
 
   function isValidProfile(data) {

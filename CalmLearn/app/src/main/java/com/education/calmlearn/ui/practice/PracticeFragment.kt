@@ -39,6 +39,9 @@ class PracticeFragment : Fragment() {
         binding.itemFlashcard.root.setOnClickListener {
             findNavController().navigate(R.id.action_global_flashcard, bundleOf("topicId" to "travel"))
         }
+        binding.itemChatbot.root.setOnClickListener {
+            findNavController().navigate(R.id.action_global_chatbot)
+        }
     }
 
     override fun onDestroyView() {

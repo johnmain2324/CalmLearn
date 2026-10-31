@@ -110,7 +110,23 @@
     <string name="practice_quiz_note">5 câu hỏi trắc nghiệm</string>
     <string name="practice_flashcard_title">Lật Flashcard thông minh</string>
     <string name="practice_flashcard_desc">Ôn tập nhanh nghĩa từ, phiên âm và ví dụ ngữ cảnh</string>
+    <string name="practice_chatbot_title">Chatbot luyện nói</string>
+    <string name="practice_chatbot_desc">Trò chuyện tiếng Anh với gia sư AI, nhẹ nhàng sửa lỗi ngữ pháp cho bạn</string>
     <string name="practice_start">Bắt đầu</string>
+
+    <string name="chatbot_title">Chatbot luyện hội thoại</string>
+    <string name="chatbot_input_hint">Nhập tin nhắn bằng tiếng Anh…</string>
+    <string name="chatbot_send">Gửi tin nhắn</string>
+    <string name="chatbot_typing">Gia sư AI đang trả lời…</string>
+    <string name="chatbot_error_not_configured">Chưa cấu hình khóa API Gemini. Thêm GEMINI_API_KEY vào local.properties rồi build lại ứng dụng.</string>
+    <string name="chatbot_error_network">Không kết nối được tới máy chủ AI. Vui lòng kiểm tra mạng rồi thử lại.</string>
+    <string name="chatbot_error_api_key">Khóa API Gemini bị từ chối. Vui lòng kiểm tra lại khóa trong local.properties.</string>
+    <string name="chatbot_error_rate_limited">Bạn gửi quá nhanh hoặc đã hết hạn mức hôm nay. Vui lòng thử lại sau.</string>
+    <string name="chatbot_error_server">Máy chủ AI đang bận. Vui lòng thử lại sau ít phút.</string>
+    <string name="chatbot_error_empty_reply">AI không trả về nội dung. Bạn hãy thử diễn đạt câu khác nhé.</string>
+    <string name="chatbot_error_history_read">Không tải được lịch sử trò chuyện.</string>
+    <string name="chatbot_error_history_save">Không lưu được lịch sử trò chuyện.</string>
+    <string name="chatbot_error_unknown">Không nhận được phản hồi từ AI. Vui lòng thử lại.</string>
 
     <string name="progress_title">Tiến độ học tập</string>
     <string name="progress_subtitle">Theo dõi nỗ lực và kết quả rèn luyện của bạn</string>

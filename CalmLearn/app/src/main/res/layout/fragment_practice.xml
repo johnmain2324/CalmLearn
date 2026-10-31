@@ -75,6 +75,7 @@
         <include android:id="@+id/itemListening" layout="@layout/item_practice_listening" />
         <include android:id="@+id/itemQuiz" layout="@layout/item_practice_quiz" />
         <include android:id="@+id/itemFlashcard" layout="@layout/item_practice_flashcard" />
+        <include android:id="@+id/itemChatbot" layout="@layout/item_practice_chatbot" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
