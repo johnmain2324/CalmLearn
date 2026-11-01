@@ -120,6 +120,11 @@
         android:label="Settings" />
 
     <fragment
+        android:id="@+id/wordPracticeFragment"
+        android:name="com.education.calmlearn.ui.lessons.word.WordPracticeFragment"
+        android:label="WordPractice" />
+
+    <fragment
         android:id="@+id/notificationsFragment"
         android:name="com.education.calmlearn.ui.notifications.NotificationsFragment"
         android:label="Notifications" />
@@ -205,5 +210,9 @@
     <action
         android:id="@+id/action_global_notifications"
         app:destination="@id/notificationsFragment" />
+
+    <action
+        android:id="@+id/action_global_wordPractice"
+        app:destination="@id/wordPracticeFragment" />
 
 </navigation>

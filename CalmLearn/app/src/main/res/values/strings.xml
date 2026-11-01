@@ -186,6 +186,27 @@
     <string name="settings_reminder_time_value">%1$02d:%2$02d</string>
     <string name="settings_notification_denied">Bạn cần cho phép thông báo để bật nhắc nhở học tập</string>
 
+    <string name="word_practice_title">Bài tập từ vựng</string>
+    <string name="word_practice_step1">Bước 1/2 · Viết 5 câu</string>
+    <string name="word_practice_step2">Bước 2/2 · Nghe và đọc lại</string>
+    <string name="word_practice_step1_hint">Viết 5 câu tiếng Anh, mỗi câu có dùng từ \"%1$s\".</string>
+    <string name="word_practice_sentence_index">Câu %1$d</string>
+    <string name="word_practice_sentence_hint">Nhập câu tiếng Anh…</string>
+    <string name="word_practice_need_five">Hãy viết đủ 5 câu trước khi chấm bài.</string>
+    <string name="word_practice_grade">Chấm bài</string>
+    <string name="word_practice_regrade">Chấm lại</string>
+    <string name="word_practice_retry_grade">Thử lại chấm bài</string>
+    <string name="word_practice_passed">Đạt! Bạn dùng từ này đúng trong cả 5 câu.</string>
+    <string name="word_practice_failed">Chưa đạt. Hãy sửa lại theo nhận xét rồi chấm lại.</string>
+    <string name="word_practice_unparsable">Chưa đọc được kết quả chấm. Phản hồi của AI:</string>
+    <string name="word_practice_continue">Sang bước 2</string>
+    <string name="word_practice_step2_hint">Nghe câu mẫu, rồi chạm micro và đọc lại.</string>
+    <string name="word_practice_round_format">Lần %1$d/2</string>
+    <string name="word_practice_round_ok">Chính xác! Hoàn thành lần %1$d/%2$d.</string>
+    <string name="word_practice_round_fail">Chưa khớp, hãy nghe mẫu và thử lại.</string>
+    <string name="word_practice_done">Bạn đã hoàn thành bài tập. Đang lưu kết quả…</string>
+    <string name="word_practice_save_retry">Thử lưu lại</string>
+
     <string name="notifications_title">Thông báo</string>
     <string name="notifications_empty">Chưa có thông báo nào</string>
     <string name="notification_reminder_format">Nhắc nhở học tập lúc %1$02d:%2$02d hằng ngày</string>

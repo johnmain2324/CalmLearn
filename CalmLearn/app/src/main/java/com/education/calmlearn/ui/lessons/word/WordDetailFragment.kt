@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -64,10 +65,13 @@ class WordDetailFragment : Fragment() {
                 persistFavorite(newValue)
             }
             binding.btnMarkLearned.setOnClickListener {
-                val newValue = !word.isLearned
-                word.isLearned = newValue
-                updateLearnedButton()
-                persistLearned(newValue)
+                if (!word.isLearned) {
+                    findNavController().navigate(R.id.action_global_wordPractice, bundleOf("wordId" to word.id))
+                } else {
+                    word.isLearned = false
+                    updateLearnedButton()
+                    persistLearned(false)
+                }
             }
 
             hydrateProgress()

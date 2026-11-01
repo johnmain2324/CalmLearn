@@ -15,10 +15,14 @@ class GeminiChatbotRepository(
     private val apiKey: String = BuildConfig.GEMINI_API_KEY
 ) : ChatbotRepository {
 
-    override suspend fun sendMessage(history: List<ChatMessage>, userMessage: String): ChatbotResult {
+    override suspend fun sendMessage(
+        history: List<ChatMessage>,
+        userMessage: String,
+        systemInstruction: String?
+    ): ChatbotResult {
         if (apiKey.isBlank()) return ChatbotResult.Error(ChatbotErrorReason.SERVICE_NOT_CONFIGURED)
 
-        val body = buildRequestBody(history, userMessage)
+        val body = buildRequestBody(history, userMessage, systemInstruction ?: SYSTEM_INSTRUCTION)
         return try {
             withContext(Dispatchers.IO) { post(body) }
         } catch (cancellation: CancellationException) {
@@ -30,13 +34,13 @@ class GeminiChatbotRepository(
         }
     }
 
-    private fun buildRequestBody(history: List<ChatMessage>, userMessage: String): String {
+    private fun buildRequestBody(history: List<ChatMessage>, userMessage: String, systemInstruction: String): String {
         val contents = JSONArray()
         history.takeLast(MAX_HISTORY_MESSAGES).forEach { contents.put(content(it.role, it.text)) }
         contents.put(content(ChatMessage.ROLE_USER, userMessage))
 
         return JSONObject()
-            .put("systemInstruction", JSONObject().put("parts", JSONArray().put(JSONObject().put("text", SYSTEM_INSTRUCTION))))
+            .put("systemInstruction", JSONObject().put("parts", JSONArray().put(JSONObject().put("text", systemInstruction))))
             .put("contents", contents)
             .toString()
     }
