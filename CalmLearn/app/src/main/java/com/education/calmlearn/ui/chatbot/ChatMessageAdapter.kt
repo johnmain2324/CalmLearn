@@ -1,5 +1,9 @@
 package com.education.calmlearn.ui.chatbot
 
+import android.graphics.Typeface
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -37,7 +41,15 @@ class ChatMessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val message = messages[position]
         when (holder) {
             is UserViewHolder -> holder.binding.tvMessage.text = message.text
-            is AiViewHolder -> holder.binding.tvMessage.text = message.text
+            is AiViewHolder -> holder.binding.tvMessage.text = toStyledText(message.text)
+        }
+    }
+
+    private fun toStyledText(raw: String): CharSequence = SpannableStringBuilder().apply {
+        SimpleMarkdown.parse(raw).forEach { segment ->
+            val start = length
+            append(segment.text)
+            if (segment.bold) setSpan(StyleSpan(Typeface.BOLD), start, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     }
 
