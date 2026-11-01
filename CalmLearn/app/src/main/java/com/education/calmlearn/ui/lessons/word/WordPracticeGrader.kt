@@ -17,7 +17,9 @@ object WordPracticeGrader {
         "Bạn là giáo viên tiếng Anh chấm bài. Người học phải viết $SENTENCE_COUNT câu tiếng Anh, " +
             "mỗi câu có dùng từ cho trước. Dòng đầu tiên của câu trả lời phải là đúng một từ: " +
             "$PASSED nếu cả $SENTENCE_COUNT câu đều dùng đúng từ đó và đúng ngữ pháp cơ bản, " +
-            "hoặc $NOT_PASSED nếu còn lỗi. Không thêm ký tự hay chữ nào khác trên dòng đầu tiên. " +
+            "hoặc $NOT_PASSED nếu còn lỗi ngữ pháp hoặc dùng sai từ. Bỏ qua lỗi dấu câu " +
+            "(ví dụ thiếu dấu chấm cuối câu) và lỗi viết hoa/viết thường, không tính đó là lỗi khi chấm. " +
+            "Không thêm ký tự hay chữ nào khác trên dòng đầu tiên. " +
             "Các dòng sau là nhận xét ngắn gọn bằng tiếng Việt cho từng câu."
 
     fun buildPrompt(word: String, sentences: List<String>): String = buildString {
